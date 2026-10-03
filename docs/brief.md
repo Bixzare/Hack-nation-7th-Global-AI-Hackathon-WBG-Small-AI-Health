@@ -142,10 +142,10 @@ she can't read. We know because: TODO (Niger evidence, see below).
 | Dataset | Use | Licence | Size | Real / synthetic |
 |---|---|---|---|---|
 | French visit notes, generated from templates (`ml/gen_synthetic.py`) | train classifier (2,608 clauses) + dev (300 notes) | ours | 1,500 + 300 notes | **SYNTHETIC** |
-| **Gold test set:** 30 French dictation clips (ElevenLabs TTS, **3 male voices**; split per clip TBC) + `gold_labels.csv` | **test only**, frozen; speech→record (typed→record once the script is found) | ours (TTS output) | 30 clips, 286 s | **SYNTHETIC voice, SYNTHETIC patients** |
+| **Gold set:** 30 French dictation clips (ElevenLabs TTS, **3 male voices: A = clips 1–10, B = 11–20, C = 21–30**) + `gold_labels.csv`; script text drafted with AI help, checked by the author | dev 10 clips (error analysis) / **test 20 clips, frozen**; speech→record and typed→record | ours (TTS output) | 30 clips, 286 s | **SYNTHETIC voice, SYNTHETIC patients** |
 | Gold noisy copies: 15 clips + synthetic fan / street / chatter noise at 10 dB SNR | robustness test (clean vs noisy reported separately) | ours | 15 clips, 139 s | **SYNTHETIC** |
 | Zarma voice clips (intro, 7 weekdays, clinic, refill) | patient reminders | ours | 10 clips, 0.8 MB | real voice, one speaker |
-| Whisper base (faster-whisper int8); tiny and small tested | French ASR | MIT | base 148 MB (tiny 78, small 464) | pretrained |
+| **Whisper small** (demo) / base (low-end fallback), faster-whisper int8; tiny tested | French ASR | MIT | small 486 MB, base 148 MB, tiny 78 MB | pretrained |
 | WHO HEARTS 2018 + WHO 2021 hypertension guideline (PDFs) | rule thresholds | WHO | n/a | real |
 | WHO GHO, Niger DHS, GSMA, World Bank SDI | problem evidence | open | n/a | real |
 | Feriji (27Group/Feriji): Zarma–French parallel text | **next steps only**, not used | **CC-BY-NC-4.0** (non-commercial), gated | n/a | real |

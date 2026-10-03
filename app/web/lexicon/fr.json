@@ -115,7 +115,8 @@
    "mal de crane",
    "cephalalgies?",
    "tete qui (lui )?fait mal",
-   "douleurs? (a|de) la tete"
+   "douleurs? (a|de) la tete",
+   "\\b(?:(?:c|s) est |ses |ces |s )e?f+al+(?:e+s?|er|ai[st]?)\\b"
   ],
   "chest_pain": [
    "douleurs? thoraciques?",
@@ -476,5 +477,5 @@
   ],
   "min_len": 5
  },
- "_version": "v3 (post-hoc gold-informed ASR variants)"
+ "_version": "v4 (v3 + headache ASR sound-alikes from gold dev split)"
 }

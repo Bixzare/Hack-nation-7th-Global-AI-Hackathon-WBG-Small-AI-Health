@@ -102,6 +102,50 @@
 - **Reminder timing.** Sent in the evening 1 day before the visit (profile `reminder_days_before`,
   1–2), so "this coming [day]" is correct. Not sent when the patient is referred.
 
+### Sunday morning decisions (Sat 23:00 →)
+- **Script found** at `locales/dje/RECORDING-SCRIPT.md` (not `data/gold/`). Copied to
+  `data/gold/RECORDING-SCRIPT.md`, which is gitignored. Its notes say the script text was drafted with
+  AI help, and the audio and facts were checked by the author.
+- **Gold split (seed 2026).**
+  - Dev = 1, 4, 6, 13, 14, 20, 21, 25, 28, 30: the 4 seen clips plus 6 drawn with
+    `random.Random(2026)`, not chosen by looking at errors.
+  - Test = the other 20, frozen (`data/gold/split.json`).
+- **Lexicon tuning history** (full disclosure for the pitch):
+  - v1: written before any gold number (`bcc26f3`).
+  - v2: synonyms + fuzzy spelling, after seeing label-level confusions on all 30 clips.
+  - v3: ASR variants, after word-stem counts on all 30 clips; no wording read.
+  - v4: one headache sound-alike pattern, from reading the DEV clips only ("céphalées" → "c'est
+    fallé" / "s'est fallée" / "s'effaler" / "ses falais").
+  - Caveat: v2 and v3 used aggregate signals from clips that are now in test, so test numbers are
+    slightly optimistic. Typed→record shows headache is 100% on text, so the headache fix only
+    addresses ASR.
+- **Other dev observations, not acted on** (next steps): ASR writes "Homme" as "Hum" / "Pomme" (sex
+  errors), and "Tention"; "pas des soufflements" (essoufflement) is already caught.
+- **Voices:** A = clips 1–10, B = 11–20, C = 21–30; all male, all synthetic (ElevenLabs).
+- **Demo model: Whisper small; base is the documented low-end fallback.** In health, accuracy and
+  catching urgent cases matter more than speed.
+- **int8 (optional item):** faster-whisper already runs small with `compute_type="int8"`, so all
+  numbers are int8 inference. The 486 MB on disk is the fp16 checkpoint; shrinking it on disk needs
+  re-conversion (transformers + torch, about 2 GB of tooling) or an unverified third-party conversion.
+  Skipped (time-box).
+
+**Trade-off table** (frozen test split, 20 clips; noisy = 9 test clips; laptop CPU, int8):
+
+| | Whisper base (fallback) | **Whisper small (demo)** |
+|---|---|---|
+| Model size on disk | 148 MB | 486 MB |
+| Field accuracy, clean | 246/280 (87.9%) | **267/280 (95.4%)** |
+| Field accuracy, noisy | 100/126 (79.4%) | **116/126 (92.1%)** |
+| Urgent cases caught, clean | 4/5 | **5/5** |
+| Urgent cases caught, noisy | 2/3 | **3/3** |
+| False urgent, clean | 2/15 | **0/15** |
+| Present danger symptom marked absent | 0/11 | 0/11 |
+| WER, test clean / noisy | 18.2% / 31.4% | 15.8% / 15.1% |
+| Latency (RTF; 10 s clip) | 0.28 clean, 0.30 noisy (≈ 3 s) | 0.77 clean, 1.27 noisy (≈ 8–13 s) |
+| Typed→record (no ASR), for reference | 271/280 (96.8%), urgent 5/5 | |
+
+Full table with per-voice results: `docs/results-test.md`.
+
 ## Metrics (for the pitch)
 Gold = 30 SYNTHETIC TTS clips (3 male voices). "Unseen" = 26 clips whose wording was never displayed.
 Speech→record uses the extractor as of `4445cad` (lexicon v3).
@@ -127,25 +171,10 @@ Speech→record uses the extractor as of `4445cad` (lexicon v3).
 | Typed→record (gold) | **not measured: RECORDING-SCRIPT.md missing** | | |
 | Works fully offline | yes: SW cache, offline reload passes; speech service on 127.0.0.1 | `ml/smoke_test.mjs` (headless Chrome) | laptop |
 
-## Questions for morning
-1. **RECORDING-SCRIPT.md is missing.** I couldn't find it in the repo, Downloads, Desktop or
-   Documents. Without it there is no typed→record evaluation and no ASR WER. Where is it?
-2. **May I split the gold set** into gold-dev (10 clips, used for error analysis) and gold-test
-   (20, frozen)? Headache recall is ASR-limited ("céphalées" is transcribed phonetically), and
-   fixing it properly needs to look at the wording. Alternative: keep gold frozen and report the
-   limitation.
-3. **Voice split:** which clips use which of the 3 male voices? It's needed for the data table and
-   per-voice results.
-4. **Whisper small (486 MB) vs base (148 MB) on the health-centre laptop?** Small is clearly better:
-   92.6% vs 85.7% field accuracy, 100% urgent recall, 0 false urgent. But it is 3.3× bigger and about
-   3× slower (a 10 s clip takes about 8 s clean; slower than real time on noisy audio). Headache stays
-   at 53% even with small, so that gap is probably wording/convention rather than ASR, which makes
-   question 2 more important. The service still defaults to base; switch with `--model small`.
-   Recommendation: small for the demo laptop, base as the "low-end" fallback, and report both.
-5. **Deploy:** still waiting for a yes to create a public GitHub repo (`gh` is logged in as Bixzare)
-   or for you to connect Vercel. Nothing has been deployed.
-6. **Classifier:** keep it (113 KB, no gold gain) or ship rules only? The brief's fallback says rules
-   only if it's no better. I kept it because it surfaces more uncertainty on noisy text.
+## Questions for morning (answered Sun morning)
+1. Script: found in `locales/dje/`; typed→record and WER done. 2. Split: done (seed 2026).
+3. Voices: A/B/C mapping recorded. 4. Small for the demo, base as fallback. 5. Deploy: see below.
+6. Rules-only is the default; the classifier stays in the repo.
 
 ## Later (out of scope this weekend)
 - Cluster flag to a district health officer, where a human decides whether to alert
