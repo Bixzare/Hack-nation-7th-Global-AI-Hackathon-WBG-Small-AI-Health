@@ -106,5 +106,9 @@
  "flag.follow_up_missing": "No next visit set.",
  "flag.follow_up_too_long": "BP not at target: WHO suggests monthly follow-up until it is.",
  "flag.counselling_missing": "Lifestyle counselling not recorded.",
- "flag.sex_unknown": "Sex not recorded."
+ "flag.sex_unknown": "Sex not recorded.",
+ "speech.record": "🎙 Dictate",
+ "speech.stop": "■ Stop",
+ "speech.working": "Transcribing…",
+ "speech.done": "Transcribed offline in {s} s: check the text"
 }

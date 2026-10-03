@@ -45,6 +45,18 @@ await new Promise(r => setTimeout(r, 800));
 const outboxText = await page.$eval("#outbox", e => e.innerText);
 const saved = await page.$eval("#saved", e => e.innerText);
 
+// sample dictation (hosted mode): speech-sourced BP must be "please check"; mic visible if service is up
+await page.click("#samplesTitle");
+const sampleButtons = await page.$$("#samples button");
+await sampleButtons[1].click();
+await page.click("#btnFill");
+await page.waitForSelector(".field");
+const sample = await page.evaluate(() => ({
+  bpCheck: [...document.querySelectorAll(".field")].filter(f => /TA 1/.test(f.querySelector("label").textContent)).every(f => f.classList.contains("check")),
+  urgent: [...document.querySelectorAll("#flags li.urgent")].length,
+  micVisible: !document.getElementById("btnMic").hidden,
+}));
+
 // offline reload: everything must come from the service-worker cache
 await page.setOfflineMode(true);
 await page.reload({ waitUntil: "domcontentloaded" });
@@ -52,5 +64,5 @@ await new Promise(r => setTimeout(r, 800));
 const offlineTitle = await page.$eval("#title", e => e.textContent).catch(() => "FAILED");
 const missingClips = (outboxText.match(/clip pas encore/g) || []).length;
 
-console.log(JSON.stringify({ extracted, flags, approveDisabled, outboxText, saved, offlineTitle, missingClips, errors }, null, 1));
+console.log(JSON.stringify({ extracted, flags, approveDisabled, outboxText, saved, sample, offlineTitle, missingClips, errors }, null, 1));
 await browser.close();

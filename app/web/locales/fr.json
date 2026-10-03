@@ -107,5 +107,9 @@
  "flag.follow_up_missing": "Pas de prochain RDV.",
  "flag.follow_up_too_long": "TA non contrôlée : l'OMS suggère un suivi mensuel jusqu'à l'objectif.",
  "flag.counselling_missing": "Conseils hygiéno-diététiques non notés.",
- "flag.sex_unknown": "Sexe non renseigné."
+ "flag.sex_unknown": "Sexe non renseigné.",
+ "speech.record": "🎙 Dicter",
+ "speech.stop": "■ Arrêter",
+ "speech.working": "Transcription…",
+ "speech.done": "Transcrit hors ligne en {s} s : vérifiez le texte"
 }

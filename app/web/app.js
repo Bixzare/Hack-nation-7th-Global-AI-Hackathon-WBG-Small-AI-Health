@@ -200,6 +200,32 @@ async function probeSpeech() {
     ok = (await fetch(P.speech_service_url + "/health", { signal: ctl.signal })).ok;
   } catch {}
   $("speech").textContent = ok ? t("speech.available") : t("speech.unavailable");
+  $("btnMic").hidden = !ok || !navigator.mediaDevices?.getUserMedia;
+  $("btnMic").textContent = t("speech.record");
+}
+
+// Live dictation: record in the browser, transcribe on the LOCAL service (audio never leaves the device).
+let rec = null;
+async function toggleMic() {
+  if (rec) { rec.stop(); return; }
+  const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+  const chunks = [];
+  rec = new MediaRecorder(stream);
+  rec.ondataavailable = e => chunks.push(e.data);
+  rec.onstop = async () => {
+    stream.getTracks().forEach(tr => tr.stop());
+    rec = null;
+    $("btnMic").textContent = t("speech.working"); $("btnMic").disabled = true;
+    try {
+      const r = await fetch(P.speech_service_url + "/transcribe", { method: "POST", body: new Blob(chunks) });
+      const j = await r.json();
+      if (j.text) { $("note").value = j.text; $("note").dataset.source = "speech"; }
+      $("speech").textContent = j.text ? t("speech.done", { s: j.proc_s }) : t("speech.unavailable");
+    } catch { $("speech").textContent = t("speech.unavailable"); }
+    $("btnMic").textContent = t("speech.record"); $("btnMic").disabled = false;
+  };
+  rec.start();
+  $("btnMic").textContent = t("speech.stop");
 }
 
 // ---------- boot ----------
@@ -224,6 +250,7 @@ async function probeSpeech() {
   $("consent").onchange = () => RECORD && renderRecord();
   $("note").oninput = () => { delete $("note").dataset.source; };
   $("btnApprove").onclick = approve;
+  $("btnMic").onclick = toggleMic;
   $("btnSend").onclick = async () => { await outbox.flush(); renderOutbox(); };
   addEventListener("online", () => { paintNet(); renderOutbox(); });
   addEventListener("offline", () => { paintNet(); renderOutbox(); });
