@@ -31,6 +31,10 @@ function paintText() {
   $("flagsTitle").textContent = t("flags.title");
   $("btnApprove").textContent = t("approve");
   $("dangerAskedLabel").textContent = t("danger_asked");
+  $("bpNotMeasuredLabel").textContent = t("bp_not_measured");
+  $("bpReasonOther").placeholder = t("bp_reason.other_text");
+  $("bpReason").replaceChildren(el("option", { value: "", textContent: "—" }),
+    ...["device_unavailable", "patient_refused", "other"].map(r => el("option", { value: r, textContent: t("bp_reason." + r) })));
   $("outboxTitle").textContent = t("outbox.title");
   $("btnSend").textContent = t("outbox.simulate");
   $("savedTitle").textContent = t("saved.title");
@@ -91,28 +95,50 @@ function renderRecord() {
   }
   renderFlags();
   const left = Object.values(RECORD).filter(f => f.check).length;
-  $("btnApprove").disabled = left > 0 || !$("consent").checked || !$("dangerAsked").checked;
+  $("btnApprove").disabled = left > 0 || !$("consent").checked || !$("dangerAsked").checked || !bpOk();
   $("status").textContent = left ? t("status.left", { n: left }) : t("status.ready");
 }
+
+// Approval needs a BP value, or an explicit "BP not measured" with a reason (recorded with the visit).
+function bpOk() {
+  const has = RECORD.bp1_sys.value != null && RECORD.bp1_dia.value != null;
+  const reason = $("bpReason").value;
+  return has || ($("bpNotMeasured").checked && reason && (reason !== "other" || $("bpReasonOther").value.trim()));
+}
+
+let DANGER_AT = null; // when the health worker confirmed asking about danger signs
 
 function values() {
   return Object.fromEntries(Object.entries(RECORD).map(([k, f]) => [k, f.value]));
 }
 
+// The danger-sign screening flag is resolved (not deleted) by the health worker's confirmation.
+function resolveFlags(flags) {
+  return flags.map(f => f.code === "ask_danger_symptoms" && $("dangerAsked").checked && DANGER_AT
+    ? { ...f, level: "resolved", resolved: true, resolved_at: DANGER_AT } : f);
+}
+
+const fmtTime = iso => new Date(iso).toLocaleTimeString(P.worker_locale, { hour: "2-digit", minute: "2-digit" });
+
 function renderFlags() {
-  const order = { urgent: 0, refer: 1, check: 2, gap: 3 };
-  const flags = checkProtocol(values()).sort((a, b) => order[a.level] - order[b.level]);
+  const order = { urgent: 0, refer: 1, check: 2, gap: 3, resolved: 4 };
+  const flags = resolveFlags(checkProtocol(values())).sort((a, b) => order[a.level] - order[b.level]);
   $("flags").replaceChildren(...(flags.length
-    ? flags.map(f => el("li", { className: f.level, textContent: t("flag." + f.code) }))
+    ? flags.map(f => el("li", { className: f.resolved ? "resolved" : f.level,
+        textContent: f.resolved ? t("flag.danger_asked_confirmed", { time: fmtTime(f.resolved_at) }) : t("flag." + f.code) }))
     : [el("li", { textContent: t("flags.none") })]));
 }
 
 async function approve() {
   const v = values();
+  const bpMissing = RECORD.bp1_sys.value == null || RECORD.bp1_dia.value == null;
   const id = await store.add("records", { created_at: new Date().toISOString(), note: $("note").value, record: RECORD,
-    flags: checkProtocol(v), danger_signs_asked: true });
+    flags: resolveFlags(checkProtocol(v)),
+    danger_signs_asked: { confirmed: true, at: DANGER_AT },
+    bp_not_measured: bpMissing ? { reason: $("bpReason").value, other: $("bpReasonOther").value.trim() || null } : null });
   await outbox.queue(outbox.remindersFor(id, v, P));
-  RECORD = null; $("recordBox").hidden = true; $("note").value = ""; $("consent").checked = false; $("dangerAsked").checked = false;
+  RECORD = null; $("recordBox").hidden = true; $("note").value = ""; $("consent").checked = false; $("dangerAsked").checked = false; DANGER_AT = null;
+  $("bpNotMeasured").checked = false; $("bpReason").value = ""; $("bpReasonOther").value = ""; $("bpReasonRow").hidden = true;
   $("status").textContent = "";
   refreshLists();
   alertSaved(id);
@@ -269,7 +295,10 @@ async function toggleMic() {
     $("recordBox").hidden = false; renderRecord();
   };
   $("consent").onchange = () => RECORD && renderRecord();
-  $("dangerAsked").onchange = () => RECORD && renderRecord();
+  $("dangerAsked").onchange = () => { DANGER_AT = $("dangerAsked").checked ? new Date().toISOString() : null; RECORD && renderRecord(); };
+  $("bpNotMeasured").onchange = () => { $("bpReasonRow").hidden = !$("bpNotMeasured").checked; RECORD && renderRecord(); };
+  $("bpReason").onchange = () => { $("bpReasonOther").hidden = $("bpReason").value !== "other"; RECORD && renderRecord(); };
+  $("bpReasonOther").oninput = () => RECORD && renderRecord();
   $("note").oninput = () => { delete $("note").dataset.source; };
   $("btnApprove").onclick = approve;
   $("btnMic").onclick = toggleMic;

@@ -54,3 +54,4 @@ button:disabled { opacity: .45; cursor: default; }
 .hint { font-size: .8rem; color: var(--muted); margin-top: 4px; }
 #flags li.refer { font-weight: 600; }
 #flags li.check { color: var(--checkb); }
+#flags li.resolved { color: var(--okb); }

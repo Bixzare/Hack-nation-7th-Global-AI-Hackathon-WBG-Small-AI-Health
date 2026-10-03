@@ -41,6 +41,7 @@ for (let k = 0; k < 30; k++) {
 await page.click("#consent");
 const approveBeforeDanger = await page.$eval("#btnApprove", b => b.disabled);
 await page.click("#dangerAsked");
+const resolvedFlag = await page.$$eval("#flags li.resolved", ls => ls.map(l => l.textContent));
 const approveDisabled = await page.$eval("#btnApprove", b => b.disabled);
 await page.click("#btnApprove");
 await new Promise(r => setTimeout(r, 800));
@@ -59,6 +60,21 @@ const sample = await page.evaluate(() => ({
   micVisible: !document.getElementById("btnMic").hidden,
 }));
 
+// no BP in the note: approval must stay locked until "BP not measured" + a reason
+await page.$eval("#note", e => { e.value = ""; delete e.dataset.source; });
+await page.type("#note", "Homme 50 ans, pas de plaintes, sous amlodipine, bonne observance, RDV dans 1 mois. (SYNTHETIC)");
+await page.click("#btnFill");
+await page.waitForSelector(".field");
+await setField("Nom", "Ali (synthétique)");
+for (let k = 0; k < 30; k++) { const b = await page.$(".field button:not([hidden])"); if (!b) break; await b.click(); }
+await page.click("#consent"); await page.click("#dangerAsked");
+const noBpLocked = await page.$eval("#btnApprove", b => b.disabled);
+await page.click("#bpNotMeasured");
+await page.select("#bpReason", "device_unavailable");
+const noBpUnlocked = !(await page.$eval("#btnApprove", b => b.disabled));
+await page.click("#btnApprove");
+await new Promise(r => setTimeout(r, 500));
+
 await page.click("#btnDemoHistory");
 await new Promise(r => setTimeout(r, 500));
 const missed = await page.$eval("#missed", e => e.innerText);
@@ -70,5 +86,5 @@ await new Promise(r => setTimeout(r, 800));
 const offlineTitle = await page.$eval("#title", e => e.textContent).catch(() => "FAILED");
 const missingClips = (outboxText.match(/clip pas encore/g) || []).length;
 
-console.log(JSON.stringify({ extracted, flags, approveBeforeDanger, approveDisabled, outboxText, saved, sample, missed, offlineTitle, missingClips, errors }, null, 1));
+console.log(JSON.stringify({ extracted, flags, approveBeforeDanger, approveDisabled, resolvedFlag, noBpLocked, noBpUnlocked, outboxText, saved, sample, missed, offlineTitle, missingClips, errors }, null, 1));
 await browser.close();

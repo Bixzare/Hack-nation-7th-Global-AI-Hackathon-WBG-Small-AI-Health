@@ -116,5 +116,11 @@
  "missed.title": "Not returned (a person decides)",
  "missed.due": "was due {date}: decide whether to call or visit",
  "missed.none": "Everyone due has come back",
- "missed.demo": "Load synthetic demo history"
+ "missed.demo": "Load synthetic demo history",
+ "bp_not_measured": "BP not measured (give a reason)",
+ "bp_reason.device_unavailable": "Device unavailable",
+ "bp_reason.patient_refused": "Patient refused",
+ "bp_reason.other": "Other",
+ "bp_reason.other_text": "Reason",
+ "flag.danger_asked_confirmed": "Danger signs asked: confirmed by health worker, {time}"
 }

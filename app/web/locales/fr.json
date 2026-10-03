@@ -117,5 +117,11 @@
  "missed.title": "Pas revenus (une personne décide)",
  "missed.due": "RDV prévu le {date} : décider s'il faut appeler ou visiter",
  "missed.none": "Tous les patients attendus sont revenus",
- "missed.demo": "Charger un historique de démo (synthétique)"
+ "missed.demo": "Charger un historique de démo (synthétique)",
+ "bp_not_measured": "TA non mesurée (indiquer la raison)",
+ "bp_reason.device_unavailable": "Appareil indisponible",
+ "bp_reason.patient_refused": "Refus du patient",
+ "bp_reason.other": "Autre",
+ "bp_reason.other_text": "Raison",
+ "flag.danger_asked_confirmed": "Signes de danger demandés : confirmé par l'agent de santé, {time}"
 }

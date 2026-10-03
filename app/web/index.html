@@ -54,6 +54,13 @@
         <h2 id="flagsTitle"></h2>
         <ul id="flags"></ul>
       </div>
+      <div class="card">
+        <label class="consent"><input type="checkbox" id="bpNotMeasured"> <span id="bpNotMeasuredLabel"></span></label>
+        <div class="row" id="bpReasonRow" hidden>
+          <select id="bpReason"></select>
+          <input id="bpReasonOther" type="text" hidden>
+        </div>
+      </div>
       <label class="consent card"><input type="checkbox" id="dangerAsked"> <span id="dangerAskedLabel"></span></label>
       <div id="status" class="status"></div>
       <div class="row"><button id="btnApprove" disabled></button></div>
