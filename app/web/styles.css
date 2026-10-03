@@ -55,3 +55,4 @@ button:disabled { opacity: .45; cursor: default; }
 #flags li.refer { font-weight: 600; }
 #flags li.check { color: var(--checkb); }
 #flags li.resolved { color: var(--okb); }
+[hidden] { display: none !important; }

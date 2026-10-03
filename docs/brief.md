@@ -251,9 +251,14 @@ We report:
 - **Scale:** a locale pack plus a protocol pack. The engine is language-neutral. The record can
   export to DHIS2, which ministries in 70+ countries already use.
 
-## Sourced facts for the pitch (Niger)
-- TODO, WHO GHO: health-workforce density in Niger (nurses and doctors per 10,000, year).
-- TODO, Niger DHS: health-seeking behaviour, distance to facility, women's literacy.
-- TODO, GSMA Mobile Gender Gap: phone vs smartphone ownership, women (Niger or the region).
-- TODO, World Bank SDI: only if a Niger survey exists; otherwise the closest country, labelled.
-- TODO, WHO: hypertension prevalence and control gap, Niger / Africa.
+## Sourced facts for the pitch (Niger), verified Sun
+- **Health workforce:** Niger has **3.1 doctors + nurses + midwives per 10,000** population.
+  Source: WHO Global Health Observatory, as tabulated in BMJ 2021, "Demographic challenges and
+  opportunities for child health programming in Africa and Asia", table 1 (data 2014–18):
+  https://pmc.ncbi.nlm.nih.gov/articles/PMC7968446/table/tbl1
+- **Hypertension (May Measurement Month 2017–19, Niger):** 2,297 screened; **33.2% hypertensive, only
+  3.4% recorded as on treatment**. Medication data was not collected in 2017 and was missing for 55.3%
+  (2018) and 89.3% (2019). Source: *European Heart Journal Supplements* 2022:
+  https://pmc.ncbi.nlm.nih.gov/articles/PMC9547524/
+- **WHO STEPS 2007, Niger:** high blood pressure ≈ 36% (36.3%), as cited in the same paper.
+- Not sourced (left out): Niger DHS, GSMA, World Bank SDI.

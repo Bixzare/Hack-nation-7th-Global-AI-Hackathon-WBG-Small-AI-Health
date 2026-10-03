@@ -32,6 +32,15 @@ clinicians are not always up to date with the latest guidance, and heavy record-
 cannot give each patient enough attention.
 
 This prototype places Noor at a rural primary health centre, a *centre de santé intégré*, in Niger.
+The numbers there are stark:
+
+- Niger has about 3.1 doctors, nurses and midwives for every 10,000 people, according to World
+  Health Organization data for 2014 to 2018.
+- In blood-pressure screening campaigns in Niger between 2017 and 2019, about one adult in three
+  (33.2 percent) had high blood pressure. Only 3.4 percent of them were recorded as being on
+  treatment, although medication data was often missing.
+- An earlier WHO survey in 2007 found about 36 percent.
+
 Two people need help:
 
 - **The nurse.** They spend precious minutes on paperwork, and protocol steps get missed: a second
@@ -65,7 +74,8 @@ check". Above the record, a short list of protocol checks appears, with urgent i
 
 **Before Noor leaves.** The nurse corrects anything wrong and confirms the highlighted fields. They
 tick that the patient agreed to the visit being recorded, and that they asked about danger signs.
-Then they tap Approve. The record is saved on the device.
+If blood pressure could not be measured, they must say why: the device was unavailable, the patient
+refused, or another reason. Then they tap Approve. The record is saved on the device.
 
 **The evening before the next visit.** At 18:30 the outbox sends two messages to Noor's household
 phone. One is a voice reminder in Zarma, built from short recorded clips: a greeting, the weekday of
@@ -147,6 +157,8 @@ Safety was designed in from the start rather than added at the end.
 
 - **A person always decides.** Nothing is saved until the nurse confirms every highlighted field,
   confirms consent, and confirms they asked about danger signs.
+- **Blood pressure cannot be skipped silently.** A record needs a blood-pressure value, or an explicit
+  "not measured" with a recorded reason.
 - **"Not sure" is surfaced, never hidden.** Any field below a confidence threshold is marked "please
   check". Any symptom described with hesitation becomes "uncertain" and must be checked.
 - **Every number from speech is checked.** A misheard blood pressure is the most dangerous error a
@@ -164,8 +176,10 @@ One safety feature was revised after measurement. The first version always remin
 "ask about danger signs" whenever any of the four symptoms was not mentioned. It fired on almost
 every note, which risks the alerts being ignored, a problem known as alert fatigue. Now it fires
 only when blood pressure is raised, and approval requires a single tap confirming that danger signs
-were asked. Even so, it still fires on 15 of the 20 test notes, because most test patients have
-raised blood pressure. That is an honest limitation to keep improving.
+were asked. That tap resolves the flag without hiding it: the record keeps the line "danger signs
+asked, confirmed by the health worker" with the time. The flag still appears on 15 of the 20 test
+notes, because most test patients have raised blood pressure, but it now costs the nurse one tap and
+leaves an audit trail.
 
 ---
 
@@ -219,12 +233,11 @@ evaluation, and the local speech service.
 
 **Step 4: verifying the clinical rules.** Before any threshold went into code, it was checked against
 the original WHO documents: the HEARTS evidence-based treatment protocols from 2018, and the WHO
-guideline on pharmacological treatment of hypertension from 2021. One age range, 15 to 49 for women
-of reproductive age, is the standard WHO definition but was not re-fetched, and is marked for
-clinical review.
+guideline on pharmacological treatment of hypertension from 2021. The age range for women of reproductive
+age, 15 to 49, follows the World Health Organization's standard definition.
 
 **Step 5: building the test set.** A set of 30 French dictations was created with three different
-synthetic voices from the ElevenLabs text-to-speech service, with the correct record for each one
+male synthetic voices from the ElevenLabs text-to-speech service (paid plan), with the correct record for each one
 written in a spreadsheet. Fifteen copies were mixed with synthetic background noise: a fan, street
 traffic, and clinic chatter. To keep the evaluation honest, the set was split, using a fixed random
 seed, into 10 development clips for error analysis and 20 test clips that were frozen and only used

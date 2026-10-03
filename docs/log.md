@@ -201,6 +201,24 @@ Speech→record uses the extractor as of `4445cad` (lexicon v3).
 6. Rules-only is the default; the classifier stays in the repo.
 
 
+
+### Pre-freeze changes (Sun)
+- **Approval needs BP** or an explicit "BP not measured" with a reason (device unavailable / patient
+  refused / other + text). The reason is stored as `bp_not_measured` on the record.
+- **"Danger signs asked" resolves the screening flag** instead of deleting it. It shows as "Danger
+  signs asked: confirmed by health worker, HH:MM" and is saved with `resolved_at`.
+- **ElevenLabs:** paid plan (confirmed by the author), credited in the README.
+- **15–49 TODO-CLINICAL resolved:** cited as the WHO definition of women of reproductive age (WHO GHO
+  indicator definitions).
+- **Evidence added** (verified against the sources): Niger 3.1 doctors + nurses + midwives per 10,000
+  (WHO GHO via BMJ 2021, table 1, 2014–18); MMM 2017–19 33.2% hypertensive, 3.4% recorded on
+  treatment, with missing medication data; WHO STEPS 2007 ≈ 36%.
+- **Bug fixed** before freeze: elements with `hidden` inside `.row` were still displayed. Added a
+  global `[hidden]` rule.
+- README rewritten with the submission pack. The audit's ranked fixes are listed under "Next steps";
+  none started.
+- **FEATURE FREEZE** after this commit.
+
 ## Small AI audit (Sun, `ml/measure.py`, frozen test split)
 **Checklist**
 - ✅ No runtime cloud AI. Every `fetch` targets the same origin (app files, served by the SW) or the
