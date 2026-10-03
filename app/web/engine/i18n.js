@@ -14,7 +14,9 @@ export async function loadProfile() {
     getJSON(`locales/${p.patient_voice_locale}.json`),
   ]);
   const sms = p.sms_locale === p.worker_locale ? worker : await getJSON(`locales/${p.sms_locale}.json`);
-  return { name: profile, ...p, packs: { worker, fallback, voice, sms } };
+  const ui = {};
+  for (const l of p.ui_locales ?? [p.worker_locale]) ui[l] = l === p.worker_locale ? worker : l === p.fallback_locale ? fallback : await getJSON(`locales/${l}.json`);
+  return { name: profile, ...p, packs: { worker, fallback, voice, sms, ui } };
 }
 
 // t(pack, key, params): looks up the key in the pack, falls back to `en`, then to the key itself.

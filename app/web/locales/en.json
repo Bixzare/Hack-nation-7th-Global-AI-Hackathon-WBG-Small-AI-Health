@@ -8,7 +8,7 @@
  "pin.wrong": "Wrong PIN",
  "pin.lock": "Lock",
  "consent": "Patient agreed to this visit being recorded",
- "note.placeholder": "Dictate or type the visit note",
+ "note.placeholder": "Dictate or type the visit note (in French)",
  "note.fill": "Fill record",
  "note.samples": "Sample dictations",
  "note.samples_label": "Transcript precomputed offline by {model}",
@@ -125,5 +125,6 @@
  "flag.danger_asked_confirmed": "Danger signs asked: confirmed by health worker, {time}",
  "raw.live": "Raw transcript ({model}, {s} s), before extraction:",
  "raw.empty": "(no speech recognised: try again closer to the microphone, or type)",
- "speech.empty": "No speech recognised: try again or type the note"
+ "speech.empty": "No speech recognised: try again or type the note",
+ "bp.short": "BP"
 }

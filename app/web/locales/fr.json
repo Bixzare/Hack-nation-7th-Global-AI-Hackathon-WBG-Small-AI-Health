@@ -126,5 +126,6 @@
  "flag.danger_asked_confirmed": "Signes de danger demandés : confirmé par l'agent de santé, {time}",
  "raw.live": "Transcription brute ({model}, {s} s), avant extraction :",
  "raw.empty": "(aucune parole reconnue : réessayez plus près du micro, ou tapez)",
- "speech.empty": "Aucune parole reconnue : réessayez ou tapez la note"
+ "speech.empty": "Aucune parole reconnue : réessayez ou tapez la note",
+ "bp.short": "TA"
 }

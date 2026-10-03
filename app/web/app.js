@@ -14,12 +14,17 @@ const el = (tag, props = {}, ...kids) => {
   return e;
 };
 
-let P, t, tSms, SCHEMA, LEX, CLF = null, RECORD = null;
+let P, t, tSms, SCHEMA, LEX, CLF = null, RECORD = null, UI = "fr";
 const today = () => new Date().toLocaleDateString("sv"); // YYYY-MM-DD, local time
 
 // ---------- static text ----------
 function paintText() {
-  document.documentElement.lang = P.worker_locale;
+  document.documentElement.lang = UI;
+  $("lang").replaceChildren(...Object.keys(P.packs.ui).map(l => {
+    const b = el("button", { className: "small" + (l === UI ? " active" : ""), textContent: l.toUpperCase() });
+    b.setAttribute("aria-pressed", String(l === UI)); b.onclick = () => setUI(l);
+    return b;
+  }));
   $("banner").textContent = t("banner");
   $("title").textContent = t("app.title");
   $("disclaimer").textContent = t("app.disclaimer");
@@ -119,7 +124,7 @@ function resolveFlags(flags) {
     ? { ...f, level: "resolved", resolved: true, resolved_at: DANGER_AT } : f);
 }
 
-const fmtTime = iso => new Date(iso).toLocaleTimeString(P.worker_locale, { hour: "2-digit", minute: "2-digit" });
+const fmtTime = iso => new Date(iso).toLocaleTimeString(UI, { hour: "2-digit", minute: "2-digit" });
 
 function renderFlags() {
   const order = { urgent: 0, refer: 1, check: 2, gap: 3, resolved: 4 };
@@ -202,7 +207,7 @@ async function renderSaved() {
   const recs = (await store.all("records")).reverse();
   $("saved").replaceChildren(...(recs.length ? recs.map(r => {
     const v = k => r.record[k]?.value ?? "?";
-    return el("div", { textContent: `#${r.id} · ${new Date(r.created_at).toLocaleString(P.worker_locale, { dateStyle: "short", timeStyle: "short" })} · ${v("patient_name")} · TA ${v("bp1_sys")}/${v("bp1_dia")}` });
+    return el("div", { textContent: `#${r.id} · ${new Date(r.created_at).toLocaleString(UI, { dateStyle: "short", timeStyle: "short" })} · ${v("patient_name")} · ${t("bp.short")} ${v("bp1_sys")}/${v("bp1_dia")}` });
   }) : [document.createTextNode(t("saved.none"))]));
 }
 
@@ -216,7 +221,7 @@ async function renderMissed() {
 }
 
 function fmtDate(iso) {
-  return new Date(iso + "T12:00:00").toLocaleDateString(P.worker_locale, { weekday: "long", day: "numeric", month: "long" });
+  return new Date(iso + "T12:00:00").toLocaleDateString(UI, { weekday: "long", day: "numeric", month: "long" });
 }
 
 // ---------- samples + speech service ----------
@@ -226,7 +231,7 @@ async function loadSamples() {
   if (!samples.length) { $("samples").textContent = t("note.samples_none"); return; }
   $("samples").replaceChildren(...samples.map(s => {
     const b = el("button", { className: "secondary sample" },
-      el("div", { textContent: s.title }),
+      el("div", { textContent: (UI !== "fr" && s[`title_${UI}`]) || s.title }),
       el("div", { className: "sub", textContent: t("note.samples_label", { model: s.model }) }));
     b.onclick = () => {
       if (s.audio) new Audio(s.audio).play().catch(() => {});
@@ -289,10 +294,25 @@ async function toggleMic() {
   $("btnMic").textContent = t("speech.stop");
 }
 
+// Switch interface language; everything visible re-renders.
+function setUI(l) {
+  UI = l; t = makeT(P.packs.ui[l], P.packs.fallback);
+  try { localStorage.setItem("htn-ui", l); } catch {}
+  paintText(); paintNet();
+  if (!$("pinGate").hidden) { $("pinLabel").textContent = pin.hasPin() ? t("pin.enter") : t("pin.set"); $("btnPin").textContent = t("pin.button"); }
+  if (RECORD) renderRecord();
+  refreshLists(); loadSamples(); probeSpeech();
+}
+
 // ---------- boot ----------
 (async () => {
   P = await loadProfile();
-  t = makeT(P.packs.worker, P.packs.fallback);
+  // Interface language: saved choice, else English on the hosted demo, else the worker locale.
+  // Dictation, the extraction lexicon and the patient SMS stay in the profile's languages.
+  const hosted = !["localhost", "127.0.0.1", "[::1]"].includes(location.hostname);
+  let saved = null; try { saved = localStorage.getItem("htn-ui"); } catch {}
+  UI = P.packs.ui[saved] ? saved : hosted && P.packs.ui[P.hosted_default_ui] ? P.hosted_default_ui : P.worker_locale;
+  t = makeT(P.packs.ui[UI], P.packs.fallback);
   tSms = makeT(P.packs.sms, P.packs.fallback);
   SCHEMA = await (await fetch("engine/schema.json")).json();
   LEX = await (await fetch(`lexicon/${P.lexicon}.json`)).json();

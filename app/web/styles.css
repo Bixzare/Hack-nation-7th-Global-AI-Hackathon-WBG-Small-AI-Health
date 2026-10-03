@@ -57,3 +57,6 @@ button:disabled { opacity: .45; cursor: default; }
 #flags li.resolved { color: var(--okb); }
 [hidden] { display: none !important; }
 .raw { margin-top: 8px; padding: 8px; border-left: 3px solid var(--line); font-size: .9rem; }
+.lang { display: flex; gap: 2px; }
+.lang button { background: var(--line); color: var(--ink); }
+.lang button.active { background: var(--accent); color: #fff; }

@@ -5,7 +5,8 @@
   "audio": "samples/sample-01.mp3",
   "transcript": "Femme, 38 ans. Tention, 162 sur 98. C'est fallé depuis trois jours. Elle oublie parfois ses médicaments. Pas enceinte. Conseil sur le sel donné. Revoire dans deux semaines.",
   "model": "Whisper small (faster-whisper int8, hors ligne)",
-  "synthetic": true
+  "synthetic": true,
+  "title_en": "Woman, 38: follow-up (synthetic ElevenLabs voice)"
  },
  {
   "id": 4,
@@ -13,7 +14,8 @@
   "audio": "samples/sample-04.mp3",
   "transcript": "Homme, 67 ans. Tention, 190 sur 115. Douleur thoracique depuis ce matin et soufflement. Référez à l'hôpital aujourd'hui.",
   "model": "Whisper small (faster-whisper int8, hors ligne)",
-  "synthetic": true
+  "synthetic": true,
+  "title_en": "Man, 67: very high BP (synthetic ElevenLabs voice)"
  },
  {
   "id": 13,
@@ -21,7 +23,8 @@
   "audio": "samples/sample-13.mp3",
   "transcript": "femme 52 ans tension 136 sur 80 pas de plainte traitement bien suivi revoir dans trois mois",
   "model": "Whisper small (faster-whisper int8, hors ligne)",
-  "synthetic": true
+  "synthetic": true,
+  "title_en": "Woman, 52: BP controlled (synthetic ElevenLabs voice)"
  },
  {
   "id": 20,
@@ -29,6 +32,7 @@
   "audio": "samples/sample-20.mp3",
   "transcript": "Homme 39 ans. Tention 152 sur 97. Oubliez rarement ses comprimés. Peut-être un peu essoufflé. Revois dans deux semaines.",
   "model": "Whisper small (faster-whisper int8, hors ligne)",
-  "synthetic": true
+  "synthetic": true,
+  "title_en": "Man, 39: uncertain symptom (synthetic ElevenLabs voice)"
  }
 ]

@@ -9,5 +9,10 @@
  "speech_service_url": "http://localhost:8765",
  "reminder_days_before": 1,
  "lexicon": "fr",
- "use_classifier": false
+ "use_classifier": false,
+ "ui_locales": [
+  "en",
+  "fr"
+ ],
+ "hosted_default_ui": "en"
 }

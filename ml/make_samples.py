@@ -13,6 +13,7 @@ GOLD = ROOT / "data" / "gold"
 OUT = ROOT / "app" / "web" / "samples"
 # chosen by label only: 1 = woman 38, headache, adherence; 4 = urgent BP + chest pain; 13 = controlled, no
 # symptoms; 20 = uncertain breathlessness
+PICK_EN = {1: "Woman, 38: follow-up", 4: "Man, 67: very high BP", 13: "Woman, 52: BP controlled", 20: "Man, 39: uncertain symptom"}
 PICK = {1: "Femme 38 ans — suivi", 4: "Homme 67 ans — TA très élevée", 13: "Femme 52 ans — TA contrôlée",
         20: "Homme 39 ans — symptôme incertain"}
 MODEL_LABEL = {"base": "Whisper base (faster-whisper int8, hors ligne)",
@@ -27,7 +28,7 @@ def main(tag="base"):
         src = GOLD / "audio" / f"fr-{i}.mp3"
         dst = OUT / f"sample-{i:02d}.mp3"
         shutil.copyfile(src, dst)
-        samples.append({"id": i, "title": f"{title} (voix synthétique ElevenLabs)", "audio": f"samples/{dst.name}",
+        samples.append({"id": i, "title": f"{title} (voix synthétique ElevenLabs)", "title_en": f"{PICK_EN[i]} (synthetic ElevenLabs voice)", "audio": f"samples/{dst.name}",
                         "transcript": tx[str(i)], "model": MODEL_LABEL[tag], "synthetic": True})
     (OUT / "samples.json").write_text(json.dumps(samples, ensure_ascii=False, indent=1), encoding="utf-8")
     print(f"{len(samples)} samples written ({tag}); audio {sum((OUT / s['audio'].split('/')[1]).stat().st_size for s in samples) / 1024:.0f} KB")

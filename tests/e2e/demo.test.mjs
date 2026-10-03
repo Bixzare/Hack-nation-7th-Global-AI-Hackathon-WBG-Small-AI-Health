@@ -47,6 +47,14 @@ function suite(name, getUrl) {
       assert.equal(await page.$eval("#appBody", e => e.hidden), false);
     });
 
+    test("EN | FR toggle switches the interface (dictation stays French)", async () => {
+      const titleIn = async l => { await page.evaluate(l => [...document.querySelectorAll("#lang button")].find(b => b.textContent === l).click(), l);
+        return page.$eval("#title", e => e.textContent); };
+      assert.equal(await titleIn("EN"), "Hypertension visit");
+      assert.equal(await titleIn("FR"), "Consultation HTA");
+      await titleIn(process.env.E2E_LANG || "EN");
+    });
+
     test("sample dictation fills the record; speech BP is 'please check'", async () => {
       await page.click("#samplesTitle");
       const samples = await page.$$("#samples button");
