@@ -1,0 +1,215 @@
+import { loadProfile, makeT } from "./engine/i18n.js";
+import { extract } from "./engine/extractor.js";
+import { checkProtocol } from "./engine/rules.js";
+import * as store from "./engine/store.js";
+import * as pin from "./engine/pin.js";
+import * as outbox from "./engine/outbox.js";
+
+const $ = id => document.getElementById(id);
+const el = (tag, props = {}, ...kids) => {
+  const e = Object.assign(document.createElement(tag), props);
+  e.append(...kids);
+  return e;
+};
+
+let P, t, tSms, SCHEMA, RECORD = null;
+
+// ---------- static text ----------
+function paintText() {
+  document.documentElement.lang = P.worker_locale;
+  $("banner").textContent = t("banner");
+  $("title").textContent = t("app.title");
+  $("disclaimer").textContent = t("app.disclaimer");
+  $("btnLock").textContent = t("pin.lock");
+  $("consentLabel").textContent = t("consent");
+  $("note").placeholder = t("note.placeholder");
+  $("btnFill").textContent = t("note.fill");
+  $("samplesTitle").textContent = t("note.samples");
+  $("flagsTitle").textContent = t("flags.title");
+  $("btnApprove").textContent = t("approve");
+  $("outboxTitle").textContent = t("outbox.title");
+  $("btnSend").textContent = t("outbox.simulate");
+  $("savedTitle").textContent = t("saved.title");
+}
+
+function paintNet() {
+  const on = navigator.onLine;
+  $("net").textContent = on ? t("net.online") : t("net.offline");
+  $("net").classList.toggle("off", !on);
+}
+
+// ---------- PIN gate ----------
+function showPin() {
+  $("appBody").hidden = true; $("pinGate").hidden = false; $("btnLock").hidden = true;
+  $("pinLabel").textContent = pin.hasPin() ? t("pin.enter") : t("pin.set");
+  $("btnPin").textContent = t("pin.button");
+  $("pinInput").value = ""; $("pinMsg").textContent = "";
+  $("pinInput").focus();
+}
+
+async function submitPin() {
+  const v = $("pinInput").value;
+  if (!/^\d{4}$/.test(v)) { $("pinMsg").textContent = t("pin.set"); return; }
+  if (!pin.hasPin()) await pin.setPin(v);
+  else if (!(await pin.checkPin(v))) { $("pinMsg").textContent = t("pin.wrong"); return; }
+  $("pinGate").hidden = true; $("appBody").hidden = false; $("btnLock").hidden = false;
+  refreshLists();
+}
+
+// ---------- record form ----------
+function renderRecord() {
+  const form = $("form"); form.replaceChildren();
+  for (const [name, spec] of Object.entries(SCHEMA.fields)) {
+    const f = RECORD[name];
+    let input;
+    if (spec.kind === "enum") {
+      input = el("select");
+      input.append(el("option", { value: "", textContent: "—" }));
+      for (const v of spec.values) input.append(el("option", { value: v, textContent: t("enum." + v) }));
+    } else {
+      input = el("input", { type: spec.kind === "int" ? "number" : spec.kind === "date" ? "date" : "text" });
+      if (spec.kind === "int") input.inputMode = "numeric";
+    }
+    input.value = f.value ?? "";
+    input.onchange = () => { f.value = input.value === "" ? null : input.value; f.source = "typed"; f.check = false; renderRecord(); };
+    const ok = el("button", { className: "secondary small", textContent: t("field.confirm"), hidden: !f.check });
+    ok.onclick = () => { f.check = false; renderRecord(); };
+    const label = el("label", {}, t("field." + name), el("span", { className: "tag", textContent: f.check ? t("field.check") : t("field.ok") }));
+    form.append(el("div", { className: "field " + (f.check ? "check" : "ok") }, label, el("div", { className: "line" }, input, ok)));
+  }
+  renderFlags();
+  const left = Object.values(RECORD).filter(f => f.check).length;
+  $("btnApprove").disabled = left > 0 || !$("consent").checked;
+  $("status").textContent = left ? t("status.left", { n: left }) : t("status.ready");
+}
+
+function values() {
+  return Object.fromEntries(Object.entries(RECORD).map(([k, f]) => [k, f.value]));
+}
+
+function renderFlags() {
+  const flags = checkProtocol(values());
+  $("flags").replaceChildren(...(flags.length
+    ? flags.map(f => el("li", { className: f.level, textContent: t("flag." + f.code) }))
+    : [el("li", { textContent: t("flags.none") })]));
+}
+
+async function approve() {
+  const v = values();
+  const id = await store.add("records", { created_at: new Date().toISOString(), note: $("note").value, record: RECORD, flags: checkProtocol(v) });
+  await outbox.queue(outbox.remindersFor(id, v, P));
+  RECORD = null; $("recordBox").hidden = true; $("note").value = ""; $("consent").checked = false;
+  $("status").textContent = "";
+  refreshLists();
+  alertSaved(id);
+}
+
+function alertSaved(id) {
+  const s = el("div", { className: "status", textContent: t("status.saved", { id }) });
+  $("recordBox").before(s); setTimeout(() => s.remove(), 4000);
+}
+
+// ---------- outbox ----------
+let playing = null;
+function playSequence(codes) {
+  playing?.pause();
+  const files = codes.map(c => P.packs.voice.voice[c]);
+  let i = 0;
+  const next = () => {
+    if (i >= files.length) return;
+    playing = new Audio(files[i++]);
+    playing.onended = next;
+    playing.onerror = next; // missing clip: skip, it's shown as a placeholder in the list
+    playing.play().catch(next);
+  };
+  next();
+}
+
+async function clipExists(path) {
+  try { return (await fetch(path)).ok; } catch { return false; } // GET so the service worker can answer offline
+}
+
+async function renderOutbox() {
+  const msgs = (await store.all("outbox")).reverse();
+  if (!msgs.length) { $("outbox").textContent = t("outbox.empty"); return; }
+  const rows = [];
+  for (const m of msgs) {
+    const state = m.status === "sent" ? t("outbox.sent")
+      : navigator.onLine ? t("outbox.queued", { time: m.send_at }) : t("outbox.offline");
+    const meta = el("div", { className: "meta", textContent: `→ ${m.to} · ${state}` });
+    if (m.kind === "voice") {
+      const codes = outbox.clipCodes(m, P.packs.voice);
+      const missing = [];
+      for (const c of codes) if (!(await clipExists(P.packs.voice.voice[c]))) missing.push(c);
+      const btn = el("button", { className: "secondary small", textContent: "▶ " + t("outbox.play") });
+      btn.onclick = () => playSequence(codes);
+      rows.push(el("div", { className: "msg" },
+        el("div", {}, `🔊 ${t("outbox.voice", { locale: m.locale })}: `, el("code", { textContent: codes.join(" + ") }), " ", btn),
+        ...missing.map(c => el("div", { className: "meta", textContent: t("outbox.missing_clip", { clip: c }) })),
+        meta));
+    } else {
+      const text = tSms(m.template, { ...m.params, weekday: tSms("weekday." + m.params.weekday) });
+      rows.push(el("div", { className: "msg" }, el("div", { textContent: `✉ ${t("outbox.sms")}: « ${text} »` }), meta));
+    }
+  }
+  $("outbox").replaceChildren(...rows);
+}
+
+async function renderSaved() {
+  const recs = (await store.all("records")).reverse();
+  $("saved").replaceChildren(...(recs.length ? recs.map(r => {
+    const v = k => r.record[k]?.value ?? "?";
+    return el("div", { textContent: `#${r.id} · ${new Date(r.created_at).toLocaleString(P.worker_locale, { dateStyle: "short", timeStyle: "short" })} · ${v("patient_name")} · TA ${v("bp1_sys")}/${v("bp1_dia")}` });
+  }) : [document.createTextNode(t("saved.none"))]));
+}
+
+function refreshLists() { renderOutbox(); renderSaved(); }
+
+// ---------- samples + speech service ----------
+async function loadSamples() {
+  let samples = [];
+  try { samples = await (await fetch("samples/samples.json")).json(); } catch {}
+  if (!samples.length) { $("samples").textContent = t("note.samples_none"); return; }
+  $("samples").replaceChildren(...samples.map(s => {
+    const b = el("button", { className: "secondary sample" },
+      el("div", { textContent: s.title }),
+      el("div", { className: "sub", textContent: t("note.samples_label", { model: s.model }) }));
+    b.onclick = () => { if (s.audio) new Audio(s.audio).play().catch(() => {}); $("note").value = s.transcript; $("note").dataset.source = "speech"; };
+    return b;
+  }));
+}
+
+async function probeSpeech() {
+  let ok = false;
+  try {
+    const ctl = new AbortController(); setTimeout(() => ctl.abort(), 800);
+    ok = (await fetch(P.speech_service_url + "/health", { signal: ctl.signal })).ok;
+  } catch {}
+  $("speech").textContent = ok ? t("speech.available") : t("speech.unavailable");
+}
+
+// ---------- boot ----------
+(async () => {
+  P = await loadProfile();
+  t = makeT(P.packs.worker, P.packs.fallback);
+  tSms = makeT(P.packs.sms, P.packs.fallback);
+  SCHEMA = await (await fetch("engine/schema.json")).json();
+  paintText(); paintNet(); showPin();
+
+  $("btnPin").onclick = submitPin;
+  $("pinInput").onkeydown = e => { if (e.key === "Enter") submitPin(); };
+  $("btnLock").onclick = showPin;
+  $("btnFill").onclick = () => {
+    RECORD = extract($("note").value, SCHEMA);
+    $("recordBox").hidden = false; renderRecord();
+  };
+  $("consent").onchange = () => RECORD && renderRecord();
+  $("note").oninput = () => { delete $("note").dataset.source; };
+  $("btnApprove").onclick = approve;
+  $("btnSend").onclick = async () => { await outbox.flush(); renderOutbox(); };
+  addEventListener("online", () => { paintNet(); renderOutbox(); });
+  addEventListener("offline", () => { paintNet(); renderOutbox(); });
+
+  loadSamples(); probeSpeech();
+  if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(() => {});
+})();

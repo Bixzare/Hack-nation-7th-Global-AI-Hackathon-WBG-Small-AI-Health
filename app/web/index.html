@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#1f5fbf">
+<title>HTN Visit Recorder</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<!-- No external resources: everything is same-origin so the service worker can serve it offline. -->
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div id="banner" class="banner"></div>
+<main>
+  <header>
+    <div>
+      <h1 id="title"></h1>
+      <div id="disclaimer" class="sub"></div>
+    </div>
+    <div class="right">
+      <span id="net" class="pill"></span>
+      <button id="btnLock" class="secondary small" hidden></button>
+    </div>
+  </header>
+
+  <section id="pinGate" class="card">
+    <label id="pinLabel" for="pinInput"></label>
+    <div class="row">
+      <input id="pinInput" type="password" inputmode="numeric" maxlength="4" autocomplete="off">
+      <button id="btnPin"></button>
+    </div>
+    <div id="pinMsg" class="warn"></div>
+  </section>
+
+  <div id="appBody" hidden>
+    <section class="card">
+      <label class="consent"><input type="checkbox" id="consent"> <span id="consentLabel"></span></label>
+      <textarea id="note"></textarea>
+      <div class="row">
+        <button id="btnFill"></button>
+        <span id="speech" class="sub"></span>
+      </div>
+      <details id="samplesBox">
+        <summary id="samplesTitle"></summary>
+        <div id="samples"></div>
+      </details>
+    </section>
+
+    <section id="recordBox" hidden>
+      <div id="form"></div>
+      <div class="card">
+        <h2 id="flagsTitle"></h2>
+        <ul id="flags"></ul>
+      </div>
+      <div id="status" class="status"></div>
+      <div class="row"><button id="btnApprove" disabled></button></div>
+    </section>
+
+    <section class="card">
+      <h2 id="outboxTitle"></h2>
+      <div id="outbox"></div>
+      <div class="row"><button id="btnSend" class="secondary"></button></div>
+    </section>
+
+    <section class="card">
+      <h2 id="savedTitle"></h2>
+      <div id="saved" class="sub"></div>
+    </section>
+  </div>
+</main>
+<script type="module" src="app.js"></script>
+</body>
+</html>

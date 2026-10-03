@@ -1,0 +1,10 @@
+{
+  "_comment": "Deployment profile. Everything country- or language-specific is chosen here, not in engine/.",
+  "worker_locale": "fr",
+  "patient_voice_locale": "dje",
+  "fallback_locale": "en",
+  "sms_locale": "fr",
+  "clinic_name": "CSI (démo)",
+  "reminder_send_time": "18:30",
+  "speech_service_url": "http://localhost:8765"
+}

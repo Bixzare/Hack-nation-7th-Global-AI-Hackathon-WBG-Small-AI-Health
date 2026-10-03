@@ -1,0 +1,23 @@
+{
+  "_comment": "Fixed visit record for an adult hypertension follow-up (WHO HEARTS, Evidence-based treatment protocols, 2018). Codes only: labels live in locale packs. Shared by the browser and ml/.",
+  "fields": {
+    "patient_name":   {"kind": "text"},
+    "age":            {"kind": "int"},
+    "sex":            {"kind": "enum", "values": ["female", "male", "unknown"]},
+    "phone":          {"kind": "text"},
+    "bp1_sys":        {"kind": "int", "numeric_bp": true},
+    "bp1_dia":        {"kind": "int", "numeric_bp": true},
+    "bp2_sys":        {"kind": "int", "numeric_bp": true},
+    "bp2_dia":        {"kind": "int", "numeric_bp": true},
+    "sym_headache":   {"kind": "enum", "values": ["present", "absent", "not_asked"]},
+    "sym_chest_pain": {"kind": "enum", "values": ["present", "absent", "not_asked"]},
+    "sym_breathless": {"kind": "enum", "values": ["present", "absent", "not_asked"]},
+    "sym_vision":     {"kind": "enum", "values": ["present", "absent", "not_asked"]},
+    "sym_weakness":   {"kind": "enum", "values": ["present", "absent", "not_asked"]},
+    "on_medication":  {"kind": "enum", "values": ["yes", "no", "unknown"]},
+    "missed_doses":   {"kind": "enum", "values": ["yes", "no", "unknown"]},
+    "pregnant":       {"kind": "enum", "values": ["yes", "no", "unknown", "not_applicable"]},
+    "counselling":    {"kind": "enum", "values": ["yes", "no", "unknown"]},
+    "follow_up_date": {"kind": "date"}
+  }
+}

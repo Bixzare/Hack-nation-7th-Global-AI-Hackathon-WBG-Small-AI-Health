@@ -36,21 +36,49 @@
   - Whisper-small and XLS-R fine-tunes, 1-1.3 GB, torch
 - Sat 20:05: M0 done (commit 9b46c60). The challenge PDF is gitignored (marked "Official Use Only").
 
+- Sat 20:10: **Relocalized to a rural health centre (CSI) in Niger, and cancelled the Kinyarwanda
+  speech-model search.** The worker side is French (short clinical notes); the patient side is
+  **Zarma by voice only**.
+  Why: Zarma has no usable open speech recognition and low written literacy, which makes it the
+  PDF's "less-supported language" case. Recorded human voice is the safe answer; a weak model is not.
+  Dropped the Zarma text SMS and the Zarma reply classifier, since text can't reach Noor.
+- Sat 20:10: Locale packs are `fr` (worker), `dje` (patient voice clips only) and `en` (fallback).
+  The engine and rules emit codes only, and one config value selects the profile.
+  Why: replicability is scored, and a new country should mean a new pack, not new code.
+- Sat 20:10: The gold test set is now ~30 audio clips of my French dictation plus a CSV of fields.
+  It measures speech→record and typed→record end to end.
+  Why: it measures the whole pipeline, not just the extractor.
+- Sat 20:10: S0 is French Whisper tiny or base, offline. Sizes:
+  - faster-whisper tiny: 76 MB
+  - faster-whisper base: 145 MB
+  - whisper.cpp tiny-q5_1: 32 MB
+  - whisper.cpp base-q5_1: 60 MB
+  All MIT. Nothing downloaded yet.
+- Sat 20:10: Feriji (27Group/Feriji) is CC-BY-NC-4.0 and gated, so it is next steps only.
+- Sat 20:10: **Architecture: a static front-end.** The extractor, rules, PIN gate, outbox and
+  IndexedDB all run in the browser, with a service worker for offline use, and the app is hosted.
+  Python is only for training/export and a local Whisper service. The FastAPI M0 is replaced.
+  Why: a clickable hosted demo is required, running in the browser is the honest "on device" story,
+  and the planned JS port at M2 becomes the architecture, freeing M2 for the classifier and eval.
+- Sat 20:10: The PIN gate is an access gate, not encryption. We won't claim encryption unless it is built.
+
 ## Metrics (for the pitch)
 | Metric | Value | How measured | Device |
 |---|---|---|---|
 | ASR model size | | | |
 | ASR latency (per 10 s clip) | | | |
-| ASR WER / number accuracy on own BP sentences | | | |
+| ASR WER / BP-number accuracy (gold clips) | | | |
 | Extractor size | | | |
 | Extractor latency (median of 20) | | | |
-| Field-level accuracy (held-out synthetic) | | | |
+| Field accuracy, typed→record (gold) | | | |
+| Field accuracy, speech→record (gold) | | | |
 | BP-number extraction accuracy | | | |
 | Urgent-flag recall (held-out synthetic) | | | |
 | Works fully offline | | | |
 
 ## Later (out of scope this weekend)
 - Cluster flag to a district health officer, where a human decides whether to alert
-- Pre-recorded Kinyarwanda voice calls to patients (IVR)
-- Native Android build with on-device ASR
+- IVR calls playing the Zarma clips
+- Zarma–French data (Feriji, licence permitting) and Zarma ASR
+- Native Android build with on-device ASR (whisper.cpp)
 - Real DHIS2 sync; other protocols (diabetes, antenatal care, IMCI)

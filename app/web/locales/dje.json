@@ -1,0 +1,19 @@
+{
+  "_comment": "Zarma patient locale: VOICE ONLY, no text (limited written literacy). Clips recorded by the team; content NEEDS-NATIVE-CHECK. Missing files are shown as placeholders.",
+  "voice": {
+    "intro":  "audio/dje/intro.m4a",
+    "mon":    "audio/dje/mon.m4a",
+    "tue":    "audio/dje/tue.m4a",
+    "wed":    "audio/dje/wed.m4a",
+    "thu":    "audio/dje/thu.m4a",
+    "fri":    "audio/dje/fri.m4a",
+    "sat":    "audio/dje/sat.m4a",
+    "sun":    "audio/dje/sun.m4a",
+    "clinic": "audio/dje/clinic.m4a",
+    "refill": "audio/dje/refill.m4a"
+  },
+  "sequences": {
+    "follow_up": ["intro", "{weekday}", "clinic"],
+    "refill":    ["intro", "refill", "{weekday}", "clinic"]
+  }
+}
