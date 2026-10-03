@@ -26,6 +26,16 @@
 - Sat ~19:45: M2 option: a JavaScript port of the extractor and rules, run in airplane mode in the
   Android browser. Otherwise the laptop is framed as the health-centre device.
 
+- Sat 20:05: The speech model was never downloaded, so we are text-first for M0 and the S0
+  decision is due by M1b (23:59). Kinyarwanda ASR candidates (sizes from the HF API):
+  - w2v-bert-2.0 rw ONNX int8 (OpenVoiceOS), 584 MB, CC-BY-4.0, onnxruntime only (no torch)
+  - DigitalUmuganda/mbaza_stt_health_domain (renamed from afrivoice_..._health_domain_stt),
+    NeMo, 463 MB, licence not stated
+  - mbazaNLP Coqui STT, TFLite 47 MB + 65 MB scorer, Apache-2.0, needs Python <= 3.10
+  - DigitalUmuganda parakeet-tdt_ctc-110m, NeMo, 453 MB, gated
+  - Whisper-small and XLS-R fine-tunes, 1-1.3 GB, torch
+- Sat 20:05: M0 done (commit 9b46c60). The challenge PDF is gitignored (marked "Official Use Only").
+
 ## Metrics (for the pitch)
 | Metric | Value | How measured | Device |
 |---|---|---|---|
