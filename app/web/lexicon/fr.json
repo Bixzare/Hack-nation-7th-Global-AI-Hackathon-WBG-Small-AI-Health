@@ -55,7 +55,18 @@
   "\\bne signale pas\\b",
   "\\bn a pas\\b",
   "\\bjamais\\b",
-  "\\bplus de\\b"
+  "\\bplus de\\b",
+  "\\bdenie\\b",
+  "pas de notion de",
+  "ne rapporte pas",
+  "ne se plaint pas",
+  "ne presente pas",
+  "pas d histoire de",
+  "il n y a pas",
+  "n a pas de",
+  "n a ni",
+  "ne decrit pas",
+  "ne signale aucune?"
  ],
  "negation_post": [
   "\\bnon\\b",
@@ -80,14 +91,31 @@
   "\\bpas clair\\b",
   "\\ba revoir\\b",
   "\\bquestion\\b",
-  "\\bmal defini"
+  "\\bmal defini",
+  "pas certaine?",
+  "on ne sait pas",
+  "hesite",
+  "difficile a dire",
+  "\\bdoute\\b",
+  "eventuellement",
+  "il semblerait",
+  "pas tres clair",
+  "a confirmer",
+  "pas tres sure?",
+  "incertitude",
+  "n est pas sure?",
+  "ne se souvient pas"
  ],
  "symptoms": {
   "headache": [
    "cephalees?",
    "ma(l|ux) de tete",
    "mal a la tete",
-   "migraines?"
+   "migraines?",
+   "mal de crane",
+   "cephalalgies?",
+   "tete qui (lui )?fait mal",
+   "douleurs? (a|de) la tete"
   ],
   "chest_pain": [
    "douleurs? thoraciques?",
@@ -95,7 +123,10 @@
    "mal a la poitrine",
    "douleurs? (a|dans) la poitrine",
    "douleurs? de (la )?poitrine",
-   "oppression thoracique"
+   "oppression thoracique",
+   "douleurs? (au|du) thorax",
+   "serrement (dans la|de) poitrine",
+   "poitrine (qui )?(serre|fait mal)"
   ],
   "blurred_vision": [
    "vision floue",
@@ -104,7 +135,14 @@
    "baisse de (la )?vue",
    "vue (trouble|floue|baisse)",
    "voit flou",
-   "brouillard visuel"
+   "brouillard visuel",
+   "voit trouble",
+   "vue brouillee",
+   "vision troubles?",
+   "ne voit pas bien",
+   "vision baissee",
+   "yeux flous",
+   "troubles? oculaires?"
   ],
   "breathless": [
    "dyspnee",
@@ -113,7 +151,15 @@
    "(difficultes?|gene) (a|pour) respirer",
    "gene respiratoire",
    "manque de souffle",
-   "detresse respiratoire"
+   "detresse respiratoire",
+   "essoufle(ment|e)?",
+   "s essouffle",
+   "respire mal",
+   "respiration difficile",
+   "dyspneique",
+   "manque d air",
+   "a du mal a respirer",
+   "souffle (court|coupe)"
   ]
  },
  "symptoms_none": [
@@ -125,7 +171,11 @@
   "\\bras\\b",
   "sans plainte",
   "rien a signaler",
-  "pas de signes?"
+  "pas de signes?",
+  "aucun signe",
+  "rien de particulier",
+  "ne se plaint de rien",
+  "pas de plainte particuliere"
  ],
  "sex": {
   "F": {
@@ -136,7 +186,9 @@
     "\\bmadame\\b",
     "\\bmme\\b",
     "\\bsexe feminin\\b",
-    "\\benceinte\\b"
+    "\\benceinte\\b",
+    "\\bfeminin\\b",
+    "\\bsexe f\\b"
    ],
    "weak": [
     "\\belle\\b",
@@ -156,7 +208,9 @@
     "\\bpatient\\b",
     "\\bmonsieur\\b",
     "\\bmr\\b",
-    "\\bsexe masculin\\b"
+    "\\bsexe masculin\\b",
+    "\\bmasculin\\b",
+    "\\bsexe m\\b"
    ],
    "weak": [
     "\\bil\\b"
@@ -200,7 +254,13 @@
     "ne prend (aucun|pas de) (traitement|medicament)",
     "pas encore (de )?traitement",
     "naif de traitement",
-    "pas sous (antihypertenseur|medicament)"
+    "pas sous (antihypertenseur|medicament)",
+    "pas de ttt",
+    "sans ttt",
+    "ne prend rien",
+    "aucun medicament",
+    "pas sous ttt",
+    "ne prend aucun"
    ],
    "yes": [
     "sous traitement",
@@ -209,7 +269,16 @@
     "prend (son|ses|un) (traitement|medicaments?|comprimes?)",
     "traitement (en cours|habituel|antihypertenseur)",
     "deja (sous )?traitee?",
-    "\\b(amlodipine|hydrochlorothiazide|hctz|losartan|enalapril|lisinopril|nifedipine|captopril|atenolol|methyldopa)\\b"
+    "\\b(amlodipine|hydrochlorothiazide|hctz|losartan|enalapril|lisinopril|nifedipine|captopril|atenolol|methyldopa)\\b",
+    "\\bsous ttt\\b",
+    "est traitee?",
+    "suit (son|un) traitement",
+    "connue? hypertendue? sous",
+    "traitement (par|a base de)",
+    "prend (de l |du |la )?(amlodipine|hydrochlorothiazide|losartan|enalapril|nifedipine|captopril|atenolol|methyldopa)",
+    "sous (son )?traitement",
+    "deja traitee?",
+    "\\bttt\\b"
    ]
   },
   "missed_doses": {
@@ -224,7 +293,13 @@
     "quelques oublis",
     "parfois (des )?oublis?",
     "de temps en temps oublie",
-    "observance (moyenne|irreguliere|partielle)"
+    "observance (moyenne|irreguliere|partielle)",
+    "il (lui )?arrive (d |de )?oublier",
+    "certains jours",
+    "de temps a autre",
+    "pas toujours",
+    "lui arrive d oublier",
+    "oublie (une|certaines) prises?"
    ],
    "no": [
     "bonne observance",
@@ -235,7 +310,11 @@
     "aucun oubli",
     "prend bien (son|ses)",
     "prend (son traitement|ses medicaments) (regulierement|tous les jours)",
-    "sans oubli"
+    "sans oubli",
+    "prend (bien|regulierement) (son|ses|le|les)",
+    "n a (pas|jamais) oublie",
+    "jamais d oubli",
+    "observance (est )?bonne"
    ],
    "yes": [
     "oublie (souvent|son|ses|regulierement|frequemment)",
@@ -346,5 +425,49 @@
   "neg_post": 3,
   "unc_pre": 4,
   "unc_post": 3
+ },
+ "fuzzy": {
+  "_comment": "Canonical spellings for ASR-tolerant matching: a token within edit distance 1 (len 5-7) or 2 (len>=8), same first letter, is rewritten to the canonical form before pattern matching.",
+  "terms": [
+   "cephalee",
+   "cephalees",
+   "cephalalgie",
+   "thoracique",
+   "thoraciques",
+   "poitrine",
+   "dyspnee",
+   "essoufflement",
+   "essouffle",
+   "essoufflee",
+   "respirer",
+   "respiratoire",
+   "floue",
+   "trouble",
+   "troubles",
+   "traitement",
+   "traitee",
+   "amlodipine",
+   "hydrochlorothiazide",
+   "losartan",
+   "enalapril",
+   "lisinopril",
+   "nifedipine",
+   "captopril",
+   "atenolol",
+   "methyldopa",
+   "antihypertenseur",
+   "observance",
+   "enceinte",
+   "grossesse",
+   "menopausee",
+   "conseils",
+   "hygieno",
+   "dietetiques",
+   "masculin",
+   "feminin",
+   "hypertendu",
+   "hypertendue"
+  ],
+  "min_len": 5
  }
 }

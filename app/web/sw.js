@@ -1,12 +1,13 @@
 // Service worker: precache the app shell, then serve same-origin GETs cache-first and refresh in the
 // background (stale-while-revalidate). After one visit the app works in airplane mode.
-const CACHE = "htn-v1";
+const CACHE = "htn-v2";
 const SHELL = [
   "./", "index.html", "styles.css", "app.js", "manifest.webmanifest", "icon.svg", "config.json",
   "engine/i18n.js", "engine/extractor.js", "engine/rules.js", "engine/store.js", "engine/pin.js",
   "engine/outbox.js", "engine/schema.json",
   "profiles/fr-dje.json", "locales/en.json", "locales/fr.json", "locales/dje.json",
-  "samples/samples.json",
+  "samples/samples.json", "lexicon/fr.json", "engine/classifier.js",
+  ...["intro", "mon", "tue", "wed", "thu", "fri", "sat", "sun", "clinic", "refill"].map(c => `audio/dje/${c}.mp3`),
 ];
 
 self.addEventListener("install", e => {

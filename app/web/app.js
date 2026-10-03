@@ -1,5 +1,6 @@
 import { loadProfile, makeT } from "./engine/i18n.js";
 import { extract } from "./engine/extractor.js";
+import { loadClassifier } from "./engine/classifier.js";
 import { checkProtocol } from "./engine/rules.js";
 import * as store from "./engine/store.js";
 import * as pin from "./engine/pin.js";
@@ -12,7 +13,8 @@ const el = (tag, props = {}, ...kids) => {
   return e;
 };
 
-let P, t, tSms, SCHEMA, RECORD = null;
+let P, t, tSms, SCHEMA, LEX, CLF = null, RECORD = null;
+const today = () => new Date().toLocaleDateString("sv"); // YYYY-MM-DD, local time
 
 // ---------- static text ----------
 function paintText() {
@@ -75,7 +77,13 @@ function renderRecord() {
     const ok = el("button", { className: "secondary small", textContent: t("field.confirm"), hidden: !f.check });
     ok.onclick = () => { f.check = false; renderRecord(); };
     const label = el("label", {}, t("field." + name), el("span", { className: "tag", textContent: f.check ? t("field.check") : t("field.ok") }));
-    form.append(el("div", { className: "field " + (f.check ? "check" : "ok") }, label, el("div", { className: "line" }, input, ok)));
+    const box = el("div", { className: "field " + (f.check ? "check" : "ok") }, label, el("div", { className: "line" }, input, ok));
+    if (f.source === "speech" && spec.numeric_bp && f.check) box.append(el("div", { className: "hint", textContent: t("note.source_speech") }));
+    if (name === "follow_up") {
+      const d = outbox.addDuration(RECORD.visit_date.value, f.value);
+      if (d) box.append(el("div", { className: "hint", textContent: t("follow_up.date", { date: fmtDate(d) }) }));
+    }
+    form.append(box);
   }
   renderFlags();
   const left = Object.values(RECORD).filter(f => f.check).length;
@@ -88,7 +96,8 @@ function values() {
 }
 
 function renderFlags() {
-  const flags = checkProtocol(values());
+  const order = { urgent: 0, refer: 1, check: 2, gap: 3 };
+  const flags = checkProtocol(values()).sort((a, b) => order[a.level] - order[b.level]);
   $("flags").replaceChildren(...(flags.length
     ? flags.map(f => el("li", { className: f.level, textContent: t("flag." + f.code) }))
     : [el("li", { textContent: t("flags.none") })]));
@@ -134,8 +143,9 @@ async function renderOutbox() {
   if (!msgs.length) { $("outbox").textContent = t("outbox.empty"); return; }
   const rows = [];
   for (const m of msgs) {
+    const when = fmtDate(m.send_at.slice(0, 10)) + " " + m.send_at.slice(11);
     const state = m.status === "sent" ? t("outbox.sent")
-      : navigator.onLine ? t("outbox.queued", { time: m.send_at }) : t("outbox.offline");
+      : t("outbox.queued", { time: when }) + (navigator.onLine ? "" : " · " + t("outbox.offline"));
     const meta = el("div", { className: "meta", textContent: `→ ${m.to} · ${state}` });
     if (m.kind === "voice") {
       const codes = outbox.clipCodes(m, P.packs.voice);
@@ -164,6 +174,10 @@ async function renderSaved() {
 }
 
 function refreshLists() { renderOutbox(); renderSaved(); }
+
+function fmtDate(iso) {
+  return new Date(iso + "T12:00:00").toLocaleDateString(P.worker_locale, { weekday: "long", day: "numeric", month: "long" });
+}
 
 // ---------- samples + speech service ----------
 async function loadSamples() {
@@ -194,13 +208,17 @@ async function probeSpeech() {
   t = makeT(P.packs.worker, P.packs.fallback);
   tSms = makeT(P.packs.sms, P.packs.fallback);
   SCHEMA = await (await fetch("engine/schema.json")).json();
+  LEX = await (await fetch(`lexicon/${P.lexicon}.json`)).json();
+  try { const r = await fetch("models/symptom_clf.json"); if (r.ok) CLF = loadClassifier(await r.json()); } catch {}
   paintText(); paintNet(); showPin();
 
   $("btnPin").onclick = submitPin;
   $("pinInput").onkeydown = e => { if (e.key === "Enter") submitPin(); };
   $("btnLock").onclick = showPin;
   $("btnFill").onclick = () => {
-    RECORD = extract($("note").value, SCHEMA);
+    const source = $("note").dataset.source || "typed";
+    RECORD = extract($("note").value, SCHEMA, LEX, { source, classifier: CLF });
+    RECORD.visit_date = { value: today(), confidence: 1, source: "typed", check: false };
     $("recordBox").hidden = false; renderRecord();
   };
   $("consent").onchange = () => RECORD && renderRecord();

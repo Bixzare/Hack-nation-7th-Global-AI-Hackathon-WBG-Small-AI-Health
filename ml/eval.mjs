@@ -10,6 +10,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { extract } from "../app/web/engine/extractor.js";
 import { loadClassifier } from "../app/web/engine/classifier.js";
+import { checkProtocol } from "../app/web/engine/rules.js";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const read = p => JSON.parse(fs.readFileSync(path.join(ROOT, p), "utf8"));
@@ -37,7 +38,7 @@ export function toLabels(rec) {
 
 export function score(pairs, opts) {
   const per = Object.fromEntries(FIELDS.map(f => [f, { ok: 0, n: 0, conf: {} }]));
-  let checks = 0, uncertainSurfaced = 0, uncertainTotal = 0;
+  let checks = 0, uncertainSurfaced = 0, uncertainTotal = 0, uncertainByFlag = 0;
   for (const { text, labels, source } of pairs) {
     const rec = extract(text, schema, lex, { ...opts, source });
     const got = toLabels(rec);
@@ -46,17 +47,22 @@ export function score(pairs, opts) {
       const ok = String(got[f] ?? "") === want;
       per[f].n++; if (ok) per[f].ok++;
       else { const k = `${want}->${got[f]}`; per[f].conf[k] = (per[f].conf[k] || 0) + 1; }
-      if (want === "uncertain") { uncertainTotal++; if (rec[f]?.check) uncertainSurfaced++; }
+      if (want === "uncertain") {
+        uncertainTotal++;
+        const vals = Object.fromEntries(Object.entries(rec).map(([k, x]) => [k, x.value]));
+        const flagged = checkProtocol(vals).some(fl => ["ask_danger_symptoms", "symptom_uncertain", "urgent_if_symptoms_confirmed"].includes(fl.code));
+        if (rec[f]?.check) uncertainSurfaced++; else if (flagged && got[f] !== "absent") uncertainByFlag++;
+      }
     }
     checks += Object.values(rec).filter(x => x.check).length;
   }
   const total = FIELDS.reduce((a, f) => a + per[f].ok, 0) / FIELDS.reduce((a, f) => a + per[f].n, 0);
-  return { per, total, checksPerNote: checks / pairs.length, uncertainSurfaced, uncertainTotal };
+  return { per, total, checksPerNote: checks / pairs.length, uncertainSurfaced, uncertainTotal, uncertainByFlag };
 }
 
 export function report(name, r, showConfusions = true) {
   console.log(`\n== ${name}: overall field accuracy ${(100 * r.total).toFixed(1)}%  ` +
-    `("please check" per note ${r.checksPerNote.toFixed(1)}; uncertain surfaced ${r.uncertainSurfaced}/${r.uncertainTotal})`);
+    `("please check" per note ${r.checksPerNote.toFixed(1)}; uncertain surfaced: field ${r.uncertainSurfaced} + flag ${r.uncertainByFlag} of ${r.uncertainTotal})`);
   for (const f of FIELDS) {
     const p = r.per[f];
     const errs = showConfusions ? Object.entries(p.conf).sort((a, b) => b[1] - a[1]).slice(0, 3).map(([k, n]) => `${k}×${n}`).join(", ") : "";
@@ -80,7 +86,17 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const [mode, file] = process.argv.slice(2).filter(a => !a.startsWith("--"));
   const useClf = process.argv.includes("--clf");
   const opts = useClf ? { classifier: loadClassifier(read("app/web/models/symptom_clf.json")) } : {};
-  if (mode === "dev") {
+  if (mode === "devnoisy") { // dev notes with simulated ASR spelling errors (1 edit in ~1/4 of long words)
+    let seed = 7; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+    const corrupt = t => t.replace(/[a-zéèêàç]{6,}/gi, w => {
+      if (rnd() > 0.25) return w;
+      const i = 1 + Math.floor(rnd() * (w.length - 1)), op = rnd();
+      return op < 0.33 ? w.slice(0, i) + w.slice(i + 1) : op < 0.66 ? w.slice(0, i) + "e" + w.slice(i) : w.slice(0, i) + "a" + w.slice(i + 1);
+    });
+    const pairs = fs.readFileSync(path.join(ROOT, "ml/synth/dev.jsonl"), "utf8").trim().split("\n")
+      .map(l => JSON.parse(l)).map(e => ({ text: corrupt(e.text), labels: e.labels, source: "typed" }));
+    report(`dev+ASR-typos (synthetic)${useClf ? " rules+clf" : " rules"}`, score(pairs, opts));
+  } else if (mode === "dev") {
     const pairs = fs.readFileSync(path.join(ROOT, "ml/synth/dev.jsonl"), "utf8").trim().split("\n")
       .map(l => JSON.parse(l)).map(e => ({ text: e.text, labels: e.labels, source: "typed" }));
     report(`dev (synthetic)${useClf ? " rules+clf" : " rules"}`, score(pairs, opts));

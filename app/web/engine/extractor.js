@@ -17,7 +17,40 @@ export function emptyRecord(schema) {
 export function normalize(text, lex) {
   let s = text.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
   s = s.replace(/[’']/g, " ").replace(/\s+/g, " ");
-  return wordsToDigits(s, lex.numbers);
+  s = wordsToDigits(s, lex.numbers);
+  return lex.fuzzy ? fuzzyRewrite(s, lex.fuzzy) : s;
+}
+
+// ASR-tolerant spelling: rewrite a word to a canonical lexicon term when it is within edit distance
+// 1 (length 5-7) or 2 (length >= 8) and starts with the same letter.
+export function fuzzyRewrite(s, fz) {
+  const canon = new Set(fz.terms);
+  return s.replace(/[a-z]+/g, w => {
+    if (w.length < fz.min_len || canon.has(w)) return w;
+    let best = null, bestD = Infinity;
+    for (const c of fz.terms) {
+      if (c[0] !== w[0] || Math.abs(c.length - w.length) > 2) continue;
+      const max = Math.max(c.length, w.length) >= 8 ? 2 : 1;
+      const d = editDistance(w, c, max);
+      if (d <= max && d < bestD) { best = c; bestD = d; }
+    }
+    return best ?? w;
+  });
+}
+
+function editDistance(a, b, max) {
+  let prev = Array.from({ length: b.length + 1 }, (_, j) => j);
+  for (let i = 1; i <= a.length; i++) {
+    const cur = [i];
+    let rowMin = i;
+    for (let j = 1; j <= b.length; j++) {
+      cur[j] = Math.min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+      rowMin = Math.min(rowMin, cur[j]);
+    }
+    if (rowMin > max) return Infinity;
+    prev = cur;
+  }
+  return prev[b.length];
 }
 
 // Converts runs of number words to digits: "cent soixante-deux" -> "162".
