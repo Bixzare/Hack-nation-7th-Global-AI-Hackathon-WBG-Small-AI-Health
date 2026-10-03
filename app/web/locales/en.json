@@ -122,5 +122,8 @@
  "bp_reason.patient_refused": "Patient refused",
  "bp_reason.other": "Other",
  "bp_reason.other_text": "Reason",
- "flag.danger_asked_confirmed": "Danger signs asked: confirmed by health worker, {time}"
+ "flag.danger_asked_confirmed": "Danger signs asked: confirmed by health worker, {time}",
+ "raw.live": "Raw transcript ({model}, {s} s), before extraction:",
+ "raw.empty": "(no speech recognised: try again closer to the microphone, or type)",
+ "speech.empty": "No speech recognised: try again or type the note"
 }

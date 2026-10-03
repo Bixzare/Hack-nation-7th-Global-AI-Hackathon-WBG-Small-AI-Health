@@ -123,5 +123,8 @@
  "bp_reason.patient_refused": "Refus du patient",
  "bp_reason.other": "Autre",
  "bp_reason.other_text": "Raison",
- "flag.danger_asked_confirmed": "Signes de danger demandés : confirmé par l'agent de santé, {time}"
+ "flag.danger_asked_confirmed": "Signes de danger demandés : confirmé par l'agent de santé, {time}",
+ "raw.live": "Transcription brute ({model}, {s} s), avant extraction :",
+ "raw.empty": "(aucune parole reconnue : réessayez plus près du micro, ou tapez)",
+ "speech.empty": "Aucune parole reconnue : réessayez ou tapez la note"
 }

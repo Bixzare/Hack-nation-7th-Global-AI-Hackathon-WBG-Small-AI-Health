@@ -135,10 +135,11 @@ async function approve() {
   const bpMissing = RECORD.bp1_sys.value == null || RECORD.bp1_dia.value == null;
   const id = await store.add("records", { created_at: new Date().toISOString(), note: $("note").value, record: RECORD,
     flags: resolveFlags(checkProtocol(v)),
-    danger_signs_asked: { confirmed: true, at: DANGER_AT },
+    danger_signs_asked: { confirmed: true, at: DANGER_AT }, raw_transcript: RAW,
     bp_not_measured: bpMissing ? { reason: $("bpReason").value, other: $("bpReasonOther").value.trim() || null } : null });
   await outbox.queue(outbox.remindersFor(id, v, P));
   RECORD = null; $("recordBox").hidden = true; $("note").value = ""; $("consent").checked = false; $("dangerAsked").checked = false; DANGER_AT = null;
+  RAW = null; $("rawBox").hidden = true;
   $("bpNotMeasured").checked = false; $("bpReason").value = ""; $("bpReasonOther").value = ""; $("bpReasonRow").hidden = true;
   $("status").textContent = "";
   refreshLists();
@@ -227,9 +228,21 @@ async function loadSamples() {
     const b = el("button", { className: "secondary sample" },
       el("div", { textContent: s.title }),
       el("div", { className: "sub", textContent: t("note.samples_label", { model: s.model }) }));
-    b.onclick = () => { if (s.audio) new Audio(s.audio).play().catch(() => {}); $("note").value = s.transcript; $("note").dataset.source = "speech"; };
+    b.onclick = () => {
+      if (s.audio) new Audio(s.audio).play().catch(() => {});
+      $("note").value = s.transcript; $("note").dataset.source = "speech";
+      showRaw(s.transcript, t("note.samples_label", { model: s.model }));
+    };
     return b;
   }));
+}
+
+let RAW = null; // last raw speech transcript (before any edit or extraction)
+function showRaw(text, label) {
+  RAW = { text, label };
+  $("rawBox").hidden = false;
+  $("rawLabel").textContent = label;
+  $("rawText").textContent = text ? `« ${text} »` : t("raw.empty");
 }
 
 async function probeSpeech() {
@@ -264,8 +277,11 @@ async function toggleMic() {
     try {
       const r = await fetch(P.speech_service_url + "/transcribe", { method: "POST", body: new Blob(chunks) });
       const j = await r.json();
-      if (j.text) { $("note").value = j.text; $("note").dataset.source = "speech"; }
-      $("speech").textContent = j.text ? t("speech.done", { s: j.proc_s }) : t("speech.unavailable");
+      // Raw transcript is shown separately from the extracted record, so we can tell whether speech or
+      // extraction failed. Then the record is filled automatically.
+      showRaw(j.text ?? "", t("raw.live", { model: j.model ?? "?", s: j.proc_s ?? "?" }));
+      if (j.text) { $("note").value = j.text; $("note").dataset.source = "speech"; $("btnFill").click(); }
+      $("speech").textContent = j.text ? t("speech.done", { s: j.proc_s }) : t("speech.empty");
     } catch { $("speech").textContent = t("speech.unavailable"); }
     $("btnMic").textContent = t("speech.record"); $("btnMic").disabled = false;
   };
