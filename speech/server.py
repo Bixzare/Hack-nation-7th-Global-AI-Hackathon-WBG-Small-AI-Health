@@ -6,6 +6,10 @@ available and falls back to typing when it is not.
   GET  /health      -> {"ok": true, "model": "..."}
   POST /transcribe  body = audio bytes (webm/ogg/wav/mp3) -> {"text": "...", "audio_s": .., "proc_s": ..}
 
+Settings were chosen on gold DEV clips (webm/opus, as the browser sends): language="fr", VAD on, no
+initial_prompt. The prompt invented numbers on cut-off phrases ("Tension 100 sur 100") and lowered dev
+field accuracy from 96.4% to 95.0%; with VAD off, silence produced subtitle-credit text.
+
 Run: .venv-speech/Scripts/python speech/server.py [--model small|base] [--port 8765]
 """
 import argparse
@@ -20,6 +24,9 @@ from faster_whisper import WhisperModel
 
 ROOT = Path(__file__).resolve().parent.parent
 MAX_BYTES = 20 * 1024 * 1024
+# Whisper's known silence hallucinations in French (subtitle credits from its training data). Seen on silent
+# and room-tone clips when VAD is off (speech/dictation_experiments.py). Dropped as a second safety net.
+HALLUCINATIONS = ("sous-titres réalisés par", "sous-titrage st", "amara.org", "merci d'avoir regardé")
 MODEL = None
 MODEL_NAME = ""
 
@@ -61,7 +68,9 @@ class Handler(BaseHTTPRequestHandler):
             t = time.perf_counter()
             segs, info = MODEL.transcribe(path, language="fr", beam_size=5, vad_filter=True,
                                           condition_on_previous_text=False)
-            text = " ".join(s.text.strip() for s in segs)
+            text = " ".join(s.text.strip() for s in segs).strip()
+            if any(h in text.lower() for h in HALLUCINATIONS):
+                text = ""
             self._json({"text": text, "audio_s": round(info.duration, 2),
                         "proc_s": round(time.perf_counter() - t, 2), "model": MODEL_NAME})
         except Exception as e:  # report, never crash the service

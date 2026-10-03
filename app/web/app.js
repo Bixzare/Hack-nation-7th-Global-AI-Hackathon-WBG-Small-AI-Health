@@ -27,6 +27,12 @@ function paintText() {
   }));
   $("banner").textContent = t("banner");
   $("title").textContent = t("app.title");
+  $("step1Title").textContent = t("step1.title");
+  $("step2Title").textContent = t("step2.title");
+  $("step3Title").textContent = t("step3.title");
+  $("deviceCaptionNurse").textContent = t("device.nurse");
+  $("deviceCaptionNoor").textContent = t("device.noor");
+  $("offlineHint").textContent = t("offline.hint");
   $("disclaimer").textContent = t("app.disclaimer");
   $("btnLock").textContent = t("pin.lock");
   $("consentLabel").textContent = t("consent");
@@ -89,8 +95,10 @@ function renderRecord() {
     input.onchange = () => { f.value = input.value === "" ? null : input.value; f.source = "typed"; f.check = false; renderRecord(); };
     const ok = el("button", { className: "secondary small confirm", textContent: t("field.confirm"), hidden: !f.check });
     ok.onclick = () => { f.check = false; renderRecord(); };
-    const label = el("label", {}, t("field." + name), el("span", { className: "tag", textContent: f.check ? t("field.check") : t("field.ok") }));
-    const box = el("div", { className: "field " + (f.check ? "check" : "ok") }, label, el("div", { className: "line" }, input, ok));
+    const empty = f.value == null || f.value === "";
+    const state = f.check ? "check" : empty ? "empty" : "ok"; // an empty field is never shown as "confirmed"
+    const label = el("label", {}, t("field." + name), el("span", { className: "tag", textContent: t("field." + state) }));
+    const box = el("div", { className: "field " + state }, label, el("div", { className: "line" }, input, ok));
     box.dataset.field = name;
     if (f.source === "speech" && spec.numeric_bp && f.check) box.append(el("div", { className: "hint", textContent: t("note.source_speech") }));
     if (name === "follow_up") {
@@ -103,6 +111,17 @@ function renderRecord() {
   const left = Object.values(RECORD).filter(f => f.check).length;
   $("btnApprove").disabled = left > 0 || !$("consent").checked || !$("dangerAsked").checked || !bpOk();
   $("status").textContent = left ? t("status.left", { n: left }) : t("status.ready");
+  renderSteps();
+}
+
+// Step indicator: Dictate -> Review -> Approve -> Reminder
+let APPROVED = false;
+function renderSteps() {
+  const left = RECORD ? Object.values(RECORD).filter(f => f.check).length : 0;
+  const cur = APPROVED ? 4 : !RECORD ? 1 : left > 0 ? 2 : 3;
+  $("steps").replaceChildren(...["dictate", "review", "approve", "reminder"].map((k, i) =>
+    el("li", { className: i + 1 < cur || (APPROVED && i === 3) ? "done" : i + 1 === cur ? "current" : "", textContent: t("step." + k) })));
+  $("steps").children[cur - 1]?.setAttribute("aria-current", "step");
 }
 
 // Approval needs a BP value, or an explicit "BP not measured" with a reason (recorded with the visit).
@@ -129,10 +148,15 @@ const fmtTime = iso => new Date(iso).toLocaleTimeString(UI, { hour: "2-digit", m
 function renderFlags() {
   const order = { urgent: 0, refer: 1, check: 2, gap: 3, resolved: 4 };
   const flags = resolveFlags(checkProtocol(values())).sort((a, b) => order[a.level] - order[b.level]);
+  const ICON = { urgent: "⚠", refer: "➜", check: "?", gap: "○", resolved: "✓", info: "ⓘ" };
+  const card = (level, text) => el("li", { className: "flag " + level },
+    el("span", { className: "ico", textContent: ICON[level], ariaHidden: "true" }),
+    el("span", { className: "word", textContent: t("flagword." + level) }),
+    el("span", { className: "txt", textContent: text }));
+  // "No gap found" is an info card, never styled as an all-clear.
   $("flags").replaceChildren(...(flags.length
-    ? flags.map(f => el("li", { className: "flag " + (f.resolved ? "resolved" : f.level),
-        textContent: f.resolved ? t("flag.danger_asked_confirmed", { time: fmtTime(f.resolved_at) }) : t("flag." + f.code) }))
-    : [el("li", { textContent: t("flags.none") })]));
+    ? flags.map(f => f.resolved ? card("resolved", t("flag.danger_asked_confirmed", { time: fmtTime(f.resolved_at) })) : card(f.level, t("flag." + f.code)))
+    : [card("info", t("flags.none"))]));
 }
 
 async function approve() {
@@ -147,6 +171,7 @@ async function approve() {
   RAW = null; $("rawBox").hidden = true;
   $("bpNotMeasured").checked = false; $("bpReason").value = ""; $("bpReasonOther").value = ""; $("bpReasonRow").hidden = true;
   $("status").textContent = "";
+  APPROVED = true; renderSteps();
   refreshLists();
   alertSaved(id);
 }
@@ -211,7 +236,24 @@ async function renderSaved() {
   }) : [document.createTextNode(t("saved.none"))]));
 }
 
-function refreshLists() { renderOutbox(); renderSaved(); renderMissed(); }
+function refreshLists() { renderOutbox(); renderSaved(); renderMissed(); renderNoorPhone(); renderSteps(); }
+
+// Noor's shared basic phone (desktop: right-hand device): the latest reminders as she receives them.
+async function renderNoorPhone() {
+  const msgs = (await store.all("outbox"));
+  const lastRec = msgs.length ? Math.max(...msgs.map(m => m.record_id)) : null;
+  const mine = msgs.filter(m => m.record_id === lastRec);
+  if (mine[0]) $("noorClock").textContent = mine[0].send_at.slice(11);
+  $("noorInbox").replaceChildren(...(mine.length ? mine.map(m => {
+    if (m.kind === "voice") {
+      const b = el("button", { textContent: "▶ " + t("noor.play") });
+      b.onclick = () => playSequence(outbox.clipCodes(m, P.packs.voice));
+      return el("div", { className: "basic-msg" }, el("div", { className: "from", textContent: t("noor.voice") }), b);
+    }
+    const text = tSms(m.template, { ...m.params, weekday: tSms("weekday." + m.params.weekday) });
+    return el("div", { className: "basic-msg" }, el("div", { className: "from", textContent: t("noor.sms") }), el("div", { textContent: text }));
+  }) : [el("div", { className: "basic-empty", textContent: t("noor.empty") })]));
+}
 
 async function renderMissed() {
   const missed = missedFollowUps(await store.all("records"), today());
@@ -329,6 +371,7 @@ function setUI(l) {
     try { RECORD = extract($("note").value, SCHEMA, LEX, { source, classifier: CLF }); }
     catch { RECORD = emptyRecord(SCHEMA); } // safe default: nothing pre-filled, everything "please check"
     RECORD.visit_date = { value: today(), confidence: 1, source: "typed", check: false };
+    APPROVED = false;
     $("recordBox").hidden = false; renderRecord();
   };
   $("consent").onchange = () => RECORD && renderRecord();

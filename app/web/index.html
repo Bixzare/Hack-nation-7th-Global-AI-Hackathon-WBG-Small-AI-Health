@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -11,84 +11,113 @@
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-<div id="banner" class="banner"></div>
-<main>
-  <header>
-    <div>
-      <h1 id="title"></h1>
-      <div id="disclaimer" class="sub"></div>
-    </div>
-    <div class="right">
-      <div id="lang" class="lang" role="group" aria-label="Language"></div>
-      <span id="net" class="pill"></span>
-      <button id="btnLock" class="secondary small" hidden></button>
-    </div>
-  </header>
+<div id="banner" class="banner" role="note"></div>
 
-  <section id="pinGate" class="card">
-    <label id="pinLabel" for="pinInput"></label>
-    <div class="row">
-      <input id="pinInput" type="password" inputmode="numeric" maxlength="4" autocomplete="off">
-      <button id="btnPin"></button>
-    </div>
-    <div id="pinMsg" class="warn"></div>
+<div class="stage">
+  <!-- Nurse's phone: the app -->
+  <section class="device nurse" aria-label="Health worker's phone">
+    <div id="deviceCaptionNurse" class="device-caption"></div>
+    <main class="screen">
+      <header class="topbar">
+        <div>
+          <h1 id="title"></h1>
+          <div id="disclaimer" class="sub"></div>
+        </div>
+        <div class="right">
+          <div id="lang" class="lang" role="group" aria-label="Language"></div>
+          <span id="net" class="pill"></span>
+          <button id="btnLock" class="ghost small" hidden></button>
+        </div>
+      </header>
+
+      <section id="pinGate" class="card">
+        <label id="pinLabel" for="pinInput"></label>
+        <div class="row">
+          <input id="pinInput" type="password" inputmode="numeric" maxlength="4" autocomplete="off">
+          <button id="btnPin"></button>
+        </div>
+        <div id="pinMsg" class="warn" role="alert"></div>
+      </section>
+
+      <div id="appBody" hidden>
+        <ol id="steps" class="steps" aria-label="Progress"></ol>
+
+        <section class="card">
+          <h2 id="step1Title" class="step-title"></h2>
+          <label class="tick"><input type="checkbox" id="consent"> <span id="consentLabel"></span></label>
+          <textarea id="note"></textarea>
+          <div id="rawBox" class="raw" hidden>
+            <div id="rawLabel" class="sub"></div>
+            <div id="rawText"></div>
+          </div>
+          <div class="row">
+            <button id="btnMic" class="secondary" hidden></button>
+            <button id="btnFill"></button>
+          </div>
+          <div id="speech" class="sub"></div>
+          <details id="samplesBox">
+            <summary id="samplesTitle"></summary>
+            <div id="samples"></div>
+          </details>
+        </section>
+
+        <section id="recordBox" hidden>
+          <div class="card">
+            <h2 id="flagsTitle" class="step-title"></h2>
+            <ul id="flags" class="flags"></ul>
+          </div>
+          <div class="card">
+            <h2 id="step2Title" class="step-title"></h2>
+            <div id="form"></div>
+          </div>
+          <div class="card">
+            <h2 id="step3Title" class="step-title"></h2>
+            <label class="tick"><input type="checkbox" id="bpNotMeasured"> <span id="bpNotMeasuredLabel"></span></label>
+            <div class="row" id="bpReasonRow" hidden>
+              <select id="bpReason"></select>
+              <input id="bpReasonOther" type="text" hidden>
+            </div>
+            <label class="tick"><input type="checkbox" id="dangerAsked"> <span id="dangerAskedLabel"></span></label>
+            <div id="status" class="status" role="status"></div>
+            <button id="btnApprove" class="wide" disabled></button>
+          </div>
+        </section>
+
+        <section class="card">
+          <h2 id="outboxTitle" class="step-title"></h2>
+          <div id="outbox"></div>
+          <div class="row"><button id="btnSend" class="secondary"></button></div>
+          <div id="offlineHint" class="hint"></div>
+        </section>
+
+        <section class="card">
+          <h2 id="missedTitle"></h2>
+          <div id="missed" class="sub"></div>
+          <div class="row"><button id="btnDemoHistory" class="secondary small"></button></div>
+        </section>
+
+        <section class="card">
+          <h2 id="savedTitle"></h2>
+          <div id="saved" class="sub"></div>
+        </section>
+      </div>
+    </main>
   </section>
 
-  <div id="appBody" hidden>
-    <section class="card">
-      <label class="consent"><input type="checkbox" id="consent"> <span id="consentLabel"></span></label>
-      <textarea id="note"></textarea>
-      <div id="rawBox" class="raw" hidden>
-        <div id="rawLabel" class="sub"></div>
-        <div id="rawText"></div>
+  <!-- Noor's shared basic phone: what the patient receives -->
+  <section class="device basic" aria-label="Patient's basic phone">
+    <div id="deviceCaptionNoor" class="device-caption"></div>
+    <div class="basic-phone">
+      <div class="basic-screen">
+        <div class="basic-status"><span id="noorClock">18:30</span><span aria-hidden="true">▂▄▆ ▮</span></div>
+        <div id="noorInbox"></div>
       </div>
-      <div class="row">
-        <button id="btnMic" class="secondary" hidden></button>
-        <button id="btnFill"></button>
-        <span id="speech" class="sub"></span>
+      <div class="basic-keys" aria-hidden="true">
+        <span></span><span></span><span></span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>*</span><span>0</span><span>#</span>
       </div>
-      <details id="samplesBox">
-        <summary id="samplesTitle"></summary>
-        <div id="samples"></div>
-      </details>
-    </section>
-
-    <section id="recordBox" hidden>
-      <div id="form"></div>
-      <div class="card">
-        <h2 id="flagsTitle"></h2>
-        <ul id="flags"></ul>
-      </div>
-      <div class="card">
-        <label class="consent"><input type="checkbox" id="bpNotMeasured"> <span id="bpNotMeasuredLabel"></span></label>
-        <div class="row" id="bpReasonRow" hidden>
-          <select id="bpReason"></select>
-          <input id="bpReasonOther" type="text" hidden>
-        </div>
-      </div>
-      <label class="consent card"><input type="checkbox" id="dangerAsked"> <span id="dangerAskedLabel"></span></label>
-      <div id="status" class="status"></div>
-      <div class="row"><button id="btnApprove" disabled></button></div>
-    </section>
-
-    <section class="card">
-      <h2 id="outboxTitle"></h2>
-      <div id="outbox"></div>
-      <div class="row"><button id="btnSend" class="secondary"></button></div>
-    </section>
-
-    <section class="card">
-      <h2 id="missedTitle"></h2>
-      <div id="missed" class="sub"></div>
-      <div class="row"><button id="btnDemoHistory" class="secondary small"></button></div>
-    </section>
-
-    <section class="card">
-      <h2 id="savedTitle"></h2>
-      <div id="saved" class="sub"></div>
-    </section>
-  </div>
-</main>
+    </div>
+  </section>
+</div>
 <script type="module" src="app.js"></script>
 </body>
 </html>
