@@ -200,6 +200,52 @@ Speech→record uses the extractor as of `4445cad` (lexicon v3).
 3. Voices: A/B/C mapping recorded. 4. Small for the demo, base as fallback. 5. Deploy: see below.
 6. Rules-only is the default; the classifier stays in the repo.
 
+
+## Small AI audit (Sun, `ml/measure.py`, frozen test split)
+**Checklist**
+- ✅ No runtime cloud AI. Every `fetch` targets the same origin (app files, served by the SW) or the
+  local speech service on `localhost`. There are no API keys or AI endpoints anywhere in the history.
+- ✅ Offline. The SW precaches the app shell, lexicon, Zarma clips and samples. Headless Chrome
+  offline reload passes on the live Pages site. Reminders queue in the outbox ("will send when the
+  network returns"); nothing crashes.
+- ✅ Size budget (≤ 50 MB) **for the phone side**: the web app is 1.7 MB in total; engine + lexicon
+  38 KB; rules-only.
+- ❌ Size budget for speech: Whisper small 486 MB (base 148 MB). Brief override: speech runs on the
+  health-centre laptop, not the phone.
+- ✅ Latency (≤ 2 s) for extraction + rules: 0.54 ms median, 1.15 ms p90.
+- ❌ Latency for speech: small 9.41 s median / 9.52 s p90 per 9.9 s clip; base 3.27 / 3.58 s.
+  Dictation is asynchronous (the worker speaks, then reviews), so it's acceptable but slower than the
+  default budget.
+
+**Measured** on an Intel laptop (16 cores, 34 GB RAM, Windows), CPU only, int8; 20 runs after 1 warm-up.
+
+| | Whisper small (demo) | Whisper base (fallback) |
+|---|---|---|
+| Size | 486 MB | 148 MB |
+| Latency, 9.9 s clip | 9.41 s median, 9.52 s p90 (RTF 0.95) | 3.27 s median, 3.58 s p90 (RTF 0.33) |
+| Peak RAM (model + inference) | ≈ 364 MB | ≈ 140 MB |
+| Danger-sign PRESENT detection, test clean | sensitivity 11/11, specificity 69/69 | 10/11, 66/69 |
+| Same, test noisy | 6/6, 30/30 | n/a (see results-test.md) |
+| Typed (no ASR) | 11/11, 69/69 | |
+
+- Confusion (small, clean, pooled over 4 symptoms): TP 11, FN 0, FP 0, TN 69. Sensitivity matters
+  most for danger signs. With only 11 positives the confidence interval is wide, and all audio is
+  synthetic.
+- **Reach / cost:**
+  - Phone side: any Android browser with IndexedDB + service worker (the 2–3 GB RAM target is fine;
+    1.7 MB download).
+  - Speech: a laptop with ≈ 0.5 GB free RAM for small (≈ 0.2 GB for base).
+  - Running cost: no cloud. SMS / voice-call price per reminder in Niger: TODO (operator rates; the
+    gateway is simulated).
+
+**Ranked fixes (cheapest first, not started)**
+1. A real low-end laptop / tablet timing run for base and small (no code).
+2. Pre-download the Whisper models into the install (`local_files_only=True` already set; document it).
+3. SMS / voice-call cost per reminder from Niger operator tariffs (TODO for the pitch).
+4. On-device speech on the phone: whisper.cpp tiny/base q5 (32–60 MB) via WebAssembly or Android.
+   This would move speech onto the phone, at lower accuracy (tiny: 81.4% fields on test).
+5. Re-convert small to int8 on disk (≈ 250 MB) with transformers + torch tooling.
+
 ## Later (out of scope this weekend)
 - Cluster flag to a district health officer, where a human decides whether to alert
 - IVR calls playing the Zarma clips
