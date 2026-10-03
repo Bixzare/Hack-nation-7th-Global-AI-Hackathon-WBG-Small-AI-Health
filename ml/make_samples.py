@@ -27,7 +27,7 @@ def main(tag="base"):
         src = GOLD / "audio" / f"fr-{i}.mp3"
         dst = OUT / f"sample-{i:02d}.mp3"
         shutil.copyfile(src, dst)
-        samples.append({"id": i, "title": f"{title} (voix synthétique)", "audio": f"samples/{dst.name}",
+        samples.append({"id": i, "title": f"{title} (voix synthétique ElevenLabs)", "audio": f"samples/{dst.name}",
                         "transcript": tx[str(i)], "model": MODEL_LABEL[tag], "synthetic": True})
     (OUT / "samples.json").write_text(json.dumps(samples, ensure_ascii=False, indent=1), encoding="utf-8")
     print(f"{len(samples)} samples written ({tag}); audio {sum((OUT / s['audio'].split('/')[1]).stat().st_size for s in samples) / 1024:.0f} KB")

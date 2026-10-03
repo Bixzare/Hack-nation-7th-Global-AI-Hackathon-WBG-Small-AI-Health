@@ -1,7 +1,7 @@
 [
  {
   "id": 1,
-  "title": "Femme 38 ans — suivi (voix synthétique)",
+  "title": "Femme 38 ans — suivi (voix synthétique ElevenLabs)",
   "audio": "samples/sample-01.mp3",
   "transcript": "Femme, 38 ans. Tention, 162 sur 98. C'est fallé depuis trois jours. Elle oublie parfois ses médicaments. Pas enceinte. Conseil sur le sel donné. Revoire dans deux semaines.",
   "model": "Whisper small (faster-whisper int8, hors ligne)",
@@ -9,7 +9,7 @@
  },
  {
   "id": 4,
-  "title": "Homme 67 ans — TA très élevée (voix synthétique)",
+  "title": "Homme 67 ans — TA très élevée (voix synthétique ElevenLabs)",
   "audio": "samples/sample-04.mp3",
   "transcript": "Homme, 67 ans. Tention, 190 sur 115. Douleur thoracique depuis ce matin et soufflement. Référez à l'hôpital aujourd'hui.",
   "model": "Whisper small (faster-whisper int8, hors ligne)",
@@ -17,7 +17,7 @@
  },
  {
   "id": 13,
-  "title": "Femme 52 ans — TA contrôlée (voix synthétique)",
+  "title": "Femme 52 ans — TA contrôlée (voix synthétique ElevenLabs)",
   "audio": "samples/sample-13.mp3",
   "transcript": "femme 52 ans tension 136 sur 80 pas de plainte traitement bien suivi revoir dans trois mois",
   "model": "Whisper small (faster-whisper int8, hors ligne)",
@@ -25,7 +25,7 @@
  },
  {
   "id": 20,
-  "title": "Homme 39 ans — symptôme incertain (voix synthétique)",
+  "title": "Homme 39 ans — symptôme incertain (voix synthétique ElevenLabs)",
   "audio": "samples/sample-20.mp3",
   "transcript": "Homme 39 ans. Tention 152 sur 97. Oubliez rarement ses comprimés. Peut-être un peu essoufflé. Revois dans deux semaines.",
   "model": "Whisper small (faster-whisper int8, hors ligne)",

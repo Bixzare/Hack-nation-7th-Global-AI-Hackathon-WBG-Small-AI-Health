@@ -8,6 +8,12 @@ a fixed hypertension record, checks it against WHO HEARTS, and the nurse approve
 gets a reminder the evening before the visit, as recorded Zarma voice clips plus a short French SMS,
 with no clinical content.
 
+## Credits and data
+- Sample dictation voices: **ElevenLabs TTS (synthetic)**, generated for this non-commercial hackathon prototype.
+- Zarma reminder clips: recorded by a team member (one speaker).
+- Clinical rules: WHO HEARTS technical package (2018) and WHO hypertension guideline (2021). See `app/web/engine/rules.js`.
+- Speech model: OpenAI Whisper via faster-whisper (MIT), run locally; not included in this repo.
+
 ## Run locally (offline after first load)
 ```
 py -3.11 -m http.server 8080 -d app/web --bind 127.0.0.1
