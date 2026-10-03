@@ -173,11 +173,14 @@ export function extract(text, schema, lex, opts = {}) {
 
   // blood pressure: every number pair in order; first -> bp1, second -> bp2. Speech numbers are ALWAYS checked.
   const bps = [];
-  for (const p of lex.bp.patterns) for (const m of norm.matchAll(new RegExp(p, "g"))) bps.push({ i: m.index, s: +m[1], d: +m[2] });
+  for (const p of lex.bp.patterns) for (const m of norm.matchAll(new RegExp(p, "g")))
+    if (+m[1] >= (lex.bp.min_sys ?? 0)) bps.push({ i: m.index, s: +m[1], d: +m[2] }); // skip dates like 12/10
+  // cmHg shorthand ("TA 16/9") is accepted only right after a BP word (lexicon cmhg_pattern)
+  if (lex.bp.cmhg_pattern) for (const m of norm.matchAll(new RegExp(lex.bp.cmhg_pattern, "g")))
+    if (+m[1] <= lex.bp.cmhg_below && +m[2] <= lex.bp.cmhg_below) bps.push({ i: m.index, s: +m[1] * 10, d: +m[2] * 10, cmhg: true });
   bps.sort((a, b) => a.i - b.i);
   bps.slice(0, 2).forEach((bp, k) => {
-    let { s, d } = bp, conf = 0.9;
-    if (s <= lex.bp.cmhg_below && d <= lex.bp.cmhg_below) { s *= 10; d *= 10; conf = 0.6; } // "16/9" = cmHg
+    let { s, d } = bp, conf = bp.cmhg ? 0.6 : 0.9; // cmHg conversion is always "please check"
     const [smin, smax] = lex.bp.plausible.sys, [dmin, dmax] = lex.bp.plausible.dia;
     if (s < smin || s > smax || d < dmin || d > dmax || d >= s) conf = 0.3;
     set(`bp${k + 1}_sys`, s, conf, source === "speech");
