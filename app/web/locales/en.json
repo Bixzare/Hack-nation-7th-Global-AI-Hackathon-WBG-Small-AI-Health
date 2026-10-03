@@ -111,5 +111,6 @@
  "speech.stop": "■ Stop",
  "speech.working": "Transcribing…",
  "speech.done": "Transcribed offline in {s} s: check the text",
- "danger_asked": "I asked about danger signs: severe headache, chest pain, breathlessness, blurred vision"
+ "danger_asked": "I asked about danger signs: severe headache, chest pain, breathlessness, blurred vision",
+ "speech.hosted": "Hosted demo: use a sample dictation (live dictation runs on the health-centre install)"
 }

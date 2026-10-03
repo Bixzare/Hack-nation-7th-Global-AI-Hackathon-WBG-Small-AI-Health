@@ -112,5 +112,6 @@
  "speech.stop": "■ Arrêter",
  "speech.working": "Transcription…",
  "speech.done": "Transcrit hors ligne en {s} s : vérifiez le texte",
- "danger_asked": "J'ai demandé les signes de danger : céphalées sévères, douleur thoracique, dyspnée, vision floue"
+ "danger_asked": "J'ai demandé les signes de danger : céphalées sévères, douleur thoracique, dyspnée, vision floue",
+ "speech.hosted": "Démo en ligne : utilisez une dictée exemple (la dictée en direct fonctionne sur l'installation du CSI)"
 }

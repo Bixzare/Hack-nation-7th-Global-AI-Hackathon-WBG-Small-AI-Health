@@ -196,6 +196,12 @@ async function loadSamples() {
 }
 
 async function probeSpeech() {
+  // Hosted demo: never reach for the visitor's localhost (Chrome would ask for local-network permission).
+  // Live dictation is for the health-centre install, where the page itself is served locally.
+  if (!["localhost", "127.0.0.1", "[::1]"].includes(location.hostname)) {
+    $("speech").textContent = t("speech.hosted");
+    return;
+  }
   let ok = false;
   try {
     const ctl = new AbortController(); setTimeout(() => ctl.abort(), 800);
