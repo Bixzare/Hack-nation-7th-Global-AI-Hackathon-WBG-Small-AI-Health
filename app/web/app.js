@@ -1,5 +1,5 @@
 import { loadProfile, makeT } from "./engine/i18n.js";
-import { extract } from "./engine/extractor.js";
+import { extract, emptyRecord } from "./engine/extractor.js";
 import { loadClassifier } from "./engine/classifier.js";
 import { checkProtocol } from "./engine/rules.js";
 import * as store from "./engine/store.js";
@@ -243,7 +243,8 @@ async function toggleMic() {
   $("btnLock").onclick = showPin;
   $("btnFill").onclick = () => {
     const source = $("note").dataset.source || "typed";
-    RECORD = extract($("note").value, SCHEMA, LEX, { source, classifier: CLF });
+    try { RECORD = extract($("note").value, SCHEMA, LEX, { source, classifier: CLF }); }
+    catch { RECORD = emptyRecord(SCHEMA); } // safe default: nothing pre-filled, everything "please check"
     RECORD.visit_date = { value: today(), confidence: 1, source: "typed", check: false };
     $("recordBox").hidden = false; renderRecord();
   };
