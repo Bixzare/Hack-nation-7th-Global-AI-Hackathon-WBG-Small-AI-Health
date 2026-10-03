@@ -142,6 +142,17 @@
 - Hosted samples are now Whisper small transcripts (dev clips 1, 4, 13, 20). The speech service
   defaults to small.
 
+- **Deployed** to GitHub Pages (repo public; Actions workflow serves `app/web`):
+  https://bixzare.github.io/Hack-nation-7th-Global-AI-Hackathon-WBG-Small-AI-Health/
+  - Pre-push audit of all history: no keys, `.env` or secret-like strings; no model files; no PDFs;
+    largest blob 0.78 MB.
+  - Live headless test passes: full demo path + offline reload, 0 console errors.
+  - The hosted page doesn't probe localhost (avoids Chrome's local-network permission prompt). Live
+    dictation is for the local install.
+- **ElevenLabs terms:** you keep rights to the output. Free plan = non-commercial use only; paid =
+  commercial. I found no attribution requirement (from the terms page summary), but credited it
+  anyway. TODO: confirm which plan was used.
+
 **Trade-off table** (frozen test split, 20 clips; noisy = 9 test clips; laptop CPU, int8):
 
 | | Whisper base (fallback) | **Whisper small (demo)** |
