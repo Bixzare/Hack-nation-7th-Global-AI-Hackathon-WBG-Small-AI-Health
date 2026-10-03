@@ -8,5 +8,6 @@
  "reminder_send_time": "18:30",
  "speech_service_url": "http://localhost:8765",
  "reminder_days_before": 1,
- "lexicon": "fr"
+ "lexicon": "fr",
+ "use_classifier": false
 }

@@ -6,7 +6,7 @@ available and falls back to typing when it is not.
   GET  /health      -> {"ok": true, "model": "..."}
   POST /transcribe  body = audio bytes (webm/ogg/wav/mp3) -> {"text": "...", "audio_s": .., "proc_s": ..}
 
-Run: .venv-speech/Scripts/python speech/server.py [--model base] [--port 8765]
+Run: .venv-speech/Scripts/python speech/server.py [--model small|base] [--port 8765]
 """
 import argparse
 import json
@@ -76,7 +76,7 @@ class Handler(BaseHTTPRequestHandler):
 def main():
     global MODEL, MODEL_NAME
     ap = argparse.ArgumentParser()
-    ap.add_argument("--model", default="base")
+    ap.add_argument("--model", default="small")  # demo model; base = low-end fallback
     ap.add_argument("--port", type=int, default=8765)
     a = ap.parse_args()
     MODEL_NAME = f"faster-whisper-{a.model} int8 (offline)"

@@ -92,7 +92,7 @@
  "flag.urgent_bp_very_high": "URGENT: BP above 200/120. Ask a clinician / refer today.",
  "flag.urgent_bp_with_symptoms": "URGENT: BP above 180/110 with a danger symptom. Ask a clinician / refer today.",
  "flag.urgent_if_symptoms_confirmed": "URGENT if confirmed: BP above 180/110 and a danger symptom is unclear. Check now.",
- "flag.ask_danger_symptoms": "Danger signs not all recorded: ask about headache, chest pain, breathlessness, blurred vision (HEARTS).",
+ "flag.ask_danger_symptoms": "Raised BP and danger signs not all recorded: ask about headache, chest pain, breathlessness, blurred vision (HEARTS).",
  "flag.urgent_chest_pain": "Chest pain: HEARTS urgent-referral sign. Ask a clinician today.",
  "flag.urgent_breathless": "Shortness of breath: HEARTS urgent-referral sign. Ask a clinician today.",
  "flag.urgent_vision": "Blurred vision: HEARTS urgent-referral sign if recent. Ask a clinician today.",
@@ -110,5 +110,6 @@
  "speech.record": "🎙 Dictate",
  "speech.stop": "■ Stop",
  "speech.working": "Transcribing…",
- "speech.done": "Transcribed offline in {s} s: check the text"
+ "speech.done": "Transcribed offline in {s} s: check the text",
+ "danger_asked": "I asked about danger signs: severe headache, chest pain, breathlessness, blurred vision"
 }

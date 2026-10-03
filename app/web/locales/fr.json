@@ -93,7 +93,7 @@
  "flag.urgent_bp_very_high": "URGENT : TA > 200/120. Avis clinicien / référer aujourd'hui.",
  "flag.urgent_bp_with_symptoms": "URGENT : TA > 180/110 avec un signe de danger. Avis clinicien / référer aujourd'hui.",
  "flag.urgent_if_symptoms_confirmed": "URGENT si confirmé : TA > 180/110 et un signe de danger incertain. Vérifier maintenant.",
- "flag.ask_danger_symptoms": "Signes de danger non tous notés : demander céphalées, douleur thoracique, dyspnée, vision floue (HEARTS).",
+ "flag.ask_danger_symptoms": "TA élevée et signes de danger non tous notés : demander céphalées, douleur thoracique, dyspnée, vision floue (HEARTS).",
  "flag.urgent_chest_pain": "Douleur thoracique : critère de référence urgente HEARTS. Avis clinicien aujourd'hui.",
  "flag.urgent_breathless": "Dyspnée : critère de référence urgente HEARTS. Avis clinicien aujourd'hui.",
  "flag.urgent_vision": "Vision floue : critère de référence urgente HEARTS si récente. Avis clinicien aujourd'hui.",
@@ -111,5 +111,6 @@
  "speech.record": "🎙 Dicter",
  "speech.stop": "■ Arrêter",
  "speech.working": "Transcription…",
- "speech.done": "Transcrit hors ligne en {s} s : vérifiez le texte"
+ "speech.done": "Transcrit hors ligne en {s} s : vérifiez le texte",
+ "danger_asked": "J'ai demandé les signes de danger : céphalées sévères, douleur thoracique, dyspnée, vision floue"
 }

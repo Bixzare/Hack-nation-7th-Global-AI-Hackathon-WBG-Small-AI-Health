@@ -29,6 +29,7 @@ function paintText() {
   $("samplesTitle").textContent = t("note.samples");
   $("flagsTitle").textContent = t("flags.title");
   $("btnApprove").textContent = t("approve");
+  $("dangerAskedLabel").textContent = t("danger_asked");
   $("outboxTitle").textContent = t("outbox.title");
   $("btnSend").textContent = t("outbox.simulate");
   $("savedTitle").textContent = t("saved.title");
@@ -87,7 +88,7 @@ function renderRecord() {
   }
   renderFlags();
   const left = Object.values(RECORD).filter(f => f.check).length;
-  $("btnApprove").disabled = left > 0 || !$("consent").checked;
+  $("btnApprove").disabled = left > 0 || !$("consent").checked || !$("dangerAsked").checked;
   $("status").textContent = left ? t("status.left", { n: left }) : t("status.ready");
 }
 
@@ -105,9 +106,10 @@ function renderFlags() {
 
 async function approve() {
   const v = values();
-  const id = await store.add("records", { created_at: new Date().toISOString(), note: $("note").value, record: RECORD, flags: checkProtocol(v) });
+  const id = await store.add("records", { created_at: new Date().toISOString(), note: $("note").value, record: RECORD,
+    flags: checkProtocol(v), danger_signs_asked: true });
   await outbox.queue(outbox.remindersFor(id, v, P));
-  RECORD = null; $("recordBox").hidden = true; $("note").value = ""; $("consent").checked = false;
+  RECORD = null; $("recordBox").hidden = true; $("note").value = ""; $("consent").checked = false; $("dangerAsked").checked = false;
   $("status").textContent = "";
   refreshLists();
   alertSaved(id);
@@ -235,7 +237,9 @@ async function toggleMic() {
   tSms = makeT(P.packs.sms, P.packs.fallback);
   SCHEMA = await (await fetch("engine/schema.json")).json();
   LEX = await (await fetch(`lexicon/${P.lexicon}.json`)).json();
-  try { const r = await fetch("models/symptom_clf.json"); if (r.ok) CLF = loadClassifier(await r.json()); } catch {}
+  // Rules-only by default: on the gold test the classifier added nothing (errors are upstream: lexicon
+  // coverage and ASR). It stays available behind profile.use_classifier.
+  if (P.use_classifier) try { const r = await fetch("models/symptom_clf.json"); if (r.ok) CLF = loadClassifier(await r.json()); } catch {}
   paintText(); paintNet(); showPin();
 
   $("btnPin").onclick = submitPin;
@@ -249,6 +253,7 @@ async function toggleMic() {
     $("recordBox").hidden = false; renderRecord();
   };
   $("consent").onchange = () => RECORD && renderRecord();
+  $("dangerAsked").onchange = () => RECORD && renderRecord();
   $("note").oninput = () => { delete $("note").dataset.source; };
   $("btnApprove").onclick = approve;
   $("btnMic").onclick = toggleMic;

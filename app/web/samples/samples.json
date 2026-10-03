@@ -3,32 +3,32 @@
   "id": 1,
   "title": "Femme 38 ans — suivi (voix synthétique)",
   "audio": "samples/sample-01.mp3",
-  "transcript": "femme 38 ans, tension 162 sur 98, s'est fallée depuis 3 jours. Elle oublie parfois ses médicaments, pas enceinte, conseille sur le sel donné, revoir dans 2 semaines.",
-  "model": "Whisper base (faster-whisper int8, hors ligne)",
+  "transcript": "Femme, 38 ans. Tention, 162 sur 98. C'est fallé depuis trois jours. Elle oublie parfois ses médicaments. Pas enceinte. Conseil sur le sel donné. Revoire dans deux semaines.",
+  "model": "Whisper small (faster-whisper int8, hors ligne)",
   "synthetic": true
  },
  {
   "id": 4,
   "title": "Homme 67 ans — TA très élevée (voix synthétique)",
   "audio": "samples/sample-04.mp3",
-  "transcript": "Hum, 67 ans, tension 190 sur 115, douleur thoracique depuis ce matin et soufflement, référez à l'hôpital aujourd'hui.",
-  "model": "Whisper base (faster-whisper int8, hors ligne)",
+  "transcript": "Homme, 67 ans. Tention, 190 sur 115. Douleur thoracique depuis ce matin et soufflement. Référez à l'hôpital aujourd'hui.",
+  "model": "Whisper small (faster-whisper int8, hors ligne)",
   "synthetic": true
  },
  {
   "id": 13,
   "title": "Femme 52 ans — TA contrôlée (voix synthétique)",
   "audio": "samples/sample-13.mp3",
-  "transcript": "femme 52 ans, tension 136 sur 80, pas de plainte, traitement bien suivi, revoir dans trois mois.",
-  "model": "Whisper base (faster-whisper int8, hors ligne)",
+  "transcript": "femme 52 ans tension 136 sur 80 pas de plainte traitement bien suivi revoir dans trois mois",
+  "model": "Whisper small (faster-whisper int8, hors ligne)",
   "synthetic": true
  },
  {
   "id": 20,
   "title": "Homme 39 ans — symptôme incertain (voix synthétique)",
   "audio": "samples/sample-20.mp3",
-  "transcript": "homme 39 ans, tension 152 sur 87, oublie rarement ses comprimés, peut-être un peu et souffler, revoir dans deux semaines.",
-  "model": "Whisper base (faster-whisper int8, hors ligne)",
+  "transcript": "Homme 39 ans. Tention 152 sur 97. Oubliez rarement ses comprimés. Peut-être un peu essoufflé. Revois dans deux semaines.",
+  "model": "Whisper small (faster-whisper int8, hors ligne)",
   "synthetic": true
  }
 ]

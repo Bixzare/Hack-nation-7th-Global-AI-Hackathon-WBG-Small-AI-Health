@@ -129,6 +129,19 @@
   re-conversion (transformers + torch, about 2 GB of tooling) or an unverified third-party conversion.
   Skipped (time-box).
 
+- **Rules-only is the default extractor** (`profile.use_classifier: false`). On the test split the
+  classifier added nothing, because the errors are upstream (lexicon coverage and ASR spelling) and the
+  classifier only re-labels mentions the lexicon already found. It stays in the repo
+  (`app/web/models/symptom_clf.json`, `ml/train_classifier.py`).
+- **Alert fatigue fix.** The "ask about danger signs" flag now fires only when BP is raised (HEARTS
+  ≥140/90) AND a danger symptom is not recorded. Approval requires a one-tap "I asked about danger
+  signs" confirmation, stored with the record.
+  - Measured: the flag still fires on 15/20 test notes (Whisper small clean), because most gold
+    patients have raised BP and notes rarely mention all four signs.
+  - Option to discuss: let the confirmation resolve the flag.
+- Hosted samples are now Whisper small transcripts (dev clips 1, 4, 13, 20). The speech service
+  defaults to small.
+
 **Trade-off table** (frozen test split, 20 clips; noisy = 9 test clips; laptop CPU, int8):
 
 | | Whisper base (fallback) | **Whisper small (demo)** |

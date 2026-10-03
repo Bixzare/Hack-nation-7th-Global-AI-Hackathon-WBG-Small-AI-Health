@@ -40,8 +40,10 @@ export function checkProtocol(v) {
     else if (uncertain.length) add("urgent_if_symptoms_confirmed", "urgent");
   }
   // [H] p.36: "Screen each patient for danger signs that would suggest the need for immediate referral."
-  // Also the safety net when the extractor misses a symptom (it then reads "not_mentioned").
-  if (DANGER.some(k => v[k] === "not_mentioned")) add("ask_danger_symptoms", p && (p.s > URGENT_SYMPT.sys || p.d > URGENT_SYMPT.dia) ? "urgent" : "gap");
+  // To avoid alert fatigue the flag fires only when BP is raised ([H] 'Diagnosis': >=140/90) AND a danger
+  // symptom is not recorded. Every visit also requires a one-tap "danger signs asked" confirmation (UI).
+  if (raised && DANGER.some(k => v[k] === "not_mentioned"))
+    add("ask_danger_symptoms", p.s > URGENT_SYMPT.sys || p.d > URGENT_SYMPT.dia ? "urgent" : "gap");
   if (v.chest_pain === "present") add("urgent_chest_pain", "urgent");        // [H] p.36 new chest pain
   if (v.breathless === "present") add("urgent_breathless", "urgent");        // [H] p.36 heart failure signs
   if (v.blurred_vision === "present") add("urgent_vision", "urgent");         // [H] p.36 recent deterioration of vision

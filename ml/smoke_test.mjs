@@ -39,6 +39,8 @@ for (let k = 0; k < 30; k++) {
   await b.click();
 }
 await page.click("#consent");
+const approveBeforeDanger = await page.$eval("#btnApprove", b => b.disabled);
+await page.click("#dangerAsked");
 const approveDisabled = await page.$eval("#btnApprove", b => b.disabled);
 await page.click("#btnApprove");
 await new Promise(r => setTimeout(r, 800));
@@ -64,5 +66,5 @@ await new Promise(r => setTimeout(r, 800));
 const offlineTitle = await page.$eval("#title", e => e.textContent).catch(() => "FAILED");
 const missingClips = (outboxText.match(/clip pas encore/g) || []).length;
 
-console.log(JSON.stringify({ extracted, flags, approveDisabled, outboxText, saved, sample, offlineTitle, missingClips, errors }, null, 1));
+console.log(JSON.stringify({ extracted, flags, approveBeforeDanger, approveDisabled, outboxText, saved, sample, offlineTitle, missingClips, errors }, null, 1));
 await browser.close();
