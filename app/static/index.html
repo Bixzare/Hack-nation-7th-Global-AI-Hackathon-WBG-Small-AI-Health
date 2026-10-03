@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HTN visit recorder</title>
+<!-- No external resources: the page must work in airplane mode. -->
+<style>
+  :root { --bg:#f6f7f9; --card:#fff; --ink:#1b1f24; --muted:#5b6470; --check:#fff4d6; --checkb:#e0a800;
+          --ok:#e7f6ec; --okb:#2e8b57; --accent:#1f5fbf; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font:16px/1.4 system-ui, sans-serif; }
+  main { max-width:420px; margin:0 auto; padding:12px 16px 80px; }
+  h1 { font-size:1.15rem; margin:4px 0 2px; }
+  .sub { color:var(--muted); font-size:.85rem; margin-bottom:12px; }
+  textarea { width:100%; min-height:110px; font:inherit; padding:8px; border:1px solid #c9ced6; border-radius:8px; }
+  button { font:inherit; padding:10px 14px; border-radius:8px; border:0; background:var(--accent); color:#fff; }
+  button.secondary { background:#e3e7ee; color:var(--ink); }
+  button:disabled { opacity:.45; }
+  .row { display:flex; gap:8px; margin:8px 0 14px; }
+  .field { background:var(--card); border:2px solid #dde1e7; border-radius:8px; padding:8px; margin:6px 0; }
+  .field.check { background:var(--check); border-color:var(--checkb); }
+  .field.ok { background:var(--ok); border-color:var(--okb); }
+  .field label { display:block; font-size:.85rem; color:var(--muted); }
+  .field .line { display:flex; gap:6px; align-items:center; }
+  .field input, .field select { flex:1; font:inherit; padding:6px; border:1px solid #c9ced6; border-radius:6px; min-width:0; }
+  .tag { font-size:.75rem; font-weight:600; }
+  .check .tag { color:#8a6200; } .ok .tag { color:var(--okb); }
+  #status { margin:10px 0; font-weight:600; }
+  .saved { font-size:.85rem; color:var(--muted); }
+</style>
+</head>
+<body>
+<main>
+  <h1>Hypertension visit</h1>
+  <div class="sub">Prototype · synthetic data only · supports, does not replace, the health worker</div>
+
+  <textarea id="narrative" placeholder="Type or speak the visit summary (Kinyarwanda or English)"></textarea>
+  <div class="row">
+    <button id="btnExtract">Fill record</button>
+  </div>
+
+  <div id="form"></div>
+  <div id="status"></div>
+  <div class="row"><button id="btnApprove" disabled>Approve &amp; save</button></div>
+
+  <h2 style="font-size:1rem">Saved on this device</h2>
+  <div id="saved" class="saved"></div>
+</main>
+<script>
+let SCHEMA = {}, RECORD = null;
+const $ = id => document.getElementById(id);
+
+async function api(path, body) {
+  const r = await fetch(path, body ? {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(body)} : {});
+  const j = await r.json();
+  if (!r.ok) throw j;
+  return j;
+}
+
+function render() {
+  const form = $("form"); form.innerHTML = "";
+  for (const [name, spec] of Object.entries(SCHEMA)) {
+    const f = RECORD[name];
+    const div = document.createElement("div");
+    div.className = "field " + (f.check ? "check" : "ok");
+    let input;
+    if (spec.kind === "enum") {
+      input = document.createElement("select");
+      input.innerHTML = '<option value="">—</option>' + spec.values.map(v => `<option>${v}</option>`).join("");
+    } else {
+      input = document.createElement("input");
+      input.type = spec.kind === "int" ? "number" : spec.kind === "date" ? "date" : "text";
+      if (spec.kind === "int") input.inputMode = "numeric";
+    }
+    input.value = f.value ?? "";
+    input.onchange = () => { f.value = input.value === "" ? null : input.value; f.check = false; f.source = "typed"; render(); };
+    const ok = document.createElement("button");
+    ok.className = "secondary"; ok.textContent = "OK";
+    ok.onclick = () => { f.check = false; render(); };
+    ok.hidden = !f.check;
+    div.innerHTML = `<label>${spec.label} <span class="tag">${f.check ? "please check" : "confirmed"}</span></label>`;
+    const line = document.createElement("div"); line.className = "line";
+    line.append(input, ok); div.append(line);
+    form.append(div);
+  }
+  const left = Object.values(RECORD).filter(f => f.check).length;
+  $("btnApprove").disabled = left > 0;
+  $("status").textContent = left ? `${left} field(s) still need checking` : "All fields checked — ready to approve";
+}
+
+$("btnExtract").onclick = async () => {
+  RECORD = (await api("/api/extract", {text: $("narrative").value})).record;
+  render();
+};
+
+$("btnApprove").onclick = async () => {
+  try {
+    const r = await api("/api/records", {narrative: $("narrative").value, record: RECORD});
+    $("status").textContent = `Saved as record #${r.id}`;
+    RECORD = null; $("form").innerHTML = ""; $("narrative").value = ""; $("btnApprove").disabled = true;
+    loadSaved();
+  } catch (e) { $("status").textContent = "Not saved: " + JSON.stringify(e.detail ?? e); }
+};
+
+async function loadSaved() {
+  const rows = await api("/api/records");
+  $("saved").innerHTML = rows.map(r => {
+    const v = k => r.record[k]?.value ?? "?";
+    return `<div>#${r.id} · ${r.created_at} · ${v("patient_name")} · BP ${v("bp1_sys")}/${v("bp1_dia")}</div>`;
+  }).join("") || "None yet";
+}
+
+(async () => { SCHEMA = await api("/api/schema"); loadSaved(); })();
+</script>
+</body>
+</html>
