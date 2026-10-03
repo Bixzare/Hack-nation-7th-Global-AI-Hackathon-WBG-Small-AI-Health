@@ -123,6 +123,7 @@ Speech→record uses the extractor as of `4445cad` (lexicon v3).
 | Danger symptom present → missed (not_mentioned) | 11 of 15 clean before v3; headache recall is the weak point (ASR spells "céphalées" phonetically) | gold, base | |
 | Urgent-flag recall (HEARTS on extracted vs gold record) | base clean 5/6 (83%), noisy 3/4, tiny clean 6/6; false urgent 2/24 (base) | `ml/eval_flags.mjs` | |
 | Uncertain symptoms surfaced (field or flag) | 3/3 clean, 2/2 noisy | gold | |
+| **Whisper small** (486 MB, RTF 0.77 clean / 1.27 noisy, load 91 s first run) | field acc **92.6% clean / 91.0% noisy** (unseen-26: 92.9 / 90.7); BP1 97%; urgent-flag recall **6/6 clean, 4/4 noisy, 0 false urgent**; false-absent 0; headache still 53% (7 present→not_mentioned) | gold, lexicon v3 | laptop CPU |
 | Typed→record (gold) | **not measured: RECORDING-SCRIPT.md missing** | | |
 | Works fully offline | yes: SW cache, offline reload passes; speech service on 127.0.0.1 | `ml/smoke_test.mjs` (headless Chrome) | laptop |
 
@@ -135,8 +136,12 @@ Speech→record uses the extractor as of `4445cad` (lexicon v3).
    limitation.
 3. **Voice split:** which clips use which of the 3 male voices? It's needed for the data table and
    per-voice results.
-4. **Whisper small (486 MB):** downloaded overnight (under your 500 MB limit) to test whether it
-   fixes "céphalées". Result below. If it's better, is the laptop budget acceptable?
+4. **Whisper small (486 MB) vs base (148 MB) on the health-centre laptop?** Small is clearly better:
+   92.6% vs 85.7% field accuracy, 100% urgent recall, 0 false urgent. But it is 3.3× bigger and about
+   3× slower (a 10 s clip takes about 8 s clean; slower than real time on noisy audio). Headache stays
+   at 53% even with small, so that gap is probably wording/convention rather than ASR, which makes
+   question 2 more important. The service still defaults to base; switch with `--model small`.
+   Recommendation: small for the demo laptop, base as the "low-end" fallback, and report both.
 5. **Deploy:** still waiting for a yes to create a public GitHub repo (`gh` is logged in as Bixzare)
    or for you to connect Vercel. Nothing has been deployed.
 6. **Classifier:** keep it (113 KB, no gold gain) or ship rules only? The brief's fallback says rules
