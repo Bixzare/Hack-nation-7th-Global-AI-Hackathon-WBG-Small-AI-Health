@@ -129,6 +129,22 @@ export function ruleStatus(clause, termIdx, termLen, lex, inheritNeg) {
   return { status: "present", conf: 0.85 };
 }
 
+// Symptom mentions with their (normalized) clause: used to build classifier training data in ml/.
+// Classifier input: a few words around the symptom term (same function for training and inference).
+export function termWindow(clause, idx, len) {
+  return `${lastWords(clause.text.slice(0, idx), 6)} ${clause.text.slice(idx, idx + len)} ${firstWords(clause.text.slice(idx + len), 4)}${clause.question ? " ?" : ""}`.trim();
+}
+
+export function mentions(text, lex) {
+  const out = [];
+  for (const c of clauses(normalize(text, lex), lex)) for (const sym of SYMPTOMS)
+    for (const p of lex.symptoms[sym]) {
+      const m = new RegExp(p).exec(c.text);
+      if (m) { out.push({ symptom: sym, clause: termWindow(c, m.index, m[0].length) }); break; }
+    }
+  return out;
+}
+
 // ---------- main ----------
 // opts: { source: "typed" | "speech", classifier: (clauseText, symptom) => {status, conf} | null }
 export function extract(text, schema, lex, opts = {}) {
@@ -179,7 +195,7 @@ export function extract(text, schema, lex, opts = {}) {
         const m = new RegExp(p).exec(c.text);
         if (!m) continue;
         let r = ruleStatus(c, m.index, m[0].length, lex, cont && neg);
-        if (opts.classifier) r = combine(r, opts.classifier(c.text, sym));
+        if (opts.classifier) r = combine(r, opts.classifier(termWindow(c, m.index, m[0].length), sym));
         found.push(r);
         break;
       }

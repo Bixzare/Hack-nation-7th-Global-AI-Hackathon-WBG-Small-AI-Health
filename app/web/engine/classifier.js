@@ -10,12 +10,12 @@ export function loadClassifier(model) {
     const counts = new Map();
     for (const word of text.split(/\s+/).filter(Boolean)) {
       const w = ` ${word} `;
-      for (let n = model.ngram[0]; n <= model.ngram[1]; n++) {
-        for (let i = 0; i + n <= w.length; i++) {
-          const j = vocab.get(w.slice(i, i + n));
-          if (j !== undefined) counts.set(j, (counts.get(j) || 0) + 1);
-          if (i + n === w.length) break;
-        }
+      for (let n = model.ngram[0]; n <= model.ngram[1]; n++) { // mirrors sklearn _char_wb_ngrams exactly
+        let off = 0;
+        const add = g => { const j = vocab.get(g); if (j !== undefined) counts.set(j, (counts.get(j) || 0) + 1); };
+        add(w.slice(0, n));
+        while (off + n < w.length) { off++; add(w.slice(off, off + n)); }
+        if (off === 0) break;
       }
     }
     let norm = 0;

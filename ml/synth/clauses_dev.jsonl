@@ -1,0 +1,526 @@
+{"symptom":"breathless","clause":"possible gene respiratoire","label":"uncertain"}
+{"symptom":"breathless","clause":"difficulte a respirer a preciser","label":"uncertain"}
+{"symptom":"breathless","clause":"sans dyspnee","label":"absent"}
+{"symptom":"headache","clause":"cephalees non certaine","label":"uncertain"}
+{"symptom":"breathless","clause":"pas de dyspnee","label":"absent"}
+{"symptom":"breathless","clause":"dyspnee douteuse","label":"uncertain"}
+{"symptom":"blurred_vision","clause":"presente baisse de la vue","label":"present"}
+{"symptom":"blurred_vision","clause":"15 jours sous traitement pas de vision floue signalee grossesse exclue","label":"absent"}
+{"symptom":"headache","clause":"des cephalees : non","label":"absent"}
+{"symptom":"blurred_vision","clause":"baisse de la vue douteuse","label":"uncertain"}
+{"symptom":"breathless","clause":"difficulte a respirer","label":"present"}
+{"symptom":"chest_pain","clause":"se plaint de douleur thoracique","label":"present"}
+{"symptom":"chest_pain","clause":"pas de mal a la poitrine ni de gene respiratoire","label":"absent"}
+{"symptom":"breathless","clause":"mal a la poitrine ni de gene respiratoire","label":"absent"}
+{"symptom":"headache","clause":"cephalee ++","label":"present"}
+{"symptom":"chest_pain","clause":"douleur thoracique negatif","label":"absent"}
+{"symptom":"blurred_vision","clause":"pas vue trouble","label":"absent"}
+{"symptom":"breathless","clause":"essoufflement : non","label":"absent"}
+{"symptom":"blurred_vision","clause":"flou visuel ++","label":"present"}
+{"symptom":"breathless","clause":"rapporte souffle court","label":"present"}
+{"symptom":"blurred_vision","clause":"troubles visuels presente","label":"present"}
+{"symptom":"blurred_vision","clause":"a flou visuel","label":"present"}
+{"symptom":"headache","clause":"7 jours pas sous traitement a cephalee mal a la poitrine","label":"present"}
+{"symptom":"chest_pain","clause":"jours pas sous traitement a cephalee mal a la poitrine douteuse conseils donnes sur","label":"uncertain"}
+{"symptom":"blurred_vision","clause":"donnes sur le sel pas de vue trouble","label":"absent"}
+{"symptom":"chest_pain","clause":"rapporte dt","label":"present"}
+{"symptom":"headache","clause":"se plaint de maux de tete","label":"present"}
+{"symptom":"blurred_vision","clause":"pas de troubles visuels","label":"absent"}
+{"symptom":"breathless","clause":"pas de gene respiratoire","label":"absent"}
+{"symptom":"headache","clause":"rapporte cephalees","label":"present"}
+{"symptom":"breathless","clause":"rapporte souffle court","label":"present"}
+{"symptom":"breathless","clause":"difficulte a respirer","label":"present"}
+{"symptom":"headache","clause":"des cephalees non certaine","label":"uncertain"}
+{"symptom":"blurred_vision","clause":"troubles visuels depuis quelques jours","label":"present"}
+{"symptom":"breathless","clause":"difficulte a respirer","label":"present"}
+{"symptom":"blurred_vision","clause":"pas de vision floue","label":"absent"}
+{"symptom":"breathless","clause":"gene respiratoire  ?","label":"uncertain"}
+{"symptom":"headache","clause":"a 194 sur 118 nie des cephalees oriente vers le medecin","label":"absent"}
+{"symptom":"chest_pain","clause":"des cephalees oriente vers le medecin douleur thoracique ++","label":"present"}
+{"symptom":"blurred_vision","clause":"vue trouble : non","label":"absent"}
+{"symptom":"breathless","clause":"pas de souffle court signalee","label":"absent"}
+{"symptom":"headache","clause":"peut-etre mal de tete","label":"uncertain"}
+{"symptom":"chest_pain","clause":"rapporte douleur thoracique","label":"present"}
+{"symptom":"breathless","clause":"dyspnee","label":"present"}
+{"symptom":"chest_pain","clause":"douleur a la poitrine negatif","label":"absent"}
+{"symptom":"blurred_vision","clause":"presente flou visuel","label":"present"}
+{"symptom":"headache","clause":"mal de tete depuis 3 jours","label":"present"}
+{"symptom":"blurred_vision","clause":"sans flou visuel","label":"absent"}
+{"symptom":"chest_pain","clause":"possible dt","label":"uncertain"}
+{"symptom":"headache","clause":"ne signale pas de des cephalees","label":"absent"}
+{"symptom":"breathless","clause":"plainte de essoufflement","label":"present"}
+{"symptom":"breathless","clause":"essoufflement : non","label":"absent"}
+{"symptom":"breathless","clause":"pas de gene respiratoire signalee","label":"absent"}
+{"symptom":"blurred_vision","clause":"plainte de baisse de la vue","label":"present"}
+{"symptom":"breathless","clause":"se plaint de souffle court","label":"present"}
+{"symptom":"chest_pain","clause":"absence de douleurs thoraciques","label":"absent"}
+{"symptom":"headache","clause":"pas de cephalee ni de flou visuel","label":"absent"}
+{"symptom":"blurred_vision","clause":"pas de cephalee ni de flou visuel","label":"absent"}
+{"symptom":"breathless","clause":"presente dyspnee","label":"present"}
+{"symptom":"breathless","clause":"rapporte essoufflement","label":"present"}
+{"symptom":"blurred_vision","clause":"troubles visuels","label":"present"}
+{"symptom":"chest_pain","clause":"presente douleurs thoraciques","label":"present"}
+{"symptom":"chest_pain","clause":"pas de dt","label":"absent"}
+{"symptom":"breathless","clause":"presente difficulte a respirer","label":"present"}
+{"symptom":"headache","clause":"sous captopril pas de flou visuel cephalees ++","label":"present"}
+{"symptom":"blurred_vision","clause":"1 semaine sous captopril pas de flou visuel cephalees ++","label":"absent"}
+{"symptom":"breathless","clause":"homme 42 ans ta 135/83 presente dyspnee rdv dans 1 mois","label":"present"}
+{"symptom":"chest_pain","clause":"pas de douleurs thoraciques","label":"absent"}
+{"symptom":"headache","clause":"pas de des maux de tete signalee","label":"absent"}
+{"symptom":"breathless","clause":"se plaint de difficulte a respirer","label":"present"}
+{"symptom":"blurred_vision","clause":"signale troubles visuels","label":"present"}
+{"symptom":"breathless","clause":"presente dyspnee","label":"present"}
+{"symptom":"chest_pain","clause":"rapporte douleur a la poitrine","label":"present"}
+{"symptom":"breathless","clause":"gene respiratoire ++","label":"present"}
+{"symptom":"headache","clause":"a cephalee","label":"present"}
+{"symptom":"chest_pain","clause":"rapporte mal a la poitrine","label":"present"}
+{"symptom":"breathless","clause":"souffle court depuis quelques jours","label":"present"}
+{"symptom":"breathless","clause":"132 sur 76 se plaint de gene respiratoire revoir dans 2 semaines","label":"present"}
+{"symptom":"blurred_vision","clause":"pas baisse de la vue","label":"absent"}
+{"symptom":"headache","clause":"absence de cephalee","label":"absent"}
+{"symptom":"breathless","clause":"aucune difficulte a respirer","label":"absent"}
+{"symptom":"headache","clause":"presente des cephalees","label":"present"}
+{"symptom":"breathless","clause":"essoufflement depuis 2 jours","label":"present"}
+{"symptom":"headache","clause":"plaint de douleur a la poitrine maux de tete non certaine enceinte de","label":"uncertain"}
+{"symptom":"chest_pain","clause":"traitement en cours se plaint de douleur a la poitrine maux de tete non","label":"present"}
+{"symptom":"breathless","clause":"sur 108 revoir dans 1 mois essoufflement aucun traitement en cours","label":"present"}
+{"symptom":"headache","clause":"pas de maux de tete","label":"absent"}
+{"symptom":"chest_pain","clause":"dt  ?","label":"uncertain"}
+{"symptom":"blurred_vision","clause":"troubles visuels ++","label":"present"}
+{"symptom":"breathless","clause":"m 66 ans ta 155/88 essoufflement traitee par hydrochlorothiazide oublie","label":"present"}
+{"symptom":"chest_pain","clause":"absence de douleur a la poitrine","label":"absent"}
+{"symptom":"breathless","clause":"gene respiratoire","label":"present"}
+{"symptom":"headache","clause":"maux de tete presente","label":"present"}
+{"symptom":"blurred_vision","clause":"pas de vision floue","label":"absent"}
+{"symptom":"chest_pain","clause":"nie douleurs thoraciques","label":"absent"}
+{"symptom":"breathless","clause":"souffle court ++","label":"present"}
+{"symptom":"breathless","clause":"gene respiratoire presente","label":"present"}
+{"symptom":"headache","clause":"signale maux de tete","label":"present"}
+{"symptom":"headache","clause":"pas de cephalee","label":"absent"}
+{"symptom":"chest_pain","clause":"parle vaguement de douleur thoracique","label":"uncertain"}
+{"symptom":"blurred_vision","clause":"vue trouble presente","label":"present"}
+{"symptom":"chest_pain","clause":"ne signale pas de douleurs thoraciques","label":"absent"}
+{"symptom":"headache","clause":"pas de des cephalees","label":"absent"}
+{"symptom":"chest_pain","clause":"pas de douleur a la poitrine signalee","label":"absent"}
+{"symptom":"headache","clause":"signale cephalee","label":"present"}
+{"symptom":"headache","clause":"oublie pas ses prises pas de cephalee sensibilisation faite controle dans","label":"absent"}
+{"symptom":"headache","clause":"pas de cephalees","label":"absent"}
+{"symptom":"chest_pain","clause":"a douleur thoracique","label":"present"}
+{"symptom":"breathless","clause":"presente souffle court","label":"present"}
+{"symptom":"breathless","clause":"rapporte difficulte a respirer","label":"present"}
+{"symptom":"breathless","clause":"pas essoufflement","label":"absent"}
+{"symptom":"chest_pain","clause":"se plaint de douleur a la poitrine","label":"present"}
+{"symptom":"blurred_vision","clause":"pas de vue trouble","label":"absent"}
+{"symptom":"blurred_vision","clause":"se plaint de troubles visuels","label":"present"}
+{"symptom":"headache","clause":"maux de tete","label":"present"}
+{"symptom":"blurred_vision","clause":"baisse de la vue","label":"present"}
+{"symptom":"headache","clause":"faite sous antihypertenseur pas de des maux de tete","label":"absent"}
+{"symptom":"chest_pain","clause":"a 124 sur 76 pas de douleur a la poitrine ni de vue trouble","label":"absent"}
+{"symptom":"blurred_vision","clause":"douleur a la poitrine ni de vue trouble sensibilisation faite sous antihypertenseur","label":"absent"}
+{"symptom":"headache","clause":"peut-etre cephalee","label":"uncertain"}
+{"symptom":"chest_pain","clause":"pas de mal a la poitrine","label":"absent"}
+{"symptom":"breathless","clause":"se plaint de dyspnee","label":"present"}
+{"symptom":"headache","clause":"des maux de tete","label":"present"}
+{"symptom":"headache","clause":"ans tension arterielle 168 sur 92 maux de tete presente signale dyspnee sous","label":"present"}
+{"symptom":"blurred_vision","clause":"presente signale dyspnee sous traitement a baisse de la vue rdv dans 1 semaine","label":"present"}
+{"symptom":"breathless","clause":"92 maux de tete presente signale dyspnee sous traitement a baisse","label":"present"}
+{"symptom":"breathless","clause":"souffle court presente","label":"present"}
+{"symptom":"headache","clause":"a des cephalees","label":"present"}
+{"symptom":"blurred_vision","clause":"pas vue trouble","label":"absent"}
+{"symptom":"headache","clause":"se plaint de cephalee","label":"present"}
+{"symptom":"blurred_vision","clause":"plainte de vue trouble","label":"present"}
+{"symptom":"chest_pain","clause":"pas de douleur thoracique","label":"absent"}
+{"symptom":"breathless","clause":"signale dyspnee","label":"present"}
+{"symptom":"headache","clause":"nie maux de tete","label":"absent"}
+{"symptom":"chest_pain","clause":"pas de douleur a la poitrine ni de dyspnee","label":"absent"}
+{"symptom":"breathless","clause":"douleur a la poitrine ni de dyspnee","label":"absent"}
+{"symptom":"headache","clause":"cours pas de vision floue nie cephalees","label":"absent"}
+{"symptom":"blurred_vision","clause":"aucun traitement en cours pas de vision floue nie cephalees","label":"absent"}
+{"symptom":"headache","clause":"a des cephalees","label":"present"}
+{"symptom":"breathless","clause":"presente essoufflement","label":"present"}
+{"symptom":"blurred_vision","clause":"pas de vue trouble","label":"absent"}
+{"symptom":"blurred_vision","clause":"pas de baisse de la vue","label":"absent"}
+{"symptom":"breathless","clause":"possible dyspnee","label":"uncertain"}
+{"symptom":"headache","clause":"des cephalees  ?","label":"uncertain"}
+{"symptom":"breathless","clause":"rapporte gene respiratoire","label":"present"}
+{"symptom":"headache","clause":"maux de tete negatif","label":"absent"}
+{"symptom":"blurred_vision","clause":"pas de flou visuel ni de souffle court","label":"absent"}
+{"symptom":"breathless","clause":"pas de flou visuel ni de souffle court","label":"absent"}
+{"symptom":"breathless","clause":"pas de essoufflement","label":"absent"}
+{"symptom":"blurred_vision","clause":"vision floue ++","label":"present"}
+{"symptom":"headache","clause":"mal de tete negatif","label":"absent"}
+{"symptom":"headache","clause":"pas de des cephalees","label":"absent"}
+{"symptom":"chest_pain","clause":"se plaint de douleur a la poitrine","label":"present"}
+{"symptom":"headache","clause":"plainte de des maux de tete","label":"present"}
+{"symptom":"breathless","clause":"souffle court non certaine","label":"uncertain"}
+{"symptom":"headache","clause":"rapporte des cephalees","label":"present"}
+{"symptom":"chest_pain","clause":"presente dt","label":"present"}
+{"symptom":"chest_pain","clause":"sans douleur a la poitrine","label":"absent"}
+{"symptom":"blurred_vision","clause":"peut-etre troubles visuels","label":"uncertain"}
+{"symptom":"breathless","clause":"pas de souffle court","label":"absent"}
+{"symptom":"chest_pain","clause":"rapporte douleur thoracique","label":"present"}
+{"symptom":"blurred_vision","clause":"pas de vision floue","label":"absent"}
+{"symptom":"breathless","clause":"signale difficulte a respirer","label":"present"}
+{"symptom":"blurred_vision","clause":"plainte de vue trouble","label":"present"}
+{"symptom":"chest_pain","clause":"presente douleur a la poitrine","label":"present"}
+{"symptom":"headache","clause":"rapporte mal de tete","label":"present"}
+{"symptom":"headache","clause":"cephalee depuis quelques jours","label":"present"}
+{"symptom":"breathless","clause":"rapporte dyspnee","label":"present"}
+{"symptom":"chest_pain","clause":"pas de mal a la poitrine","label":"absent"}
+{"symptom":"headache","clause":"cephalees incertaine","label":"uncertain"}
+{"symptom":"chest_pain","clause":"pas douleur a la poitrine","label":"absent"}
+{"symptom":"breathless","clause":"plainte de souffle court","label":"present"}
+{"symptom":"blurred_vision","clause":"pas de flou visuel","label":"absent"}
+{"symptom":"chest_pain","clause":"a douleurs thoraciques","label":"present"}
+{"symptom":"breathless","clause":"se plaint de essoufflement","label":"present"}
+{"symptom":"headache","clause":"absence de des maux de tete","label":"absent"}
+{"symptom":"headache","clause":"signale des maux de tete","label":"present"}
+{"symptom":"breathless","clause":"pas sur pour essoufflement","label":"uncertain"}
+{"symptom":"chest_pain","clause":"pas de mal a la poitrine","label":"absent"}
+{"symptom":"blurred_vision","clause":"troubles visuels presente","label":"present"}
+{"symptom":"blurred_vision","clause":"pas vue trouble","label":"absent"}
+{"symptom":"chest_pain","clause":"douleur thoracique depuis hier","label":"present"}
+{"symptom":"chest_pain","clause":"pas de douleur thoracique","label":"absent"}
+{"symptom":"blurred_vision","clause":"rapporte troubles visuels","label":"present"}
+{"symptom":"headache","clause":"nie des cephalees","label":"absent"}
+{"symptom":"breathless","clause":"a dyspnee","label":"present"}
+{"symptom":"chest_pain","clause":"douleurs thoraciques ++","label":"present"}
+{"symptom":"blurred_vision","clause":"ne signale pas de baisse de la vue","label":"absent"}
+{"symptom":"chest_pain","clause":"aucune mal a la poitrine","label":"absent"}
+{"symptom":"blurred_vision","clause":"troubles visuels presente","label":"present"}
+{"symptom":"breathless","clause":"presente gene respiratoire","label":"present"}
+{"symptom":"breathless","clause":"difficulte a respirer depuis quelques jours","label":"present"}
+{"symptom":"chest_pain","clause":"mal a la poitrine  ?","label":"uncertain"}
+{"symptom":"headache","clause":"pas de maux de tete","label":"absent"}
+{"symptom":"blurred_vision","clause":"pas de baisse de la vue","label":"absent"}
+{"symptom":"breathless","clause":"parle vaguement de difficulte a respirer","label":"uncertain"}
+{"symptom":"blurred_vision","clause":"vision floue ++","label":"present"}
+{"symptom":"chest_pain","clause":"signale douleur a la poitrine","label":"present"}
+{"symptom":"headache","clause":"pas de des cephalees","label":"absent"}
+{"symptom":"breathless","clause":"souffle court negatif","label":"absent"}
+{"symptom":"chest_pain","clause":"132 sur 81 se plaint de douleurs thoraciques conseils donnes sur le","label":"present"}
+{"symptom":"blurred_vision","clause":"sur 82 aucune gene respiratoire sans flou visuel ta de controle 132","label":"absent"}
+{"symptom":"breathless","clause":"ans ta 137 sur 82 aucune gene respiratoire sans flou visuel ta","label":"absent"}
+{"symptom":"breathless","clause":"difficulte a respirer ++","label":"present"}
+{"symptom":"headache","clause":"pas de cephalees","label":"absent"}
+{"symptom":"chest_pain","clause":"sans mal a la poitrine","label":"absent"}
+{"symptom":"chest_pain","clause":"mesure 164/90 sans vue trouble possible douleur a la poitrine pas sous traitement","label":"uncertain"}
+{"symptom":"blurred_vision","clause":"souffle court deuxieme mesure 164/90 sans vue trouble possible douleur a la","label":"absent"}
+{"symptom":"breathless","clause":"91 revoir dans 2 semaines aucune souffle court deuxieme mesure 164/90 sans","label":"absent"}
+{"symptom":"chest_pain","clause":"dt presente","label":"present"}
+{"symptom":"headache","clause":"des maux de tete  ?","label":"uncertain"}
+{"symptom":"blurred_vision","clause":"pas de vue trouble","label":"absent"}
+{"symptom":"breathless","clause":"essoufflement : non","label":"absent"}
+{"symptom":"breathless","clause":"pas de difficulte a respirer","label":"absent"}
+{"symptom":"headache","clause":"pas sur pour maux de tete","label":"uncertain"}
+{"symptom":"blurred_vision","clause":"troubles visuels non certaine","label":"uncertain"}
+{"symptom":"chest_pain","clause":"ta a 153 sur 90 a dt pas de vue trouble","label":"present"}
+{"symptom":"blurred_vision","clause":"sur 90 a dt pas de vue trouble n a jamais pris","label":"absent"}
+{"symptom":"blurred_vision","clause":"flou visuel  ?","label":"uncertain"}
+{"symptom":"headache","clause":"a des maux de tete","label":"present"}
+{"symptom":"chest_pain","clause":"pas de douleur a la poitrine","label":"absent"}
+{"symptom":"blurred_vision","clause":"a vue trouble","label":"present"}
+{"symptom":"blurred_vision","clause":"plainte de vue trouble","label":"present"}
+{"symptom":"breathless","clause":"souffle court depuis hier","label":"present"}
+{"symptom":"chest_pain","clause":"a mal a la poitrine","label":"present"}
+{"symptom":"chest_pain","clause":"douleurs thoraciques douteuse","label":"uncertain"}
+{"symptom":"blurred_vision","clause":"pas de vue trouble","label":"absent"}
+{"symptom":"blurred_vision","clause":"absence de vue trouble","label":"absent"}
+{"symptom":"headache","clause":"cephalees incertaine","label":"uncertain"}
+{"symptom":"chest_pain","clause":"presente douleurs thoraciques","label":"present"}
+{"symptom":"blurred_vision","clause":"pas de vision floue","label":"absent"}
+{"symptom":"chest_pain","clause":"douleur a la poitrine depuis quelques jours","label":"present"}
+{"symptom":"breathless","clause":"souffle court  ?","label":"uncertain"}
+{"symptom":"blurred_vision","clause":"respirer sous captopril 5 mg presente vue trouble","label":"present"}
+{"symptom":"breathless","clause":"sensibilisation faite aucun oubli pas de difficulte a respirer sous captopril 5 mg","label":"absent"}
+{"symptom":"chest_pain","clause":"aucune douleurs thoraciques","label":"absent"}
+{"symptom":"headache","clause":"pas de cephalee","label":"absent"}
+{"symptom":"blurred_vision","clause":"vision floue a preciser","label":"uncertain"}
+{"symptom":"blurred_vision","clause":"pas de vue trouble","label":"absent"}
+{"symptom":"blurred_vision","clause":"pas de baisse de la vue","label":"absent"}
+{"symptom":"breathless","clause":"rapporte difficulte a respirer","label":"present"}
+{"symptom":"blurred_vision","clause":"flou visuel incertaine","label":"uncertain"}
+{"symptom":"breathless","clause":"plainte de essoufflement","label":"present"}
+{"symptom":"blurred_vision","clause":"sans vue trouble","label":"absent"}
+{"symptom":"chest_pain","clause":"douleur thoracique depuis 1 semaine","label":"present"}
+{"symptom":"headache","clause":"pas de cephalees","label":"absent"}
+{"symptom":"breathless","clause":"a souffle court","label":"present"}
+{"symptom":"blurred_vision","clause":"pas de vue trouble","label":"absent"}
+{"symptom":"chest_pain","clause":"par losartan evacuation vers l hopital mal a la poitrine : non pas de","label":"absent"}
+{"symptom":"breathless","clause":"la poitrine : non pas de difficulte a respirer","label":"absent"}
+{"symptom":"headache","clause":"sur 104 se plaint de des maux de tete sous hctz regime pauvre","label":"present"}
+{"symptom":"chest_pain","clause":"observance correcte rdv dans 3 mois dt depuis 2 jours","label":"present"}
+{"symptom":"headache","clause":"pas cephalees","label":"absent"}
+{"symptom":"breathless","clause":"pas de difficulte a respirer","label":"absent"}
+{"symptom":"blurred_vision","clause":"baisse de la vue douteuse","label":"uncertain"}
+{"symptom":"headache","clause":"pas de cephalee","label":"absent"}
+{"symptom":"chest_pain","clause":"se plaint de douleurs thoraciques","label":"present"}
+{"symptom":"breathless","clause":"ne signale pas de souffle court","label":"absent"}
+{"symptom":"blurred_vision","clause":"se plaint de baisse de la vue","label":"present"}
+{"symptom":"breathless","clause":"pas de difficulte a respirer","label":"absent"}
+{"symptom":"headache","clause":"rapporte des cephalees","label":"present"}
+{"symptom":"headache","clause":"pas de mal de tete ni de flou visuel","label":"absent"}
+{"symptom":"blurred_vision","clause":"de mal de tete ni de flou visuel","label":"absent"}
+{"symptom":"chest_pain","clause":"dt incertaine","label":"uncertain"}
+{"symptom":"breathless","clause":"nie difficulte a respirer","label":"absent"}
+{"symptom":"blurred_vision","clause":"pas de vision floue signalee","label":"absent"}
+{"symptom":"breathless","clause":"pas essoufflement","label":"absent"}
+{"symptom":"blurred_vision","clause":"vision floue depuis 2 jours","label":"present"}
+{"symptom":"chest_pain","clause":"a douleur thoracique","label":"present"}
+{"symptom":"headache","clause":"peut-etre cephalees","label":"uncertain"}
+{"symptom":"blurred_vision","clause":"plainte de flou visuel","label":"present"}
+{"symptom":"chest_pain","clause":"pas de douleur a la poitrine","label":"absent"}
+{"symptom":"breathless","clause":"difficulte a respirer : non","label":"absent"}
+{"symptom":"blurred_vision","clause":"possible flou visuel","label":"uncertain"}
+{"symptom":"headache","clause":"signale cephalees","label":"present"}
+{"symptom":"chest_pain","clause":"douleurs thoraciques presente","label":"present"}
+{"symptom":"blurred_vision","clause":"rapporte vue trouble","label":"present"}
+{"symptom":"blurred_vision","clause":"flou visuel","label":"present"}
+{"symptom":"chest_pain","clause":"aucune dt","label":"absent"}
+{"symptom":"breathless","clause":"gene respiratoire negatif","label":"absent"}
+{"symptom":"blurred_vision","clause":"a vue trouble","label":"present"}
+{"symptom":"chest_pain","clause":"parle vaguement de mal a la poitrine","label":"uncertain"}
+{"symptom":"headache","clause":"cephalees ++","label":"present"}
+{"symptom":"breathless","clause":"pas de difficulte a respirer","label":"absent"}
+{"symptom":"headache","clause":"presente mal de tete","label":"present"}
+{"symptom":"blurred_vision","clause":"vue trouble  ?","label":"uncertain"}
+{"symptom":"breathless","clause":"essoufflement presente","label":"present"}
+{"symptom":"chest_pain","clause":"douleur thoracique  ?","label":"uncertain"}
+{"symptom":"headache","clause":"tension arterielle 137/83 se plaint de cephalee dt ++ rdv dans","label":"present"}
+{"symptom":"chest_pain","clause":"arterielle 137/83 se plaint de cephalee dt ++ rdv dans 15","label":"present"}
+{"symptom":"blurred_vision","clause":"regime pauvre en sel conseils presente vue trouble","label":"present"}
+{"symptom":"breathless","clause":"++ rdv dans 15 jours presente gene respiratoire regime pauvre en sel","label":"present"}
+{"symptom":"headache","clause":"des maux de tete depuis 2 jours","label":"present"}
+{"symptom":"breathless","clause":"essoufflement","label":"present"}
+{"symptom":"chest_pain","clause":"signale douleur a la poitrine","label":"present"}
+{"symptom":"headache","clause":"pas de des cephalees ni de essoufflement","label":"absent"}
+{"symptom":"breathless","clause":"pas de des cephalees ni de essoufflement","label":"absent"}
+{"symptom":"headache","clause":"pas cephalees","label":"absent"}
+{"symptom":"headache","clause":"non enceinte nie flou visuel nie maux de tete","label":"absent"}
+{"symptom":"chest_pain","clause":"sous enalapril 5 mg pas de dt controle 145/89 conseils hygieno-dietetiques","label":"absent"}
+{"symptom":"blurred_vision","clause":"conseils hygieno-dietetiques donnes non enceinte nie flou visuel nie maux de tete","label":"absent"}
+{"symptom":"blurred_vision","clause":"plainte de troubles visuels","label":"present"}
+{"symptom":"chest_pain","clause":"ne signale pas de mal a la poitrine","label":"absent"}
+{"symptom":"breathless","clause":"gene respiratoire ++","label":"present"}
+{"symptom":"blurred_vision","clause":"rapporte vision floue","label":"present"}
+{"symptom":"chest_pain","clause":"douleurs thoraciques non certaine","label":"uncertain"}
+{"symptom":"breathless","clause":"gene respiratoire : non","label":"absent"}
+{"symptom":"blurred_vision","clause":"signale troubles visuels","label":"present"}
+{"symptom":"chest_pain","clause":"ne signale pas de mal a la poitrine","label":"absent"}
+{"symptom":"headache","clause":"maux de tete presente","label":"present"}
+{"symptom":"breathless","clause":"pas de difficulte a respirer","label":"absent"}
+{"symptom":"headache","clause":"145/89 conseils sur l activite physique maux de tete negatif rapporte douleur thoracique","label":"absent"}
+{"symptom":"chest_pain","clause":"physique maux de tete negatif rapporte douleur thoracique controle dans 15 jours","label":"present"}
+{"symptom":"headache","clause":"signale cephalee","label":"present"}
+{"symptom":"breathless","clause":"souffle court depuis quelques jours","label":"present"}
+{"symptom":"breathless","clause":"gene respiratoire","label":"present"}
+{"symptom":"headache","clause":"presente mal de tete","label":"present"}
+{"symptom":"blurred_vision","clause":"signale baisse de la vue","label":"present"}
+{"symptom":"chest_pain","clause":"pas de douleur thoracique","label":"absent"}
+{"symptom":"headache","clause":"se plaint de maux de tete","label":"present"}
+{"symptom":"breathless","clause":"pas de essoufflement signalee","label":"absent"}
+{"symptom":"blurred_vision","clause":"plainte de baisse de la vue","label":"present"}
+{"symptom":"chest_pain","clause":"douleur a la poitrine presente","label":"present"}
+{"symptom":"headache","clause":"parle vaguement de des cephalees","label":"uncertain"}
+{"symptom":"blurred_vision","clause":"flou visuel depuis hier","label":"present"}
+{"symptom":"chest_pain","clause":"faite deuxieme mesure 166/102 pas de douleur thoracique test de grossesse negatif","label":"absent"}
+{"symptom":"breathless","clause":"dyspnee non certaine","label":"uncertain"}
+{"symptom":"blurred_vision","clause":"flou visuel depuis 1 semaine","label":"present"}
+{"symptom":"headache","clause":"sensibilisation faite ne signale pas de maux de tete pas de flou visuel","label":"absent"}
+{"symptom":"chest_pain","clause":"vers le medecin prend son traitement mal a la poitrine","label":"present"}
+{"symptom":"blurred_vision","clause":"de maux de tete pas de flou visuel oriente vers le medecin","label":"absent"}
+{"symptom":"breathless","clause":"rapporte difficulte a respirer","label":"present"}
+{"symptom":"headache","clause":"pas de mal de tete","label":"absent"}
+{"symptom":"blurred_vision","clause":"vue trouble  ?","label":"uncertain"}
+{"symptom":"chest_pain","clause":"sans dt","label":"absent"}
+{"symptom":"breathless","clause":"se plaint de souffle court","label":"present"}
+{"symptom":"headache","clause":"aucune mal de tete","label":"absent"}
+{"symptom":"blurred_vision","clause":"vision floue  ?","label":"uncertain"}
+{"symptom":"breathless","clause":"a essoufflement","label":"present"}
+{"symptom":"blurred_vision","clause":"presente troubles visuels","label":"present"}
+{"symptom":"headache","clause":"pas des cephalees","label":"absent"}
+{"symptom":"headache","clause":"37 ans ta a 175/112 presente mal de tete nie vision floue mauvaise","label":"present"}
+{"symptom":"blurred_vision","clause":"175/112 presente mal de tete nie vision floue mauvaise observance conseils donnes","label":"absent"}
+{"symptom":"breathless","clause":"difficulte a respirer depuis quelques jours","label":"present"}
+{"symptom":"chest_pain","clause":"pas de douleur a la poitrine signalee","label":"absent"}
+{"symptom":"headache","clause":"sans des maux de tete","label":"absent"}
+{"symptom":"breathless","clause":"pas sur pour difficulte a respirer","label":"uncertain"}
+{"symptom":"blurred_vision","clause":"signale baisse de la vue","label":"present"}
+{"symptom":"headache","clause":"des maux de tete non certaine","label":"uncertain"}
+{"symptom":"chest_pain","clause":"rapporte douleur thoracique","label":"present"}
+{"symptom":"breathless","clause":"nie gene respiratoire","label":"absent"}
+{"symptom":"blurred_vision","clause":"troubles visuels ++","label":"present"}
+{"symptom":"chest_pain","clause":"dt negatif","label":"absent"}
+{"symptom":"breathless","clause":"88 conseils hygieno-dietetiques donnes observance correcte souffle court ++ menopausee sous nifedipine","label":"present"}
+{"symptom":"breathless","clause":"pas de dyspnee","label":"absent"}
+{"symptom":"blurred_vision","clause":"pas de baisse de la vue","label":"absent"}
+{"symptom":"headache","clause":"plainte de cephalees","label":"present"}
+{"symptom":"breathless","clause":"dyspnee douteuse","label":"uncertain"}
+{"symptom":"blurred_vision","clause":"rapporte vue trouble","label":"present"}
+{"symptom":"headache","clause":"pas de cephalee","label":"absent"}
+{"symptom":"blurred_vision","clause":"vision floue negatif","label":"absent"}
+{"symptom":"chest_pain","clause":"revoir dans 1 semaine plainte de douleur a la poitrine","label":"present"}
+{"symptom":"breathless","clause":"81 pas sous traitement pas de difficulte a respirer signalee controle 124/79 revoir","label":"absent"}
+{"symptom":"headache","clause":"sur 103 absence de gene respiratoire maux de tete oublis frequents se plaint","label":"present"}
+{"symptom":"chest_pain","clause":"tete oublis frequents se plaint de dt sous traitement","label":"present"}
+{"symptom":"breathless","clause":"ta 185 sur 103 absence de gene respiratoire maux de tete oublis","label":"absent"}
+{"symptom":"headache","clause":"mg non enceinte se plaint de mal de tete presente douleur a la","label":"present"}
+{"symptom":"chest_pain","clause":"plaint de mal de tete presente douleur a la poitrine rdv dans 1 mois","label":"present"}
+{"symptom":"blurred_vision","clause":"a 145 sur 86 pas de troubles visuels sous captopril 5 mg","label":"absent"}
+{"symptom":"chest_pain","clause":"pas de douleurs thoraciques ni de baisse de","label":"absent"}
+{"symptom":"blurred_vision","clause":"pas de douleurs thoraciques ni de baisse de la vue","label":"absent"}
+{"symptom":"headache","clause":"pas de cephalees","label":"absent"}
+{"symptom":"headache","clause":"sur 110 evacuation vers l hopital mal de tete ++ mauvaise observance traitee","label":"present"}
+{"symptom":"blurred_vision","clause":"plainte de baisse de la vue","label":"present"}
+{"symptom":"headache","clause":"pas sur pour cephalee","label":"uncertain"}
+{"symptom":"breathless","clause":"pas de dyspnee","label":"absent"}
+{"symptom":"headache","clause":"ne signale pas de des cephalees","label":"absent"}
+{"symptom":"headache","clause":"plainte de des maux de tete","label":"present"}
+{"symptom":"blurred_vision","clause":"troubles visuels non certaine","label":"uncertain"}
+{"symptom":"chest_pain","clause":"signale douleur a la poitrine","label":"present"}
+{"symptom":"breathless","clause":"rapporte essoufflement","label":"present"}
+{"symptom":"blurred_vision","clause":"pas de flou visuel ni de essoufflement","label":"absent"}
+{"symptom":"breathless","clause":"pas de flou visuel ni de essoufflement","label":"absent"}
+{"symptom":"chest_pain","clause":"signale dt","label":"present"}
+{"symptom":"headache","clause":"pas de cephalee","label":"absent"}
+{"symptom":"blurred_vision","clause":"peut-etre baisse de la vue","label":"uncertain"}
+{"symptom":"breathless","clause":"pas dyspnee","label":"absent"}
+{"symptom":"headache","clause":"peut-etre cephalee","label":"uncertain"}
+{"symptom":"chest_pain","clause":"mal a la poitrine","label":"present"}
+{"symptom":"breathless","clause":"essoufflement depuis 3 jours","label":"present"}
+{"symptom":"chest_pain","clause":"aucune douleur thoracique","label":"absent"}
+{"symptom":"blurred_vision","clause":"baisse de la vue a preciser","label":"uncertain"}
+{"symptom":"headache","clause":"pas sur pour maux de tete","label":"uncertain"}
+{"symptom":"breathless","clause":"a souffle court","label":"present"}
+{"symptom":"blurred_vision","clause":"pas de baisse de la vue signalee","label":"absent"}
+{"symptom":"headache","clause":"maux de tete depuis hier","label":"present"}
+{"symptom":"breathless","clause":"nie difficulte a respirer","label":"absent"}
+{"symptom":"chest_pain","clause":"pas de mal a la poitrine","label":"absent"}
+{"symptom":"headache","clause":"de vision floue se plaint de maux de tete oublie parfois sa prise","label":"present"}
+{"symptom":"chest_pain","clause":"de 57 ans ta 205/117 presente douleur a la poitrine sensibilisation faite oriente vers","label":"present"}
+{"symptom":"blurred_vision","clause":"oriente vers le medecin plainte de vision floue se plaint de maux","label":"present"}
+{"symptom":"chest_pain","clause":"douleurs thoraciques","label":"present"}
+{"symptom":"blurred_vision","clause":"pas de flou visuel signalee","label":"absent"}
+{"symptom":"headache","clause":"ne signale pas de des cephalees","label":"absent"}
+{"symptom":"blurred_vision","clause":"vue trouble presente","label":"present"}
+{"symptom":"chest_pain","clause":"pas de dt ni de difficulte a","label":"absent"}
+{"symptom":"breathless","clause":"pas de dt ni de difficulte a respirer","label":"absent"}
+{"symptom":"headache","clause":"tension 140 sur 85 pas de maux de tete ni de flou visuel","label":"absent"}
+{"symptom":"chest_pain","clause":"dans 1 semaine conseils hygieno-dietetiques donnes douleur thoracique ++","label":"present"}
+{"symptom":"blurred_vision","clause":"de maux de tete ni de flou visuel n a jamais pris","label":"absent"}
+{"symptom":"chest_pain","clause":"respiratoire prend son traitement plainte de douleurs thoraciques controle dans 15 jours","label":"present"}
+{"symptom":"breathless","clause":"tension arterielle 172 sur 104 aucune gene respiratoire prend son traitement plainte","label":"absent"}
+{"symptom":"chest_pain","clause":"de traitement ne signale pas de dt grossesse exclue","label":"absent"}
+{"symptom":"blurred_vision","clause":"de 34 ans ta a 149/92 vision floue incertaine a revoir dans","label":"uncertain"}
+{"symptom":"breathless","clause":"rapporte gene respiratoire","label":"present"}
+{"symptom":"chest_pain","clause":"ne signale pas de dt","label":"absent"}
+{"symptom":"chest_pain","clause":"pas de douleurs thoraciques","label":"absent"}
+{"symptom":"headache","clause":"des maux de tete : non","label":"absent"}
+{"symptom":"breathless","clause":"gene respiratoire presente","label":"present"}
+{"symptom":"breathless","clause":"dyspnee douteuse","label":"uncertain"}
+{"symptom":"headache","clause":"de controle 175 sur 111 des cephalees depuis 2 jours referee","label":"present"}
+{"symptom":"breathless","clause":"cours pas de traitement pas de dyspnee signalee","label":"absent"}
+{"symptom":"headache","clause":"pas de des cephalees ni de douleurs thoraciques","label":"absent"}
+{"symptom":"chest_pain","clause":"pas de des cephalees ni de douleurs thoraciques ni de essoufflement","label":"absent"}
+{"symptom":"breathless","clause":"ni de douleurs thoraciques ni de essoufflement","label":"absent"}
+{"symptom":"blurred_vision","clause":"nie baisse de la vue","label":"absent"}
+{"symptom":"chest_pain","clause":"sur le sel se plaint de douleur a la poitrine patiente enceinte aucun traitement","label":"present"}
+{"symptom":"blurred_vision","clause":"157/86 rdv dans 1 mois rapporte vision floue conseils donnes sur le","label":"present"}
+{"symptom":"breathless","clause":"enceinte aucun traitement en cours nie difficulte a respirer","label":"absent"}
+{"symptom":"blurred_vision","clause":"troubles visuels","label":"present"}
+{"symptom":"breathless","clause":"peut-etre essoufflement","label":"uncertain"}
+{"symptom":"blurred_vision","clause":"68 ans tension 179 sur 100 flou visuel  ?","label":"uncertain"}
+{"symptom":"chest_pain","clause":"plainte de dt","label":"present"}
+{"symptom":"headache","clause":"pas de cephalees","label":"absent"}
+{"symptom":"breathless","clause":"plainte de dyspnee","label":"present"}
+{"symptom":"chest_pain","clause":"pas de douleur a la poitrine","label":"absent"}
+{"symptom":"blurred_vision","clause":"baisse de la vue ++","label":"present"}
+{"symptom":"breathless","clause":"difficulte a respirer depuis 2 jours","label":"present"}
+{"symptom":"blurred_vision","clause":"pas sur pour troubles visuels","label":"uncertain"}
+{"symptom":"headache","clause":"pas de mal de tete","label":"absent"}
+{"symptom":"breathless","clause":"signale gene respiratoire","label":"present"}
+{"symptom":"chest_pain","clause":"parle vaguement de mal a la poitrine","label":"uncertain"}
+{"symptom":"chest_pain","clause":"plainte de douleur a la poitrine","label":"present"}
+{"symptom":"blurred_vision","clause":"pas de troubles visuels","label":"absent"}
+{"symptom":"blurred_vision","clause":"pas sur pour vision floue","label":"uncertain"}
+{"symptom":"chest_pain","clause":"presente dt","label":"present"}
+{"symptom":"headache","clause":"grossesse exclue ne signale pas de cephalee","label":"absent"}
+{"symptom":"chest_pain","clause":"revoir dans 2 semaines absence de douleurs thoraciques grossesse exclue ne signale","label":"absent"}
+{"symptom":"headache","clause":"presente cephalee","label":"present"}
+{"symptom":"blurred_vision","clause":"vision floue : non","label":"absent"}
+{"symptom":"breathless","clause":"dyspnee","label":"present"}
+{"symptom":"chest_pain","clause":"revoir dans 2 semaines pas de douleur a la poitrine ni de gene respiratoire","label":"absent"}
+{"symptom":"breathless","clause":"douleur a la poitrine ni de gene respiratoire non enceinte","label":"absent"}
+{"symptom":"blurred_vision","clause":"rapporte baisse de la vue","label":"present"}
+{"symptom":"headache","clause":"des cephalees douteuse","label":"uncertain"}
+{"symptom":"chest_pain","clause":"a douleur a la poitrine","label":"present"}
+{"symptom":"headache","clause":"tension 178/106 rdv dans 2 semaines mal de tete presente non traitee sans","label":"present"}
+{"symptom":"blurred_vision","clause":"de tete presente non traitee sans vue trouble a difficulte a respirer","label":"absent"}
+{"symptom":"breathless","clause":"non traitee sans vue trouble a difficulte a respirer conseils sur l activite","label":"present"}
+{"symptom":"blurred_vision","clause":"a flou visuel","label":"present"}
+{"symptom":"headache","clause":"pas de des maux de tete","label":"absent"}
+{"symptom":"chest_pain","clause":"essoufflement traitee par enalapril pas de douleur thoracique","label":"absent"}
+{"symptom":"breathless","clause":"parfois sa prise du soir presente essoufflement traitee par enalapril pas","label":"present"}
+{"symptom":"chest_pain","clause":"douleurs thoraciques non certaine","label":"uncertain"}
+{"symptom":"headache","clause":"se plaint de cephalees","label":"present"}
+{"symptom":"breathless","clause":"pas de dyspnee","label":"absent"}
+{"symptom":"blurred_vision","clause":"rapporte flou visuel","label":"present"}
+{"symptom":"breathless","clause":"essoufflement  ?","label":"uncertain"}
+{"symptom":"chest_pain","clause":"plainte de douleur a la poitrine","label":"present"}
+{"symptom":"headache","clause":"maux de tete  ?","label":"uncertain"}
+{"symptom":"breathless","clause":"pas de dyspnee","label":"absent"}
+{"symptom":"headache","clause":"pas de douleurs thoraciques plainte de cephalee prend son traitement","label":"present"}
+{"symptom":"chest_pain","clause":"ta de controle 122/71 pas de douleurs thoraciques plainte de cephalee prend","label":"absent"}
+{"symptom":"breathless","clause":"78 ans ta 127 sur 72 gene respiratoire depuis 2 jours ta","label":"present"}
+{"symptom":"blurred_vision","clause":"baisse de la vue depuis quelques jours","label":"present"}
+{"symptom":"headache","clause":"a mal de tete","label":"present"}
+{"symptom":"headache","clause":"de dt pas sous traitement possible mal de tete conseils de reduire le","label":"uncertain"}
+{"symptom":"chest_pain","clause":"plaint de souffle court pas de dt pas sous traitement possible","label":"absent"}
+{"symptom":"breathless","clause":"132/83 patiente enceinte se plaint de souffle court pas de dt pas","label":"present"}
+{"symptom":"chest_pain","clause":"pas de douleurs thoraciques","label":"absent"}
+{"symptom":"headache","clause":"maux de tete depuis quelques jours","label":"present"}
+{"symptom":"chest_pain","clause":"parle vaguement de dt","label":"uncertain"}
+{"symptom":"breathless","clause":"gene respiratoire : non","label":"absent"}
+{"symptom":"blurred_vision","clause":"presente vision floue","label":"present"}
+{"symptom":"breathless","clause":"pas de dyspnee signalee","label":"absent"}
+{"symptom":"chest_pain","clause":"pas de douleur thoracique","label":"absent"}
+{"symptom":"blurred_vision","clause":"vue trouble","label":"present"}
+{"symptom":"headache","clause":"prend son traitement se plaint de mal de tete flou visuel depuis 2","label":"present"}
+{"symptom":"chest_pain","clause":"de 51 ans tension arterielle 119/76 douleur thoracique prend bien son traitement","label":"present"}
+{"symptom":"blurred_vision","clause":"se plaint de mal de tete flou visuel depuis 2 jours controle","label":"present"}
+{"symptom":"chest_pain","clause":"douleur thoracique negatif","label":"absent"}
+{"symptom":"headache","clause":"peut-etre des cephalees","label":"uncertain"}
+{"symptom":"breathless","clause":"gene respiratoire negatif","label":"absent"}
+{"symptom":"breathless","clause":"difficulte a respirer presente","label":"present"}
+{"symptom":"headache","clause":"nie des maux de tete","label":"absent"}
+{"symptom":"blurred_vision","clause":"troubles visuels ++","label":"present"}
+{"symptom":"headache","clause":"plainte de mal de tete","label":"present"}
+{"symptom":"headache","clause":"des maux de tete depuis 2 jours","label":"present"}
+{"symptom":"breathless","clause":"essoufflement presente","label":"present"}
+{"symptom":"blurred_vision","clause":"pas de troubles visuels","label":"absent"}
+{"symptom":"headache","clause":"ne signale pas de mal de tete","label":"absent"}
+{"symptom":"blurred_vision","clause":"vue trouble negatif","label":"absent"}
+{"symptom":"chest_pain","clause":"pas de douleur thoracique","label":"absent"}
+{"symptom":"chest_pain","clause":"mal a la poitrine","label":"present"}
+{"symptom":"chest_pain","clause":"absence de dt","label":"absent"}
+{"symptom":"breathless","clause":"possible essoufflement","label":"uncertain"}
+{"symptom":"blurred_vision","clause":"signale vision floue","label":"present"}
+{"symptom":"headache","clause":"rapporte souffle court se plaint de maux de tete","label":"present"}
+{"symptom":"breathless","clause":"dans 6 mois sous traitement rapporte souffle court se plaint de maux","label":"present"}
+{"symptom":"breathless","clause":"pas de difficulte a respirer","label":"absent"}
+{"symptom":"chest_pain","clause":"pas de douleur a la poitrine","label":"absent"}
+{"symptom":"blurred_vision","clause":"parle vaguement de troubles visuels","label":"uncertain"}
+{"symptom":"headache","clause":"nie cephalees","label":"absent"}
+{"symptom":"breathless","clause":"pas de souffle court","label":"absent"}
+{"symptom":"chest_pain","clause":"douleur a la poitrine ++","label":"present"}
+{"symptom":"headache","clause":": non rdv dans 1 semaine cephalees a preciser","label":"uncertain"}
+{"symptom":"breathless","clause":"40 ans ta a 173/99 souffle court : non rdv dans","label":"absent"}
+{"symptom":"headache","clause":"pas de cephalees signalee","label":"absent"}
+{"symptom":"chest_pain","clause":"de 33 ans ta a 158/94 douleur a la poitrine  ?","label":"uncertain"}
+{"symptom":"headache","clause":"nie mal de tete","label":"absent"}
+{"symptom":"blurred_vision","clause":"pas de vision floue","label":"absent"}
+{"symptom":"headache","clause":"des cephalees : non","label":"absent"}
+{"symptom":"headache","clause":"jamais traitee parle vaguement de des cephalees sans troubles visuels evacuation","label":"uncertain"}
+{"symptom":"blurred_vision","clause":"parle vaguement de des cephalees sans troubles visuels evacuation vers l hopital","label":"absent"}
+{"symptom":"headache","clause":"se plaint de maux de tete","label":"present"}
+{"symptom":"chest_pain","clause":"douleurs thoraciques  ?","label":"uncertain"}

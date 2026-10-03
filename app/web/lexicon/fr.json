@@ -142,7 +142,9 @@
    "ne voit pas bien",
    "vision baissee",
    "yeux flous",
-   "troubles? oculaires?"
+   "troubles? oculaires?",
+   "vision (floue?|trouble|brouillee|baissee?)",
+   "\\bflou\\b"
   ],
   "breathless": [
    "dyspnee",
@@ -159,7 +161,8 @@
    "dyspneique",
    "manque d air",
    "a du mal a respirer",
-   "souffle (court|coupe)"
+   "souffle (court|coupe)",
+   "souffle(?! (cardiaque|systolique|diastolique))"
   ]
  },
  "symptoms_none": [
@@ -278,7 +281,10 @@
     "prend (de l |du |la )?(amlodipine|hydrochlorothiazide|losartan|enalapril|nifedipine|captopril|atenolol|methyldopa)",
     "sous (son )?traitement",
     "deja traitee?",
-    "\\bttt\\b"
+    "\\bttt\\b",
+    "(son|ses|un|le|les|des) (traitements?|medicaments?)",
+    "medicaments? (pour|contre)",
+    "\\bmedicaments?\\b"
    ]
   },
   "missed_doses": {
@@ -469,5 +475,6 @@
    "hypertendue"
   ],
   "min_len": 5
- }
+ },
+ "_version": "v3 (post-hoc gold-informed ASR variants)"
 }
