@@ -1,0 +1,350 @@
+{
+ "_comment": "French extraction lexicon for the language-neutral engine. Patterns are regexes over normalized text (lower case, accents stripped, number words converted to digits). Written from general French clinical-note conventions; never derived from the gold test set. NEEDS-NATIVE-CHECK by a French-speaking clinician.",
+ "numbers": {
+  "compounds": {
+   "quatre[- ]vingts?": 80,
+   "soixante[- ]et[- ]onze": 71
+  },
+  "words": {
+   "zero": 0,
+   "un": 1,
+   "une": 1,
+   "deux": 2,
+   "trois": 3,
+   "quatre": 4,
+   "cinq": 5,
+   "six": 6,
+   "sept": 7,
+   "huit": 8,
+   "neuf": 9,
+   "dix": 10,
+   "onze": 11,
+   "douze": 12,
+   "treize": 13,
+   "quatorze": 14,
+   "quinze": 15,
+   "seize": 16,
+   "vingt": 20,
+   "trente": 30,
+   "quarante": 40,
+   "cinquante": 50,
+   "soixante": 60
+  },
+  "multipliers": {
+   "cent": 100,
+   "cents": 100,
+   "mille": 1000
+  },
+  "joiners": [
+   "et"
+  ]
+ },
+ "clause_split": "[.;!?\\n]|,|\\bmais\\b|\\bpar contre\\b|\\bcependant\\b",
+ "list_continuers": [
+  "ni"
+ ],
+ "negation_pre": [
+  "\\bpas\\b",
+  "\\bpas de\\b",
+  "\\bpas d\\b",
+  "\\baucune?\\b",
+  "\\bsans\\b",
+  "\\bnie\\b",
+  "\\bni\\b",
+  "\\babsence\\b",
+  "\\bne signale pas\\b",
+  "\\bn a pas\\b",
+  "\\bjamais\\b",
+  "\\bplus de\\b"
+ ],
+ "negation_post": [
+  "\\bnon\\b",
+  "\\bnegati(f|ve)s?\\b",
+  "\\babsente?s?\\b",
+  "\\bniee?s?\\b",
+  "\\bdisparue?s?\\b"
+ ],
+ "uncertainty": [
+  "\\?",
+  "\\bpeut[- ]etre\\b",
+  "\\bpossible\\b",
+  "\\bprobable\\b",
+  "\\ba preciser\\b",
+  "\\bdouteu(x|se)\\b",
+  "\\bincertaine?\\b",
+  "\\bnon certaine?\\b",
+  "\\bvaguement\\b",
+  "\\bpas sure?\\b",
+  "\\bsemble\\b",
+  "\\bne sait pas\\b",
+  "\\bpas clair\\b",
+  "\\ba revoir\\b",
+  "\\bquestion\\b",
+  "\\bmal defini"
+ ],
+ "symptoms": {
+  "headache": [
+   "cephalees?",
+   "ma(l|ux) de tete",
+   "mal a la tete",
+   "migraines?"
+  ],
+  "chest_pain": [
+   "douleurs? thoraciques?",
+   "\\bdt\\b",
+   "mal a la poitrine",
+   "douleurs? (a|dans) la poitrine",
+   "douleurs? de (la )?poitrine",
+   "oppression thoracique"
+  ],
+  "blurred_vision": [
+   "vision floue",
+   "flou visuel",
+   "troubles? (visuels?|de la vue|de la vision)",
+   "baisse de (la )?vue",
+   "vue (trouble|floue|baisse)",
+   "voit flou",
+   "brouillard visuel"
+  ],
+  "breathless": [
+   "dyspnee",
+   "essouffle(ment|e)?",
+   "souffle court",
+   "(difficultes?|gene) (a|pour) respirer",
+   "gene respiratoire",
+   "manque de souffle",
+   "detresse respiratoire"
+  ]
+ },
+ "symptoms_none": [
+  "pas de symptomes?",
+  "aucun symptome",
+  "pas de plaintes?",
+  "aucune plainte",
+  "asymptomatique",
+  "\\bras\\b",
+  "sans plainte",
+  "rien a signaler",
+  "pas de signes?"
+ ],
+ "sex": {
+  "F": {
+   "strong": [
+    "^\\s*f\\b",
+    "\\bfemme\\b",
+    "\\bpatiente\\b",
+    "\\bmadame\\b",
+    "\\bmme\\b",
+    "\\bsexe feminin\\b",
+    "\\benceinte\\b"
+   ],
+   "weak": [
+    "\\belle\\b",
+    "\\bagee\\b",
+    "\\bmenopausee\\b",
+    "\\btraitee\\b",
+    "\\bobservante\\b",
+    "\\breferee\\b",
+    "\\borientee\\b"
+   ]
+  },
+  "M": {
+   "strong": [
+    "^\\s*h\\b",
+    "^\\s*m\\b",
+    "\\bhomme\\b",
+    "\\bpatient\\b",
+    "\\bmonsieur\\b",
+    "\\bmr\\b",
+    "\\bsexe masculin\\b"
+   ],
+   "weak": [
+    "\\bil\\b"
+   ]
+  }
+ },
+ "age": [
+  "\\b(\\d{1,3})\\s*ans\\b",
+  "\\bage\\s*:?\\s*(\\d{1,3})\\b"
+ ],
+ "bp": {
+  "patterns": [
+   "\\b(\\d{2,3})\\s*(?:/|sur|par|-)\\s*(\\d{2,3})\\b"
+  ],
+  "cmhg_below": 30,
+  "plausible": {
+   "sys": [
+    60,
+    260
+   ],
+   "dia": [
+    30,
+    160
+   ]
+  }
+ },
+ "fields": {
+  "on_meds": {
+   "order": [
+    "no",
+    "yes"
+   ],
+   "no": [
+    "pas (de|sous) traitement",
+    "sans traitement",
+    "non traitee?",
+    "jamais traitee?",
+    "aucun traitement",
+    "jamais pris",
+    "pas de (medicaments?|medoc)",
+    "ne prend (aucun|pas de) (traitement|medicament)",
+    "pas encore (de )?traitement",
+    "naif de traitement",
+    "pas sous (antihypertenseur|medicament)"
+   ],
+   "yes": [
+    "sous traitement",
+    "sous (amlodipine|hydrochlorothiazide|hctz|losartan|enalapril|lisinopril|nifedipine|captopril|atenolol|methyldopa|antihypertenseurs?|medicaments?)",
+    "traitee? (par|avec|sous)",
+    "prend (son|ses|un) (traitement|medicaments?|comprimes?)",
+    "traitement (en cours|habituel|antihypertenseur)",
+    "deja (sous )?traitee?",
+    "\\b(amlodipine|hydrochlorothiazide|hctz|losartan|enalapril|lisinopril|nifedipine|captopril|atenolol|methyldopa)\\b"
+   ]
+  },
+  "missed_doses": {
+   "order": [
+    "sometimes",
+    "no",
+    "yes"
+   ],
+   "sometimes": [
+    "oublie? (parfois|de temps en temps|quelquefois|occasionnellement)",
+    "oublis? (occasionnels?|ponctuels?)",
+    "quelques oublis",
+    "parfois (des )?oublis?",
+    "de temps en temps oublie",
+    "observance (moyenne|irreguliere|partielle)"
+   ],
+   "no": [
+    "bonne observance",
+    "observance (bonne|correcte|parfaite)",
+    "\\bobservante?\\b",
+    "n oublie (pas|jamais)",
+    "pas d oublis?",
+    "aucun oubli",
+    "prend bien (son|ses)",
+    "prend (son traitement|ses medicaments) (regulierement|tous les jours)",
+    "sans oubli"
+   ],
+   "yes": [
+    "oublie (souvent|son|ses|regulierement|frequemment)",
+    "oublis? frequents?",
+    "mauvaise observance",
+    "observance (mauvaise|faible)",
+    "a arrete (son|ses|le)",
+    "arret (du|de son) traitement",
+    "rupture",
+    "n a pas pris",
+    "ne prend pas (son|ses|regulierement)",
+    "\\boublie\\b",
+    "\\boublis\\b",
+    "non observante?"
+   ]
+  },
+  "pregnancy": {
+   "order": [
+    "not_pregnant",
+    "pregnant"
+   ],
+   "not_pregnant": [
+    "pas enceinte",
+    "non enceinte",
+    "pas de grossesse",
+    "grossesse (exclue|negative)",
+    "test de grossesse negatif",
+    "menopausee",
+    "n est pas enceinte"
+   ],
+   "pregnant": [
+    "enceinte",
+    "grossesse",
+    "\\b\\d+\\s*sa\\b",
+    "semaines d amenorrhee",
+    "gestante"
+   ]
+  },
+  "counselling": {
+   "order": [
+    "no",
+    "yes"
+   ],
+   "no": [
+    "pas de conseils?"
+   ],
+   "yes": [
+    "conseils?",
+    "conseille",
+    "regime",
+    "\\bsel\\b",
+    "hygieno[- ]dietetiques?",
+    "activite physique",
+    "education",
+    "sensibilis",
+    "eduquee?"
+   ]
+  },
+  "referral": {
+   "order": [
+    "yes"
+   ],
+   "yes": [
+    "referee?",
+    "referer",
+    "reference",
+    "evacu",
+    "transfer",
+    "orientee? vers",
+    "envoyee? (a|au|vers)",
+    "\\ba l hopital\\b",
+    "\\bchr\\b",
+    "\\bchd\\b",
+    "hopital de district",
+    "urgence"
+   ]
+  }
+ },
+ "follow_up": {
+  "phrases": {
+   "le mois prochain": "P1M",
+   "la semaine prochaine": "P1W",
+   "dans un mois": "P1M"
+  },
+  "pattern": "(?:rdv|rendez[- ]vous|revoir|revient|reviendra|revenir|controle|recontrole|suivi|a revoir|reconvoque)[^.;]{0,25}?\\b(\\d{1,2})\\s*(jours?|semaines?|mois)\\b",
+  "bare_pattern": "\\bdans\\s+(\\d{1,2})\\s*(jours?|semaines?|mois)\\b",
+  "units": {
+   "jour": "D",
+   "jours": "D",
+   "semaine": "W",
+   "semaines": "W",
+   "mois": "M"
+  },
+  "day_map": {
+   "7": "P1W",
+   "8": "P1W",
+   "10": "P10D",
+   "14": "P2W",
+   "15": "P2W",
+   "21": "P3W",
+   "28": "P1M",
+   "30": "P1M",
+   "31": "P1M"
+  }
+ },
+ "scope_words": {
+  "neg_pre": 3,
+  "neg_post": 3,
+  "unc_pre": 4,
+  "unc_post": 3
+ }
+}
