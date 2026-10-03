@@ -79,7 +79,10 @@ function csvRows(file) {
 export function goldPairs(transcriptFile, source) {
   const labels = csvRows(path.join(ROOT, "data/gold/gold_labels.csv"));
   const tx = JSON.parse(fs.readFileSync(transcriptFile, "utf8"));
-  return labels.filter(l => tx[l.id] != null).map(l => ({ text: tx[l.id], labels: l, source }));
+  // Gold clips whose transcript wording the developer has seen (hosted-demo samples, 3 Oct 23:05):
+  // reported separately so the "unseen" numbers stay clean.
+  const exclude = process.argv.includes("--unseen") ? new Set(["1", "4", "13", "20"]) : new Set();
+  return labels.filter(l => tx[l.id] != null && !exclude.has(l.id)).map(l => ({ text: tx[l.id], labels: l, source }));
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
@@ -101,7 +104,7 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
       .map(l => JSON.parse(l)).map(e => ({ text: e.text, labels: e.labels, source: "typed" }));
     report(`dev (synthetic)${useClf ? " rules+clf" : " rules"}`, score(pairs, opts));
   } else {
-    report(`gold ${path.basename(file)}${useClf ? " rules+clf" : " rules"}`,
+    report(`gold${process.argv.includes("--unseen") ? "-26 unseen" : "-30"} ${path.basename(file)}${useClf ? " rules+clf" : " rules"}`,
       score(goldPairs(file, file.includes("typed") ? "typed" : "speech"), opts), false);
   }
 }
