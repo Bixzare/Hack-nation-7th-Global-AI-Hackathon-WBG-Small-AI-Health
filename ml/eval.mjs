@@ -79,7 +79,7 @@ function csvRows(file) {
 export function goldPairs(transcriptFile, source) {
   const labels = csvRows(path.join(ROOT, "data/gold/gold_labels.csv"));
   const tx = JSON.parse(fs.readFileSync(transcriptFile, "utf8"));
-  // Gold clips whose transcript wording the developer has seen (hosted-demo samples, 3 Oct 23:05):
+  // Gold clips whose transcript wording the developer has seen (hosted-demo samples, 3 Oct ~22:35):
   // reported separately so the "unseen" numbers stay clean.
   const exclude = process.argv.includes("--unseen") ? new Set(["1", "4", "13", "20"]) : new Set();
   return labels.filter(l => tx[l.id] != null && !exclude.has(l.id)).map(l => ({ text: tx[l.id], labels: l, source }));

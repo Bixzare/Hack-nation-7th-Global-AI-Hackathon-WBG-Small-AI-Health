@@ -62,19 +62,85 @@
   and the planned JS port at M2 becomes the architecture, freeing M2 for the classifier and eval.
 - Sat 20:10: The PIN gate is an access gate, not encryption. We won't claim encryption unless it is built.
 
+### Overnight run (Sat 22:15 →)
+- **Recordings integrated.**
+  - Gold: `fr-N.mp3` maps to the CSV's `fr_NN.wav`. Converted to 16 kHz mono WAV in `data/gold/clean/`.
+  - Noisy copies: 15 even-numbered clips (`data/gold/noisy/`) at 10 dB SNR, rotating fan, street and
+    chatter noise (`data/gold/manifest.csv`). All noise is synthetic: pink noise + 100 Hz hum; brown
+    noise + horns; reversed babble of other gold clips. Originals are kept.
+  - Zarma clips were in `locales/dje/` (not `locales/dje/audio/`), named `dje_*.mp3`, with Monday as
+    `dji_mon.mp3`. All mapped to `app/web/audio/dje/<code>.mp3`.
+- **Schema aligned to gold-label conventions.** 4 symptoms (present / absent / uncertain /
+  not_mentioned), missed_doses incl. "sometimes", follow-up as an interval (stored as an ISO duration,
+  e.g. P2W), a referral field, and visit_date. "Uncertain" is always "please check".
+- **HEARTS thresholds verified** against the PDFs (WHO/NMH/NVI/18.2, 2018; WHO 2021 guideline):
+  - raised ≥140/90;
+  - two readings at the first measurement, use the second;
+  - confirmed on two different days;
+  - urgent: >180/110 with severe headache, chest pain, shortness of breath or blurred vision;
+  - urgent: >200/120, new chest pain, heart-failure signs, recently worsening vision;
+  - refer: under 40 with ≥140/90, or pregnant with hypertension;
+  - no ACE inhibitors, ARBs or thiazides for women of childbearing age;
+  - follow-up monthly until at target, then every 3–6 months.
+  Page refs for the urgent criteria are pp. 36–37. The 15–49 age range is the standard WHO
+  reproductive-age definition (not re-fetched).
+- **Gold protocol.**
+  - Extractor v1 was committed (`bcc26f3`) *before* any gold number was computed.
+  - Post-hoc changes: v2 used label-level confusions only; v3 used stem-count probes (counts, no
+    wording).
+  - At ~22:35 a tool notification displayed the 4 hosted-sample transcripts (gold ids 1, 4, 13, 20),
+    so those 4 are "seen". `--unseen` reports the other 26. No lexicon change was made from them.
+- **S0 decision: Whisper base, no prompt, as the health-centre-laptop speech model.** Voice-first is
+  viable, with typing always available. The vocabulary prompt helped tiny but hurt base. Small is
+  being tested (below).
+- **The classifier doesn't help on gold.** Gold errors are missed mentions (vocabulary / ASR
+  spelling), which the classifier can't see. It is kept: 113 KB, slightly better uncertainty
+  surfacing on noisy text. Rules-only and rules + classifier are both reported.
+- **Safety net.** HEARTS: "Screen each patient for danger signs". Any danger symptom left
+  "not_mentioned" raises "ask about danger signs" (urgent if BP >180/110). It catches every missed
+  and uncertain symptom on gold, but it fires on most notes, so it's a weak signal; say so in the pitch.
+- **Reminder timing.** Sent in the evening 1 day before the visit (profile `reminder_days_before`,
+  1–2), so "this coming [day]" is correct. Not sent when the patient is referred.
+
 ## Metrics (for the pitch)
+Gold = 30 SYNTHETIC TTS clips (3 male voices). "Unseen" = 26 clips whose wording was never displayed.
+Speech→record uses the extractor as of `4445cad` (lexicon v3).
+
 | Metric | Value | How measured | Device |
 |---|---|---|---|
-| ASR model size | | | |
-| ASR latency (per 10 s clip) | | | |
-| ASR WER / BP-number accuracy (gold clips) | | | |
-| Extractor size | | | |
-| Extractor latency (median of 20) | | | |
-| Field accuracy, typed→record (gold) | | | |
-| Field accuracy, speech→record (gold) | | | |
-| BP-number extraction accuracy | | | |
-| Urgent-flag recall (held-out synthetic) | | | |
-| Works fully offline | | | |
+| ASR model size | Whisper base int8 148 MB (tiny 78 MB) | on-disk CTranslate2 model | laptop |
+| ASR speed | base: RTF 0.28 clean / 0.30 noisy (10 s clip ≈ 2.8 s); tiny 0.19 / 0.29; service: 7.6 s clip in 1.85 s | 30 clean + 15 noisy clips, CPU int8 | laptop CPU (no GPU) |
+| Extractor + rules + classifier size | 146 KB (lexicon 10 KB, classifier 113 KB) | file sizes | browser |
+| Extractor latency | 0.27 ms per note | median of 20, Node | laptop |
+| Whole web app (incl. Zarma clips + 4 samples) | 1.1 MB | `du app/web` | browser |
+| Field accuracy, speech→record, base, CLEAN | v1 82.6% → v3 **85.7%** (unseen-26: 85.7%) | 14 fields × 30 clips | laptop |
+| Field accuracy, speech→record, base, NOISY | v1 75.2% → v3 **79.5%** (unseen: 78.0%) | 15 noisy clips, 10 dB SNR | laptop |
+| Field accuracy, tiny clean / noisy | v1 75.7 / 69.0 → v3 81.0 / 73.3% | same | laptop |
+| Rules vs rules + classifier (gold base clean) | 85.7% vs 85.7% (no gain) | same | |
+| Dev (synthetic, same generator as lexicon: circular) | 99.7%; with simulated ASR typos 94.0% (rules + clf 94.1%) | 300 notes | |
+| BP1 exact (base clean / noisy) | 83% / 53% (all speech BP is "please check" anyway) | gold | |
+| Danger symptom present → marked ABSENT (false reassurance) | **0** of 15 (clean), 0 of 9 (noisy) | gold, base | |
+| Danger symptom present → missed (not_mentioned) | 11 of 15 clean before v3; headache recall is the weak point (ASR spells "céphalées" phonetically) | gold, base | |
+| Urgent-flag recall (HEARTS on extracted vs gold record) | base clean 5/6 (83%), noisy 3/4, tiny clean 6/6; false urgent 2/24 (base) | `ml/eval_flags.mjs` | |
+| Uncertain symptoms surfaced (field or flag) | 3/3 clean, 2/2 noisy | gold | |
+| Typed→record (gold) | **not measured: RECORDING-SCRIPT.md missing** | | |
+| Works fully offline | yes: SW cache, offline reload passes; speech service on 127.0.0.1 | `ml/smoke_test.mjs` (headless Chrome) | laptop |
+
+## Questions for morning
+1. **RECORDING-SCRIPT.md is missing.** I couldn't find it in the repo, Downloads, Desktop or
+   Documents. Without it there is no typed→record evaluation and no ASR WER. Where is it?
+2. **May I split the gold set** into gold-dev (10 clips, used for error analysis) and gold-test
+   (20, frozen)? Headache recall is ASR-limited ("céphalées" is transcribed phonetically), and
+   fixing it properly needs to look at the wording. Alternative: keep gold frozen and report the
+   limitation.
+3. **Voice split:** which clips use which of the 3 male voices? It's needed for the data table and
+   per-voice results.
+4. **Whisper small (486 MB):** downloaded overnight (under your 500 MB limit) to test whether it
+   fixes "céphalées". Result below. If it's better, is the laptop budget acceptable?
+5. **Deploy:** still waiting for a yes to create a public GitHub repo (`gh` is logged in as Bixzare)
+   or for you to connect Vercel. Nothing has been deployed.
+6. **Classifier:** keep it (113 KB, no gold gain) or ship rules only? The brief's fallback says rules
+   only if it's no better. I kept it because it surfaces more uncertainty on noisy text.
 
 ## Later (out of scope this weekend)
 - Cluster flag to a district health officer, where a human decides whether to alert
