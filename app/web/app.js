@@ -212,8 +212,8 @@ async function renderOutbox() {
     const meta = el("div", { className: "meta", textContent: `→ ${m.to} · ${state}` });
     if (m.kind === "voice") {
       const codes = outbox.clipCodes(m, P.packs.voice);
-      const missing = [];
-      for (const c of codes) if (!(await clipExists(P.packs.voice.voice[c]))) missing.push(c);
+      const exists = await Promise.all(codes.map(c => clipExists(P.packs.voice.voice[c]))); // in parallel
+      const missing = codes.filter((c, i) => !exists[i]);
       const btn = el("button", { className: "secondary small", textContent: "▶ " + t("outbox.play") });
       btn.onclick = () => playSequence(codes);
       rows.push(el("div", { className: "msg" },

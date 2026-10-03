@@ -82,7 +82,7 @@ function suite(name, getUrl) {
 
     test("approve queues the Zarma voice reminder + French SMS for the evening before", async () => {
       await page.click("#btnApprove");
-      await new Promise(r => setTimeout(r, 600));
+      await page.waitForFunction(() => /clinic/.test(document.getElementById("outbox").innerText), { timeout: 15000 });
       const outbox = await page.$eval("#outbox", e => e.innerText);
       assert.match(outbox, /intro \+ \w{3} \+ clinic/);
       assert.match(outbox, /18:30/);
