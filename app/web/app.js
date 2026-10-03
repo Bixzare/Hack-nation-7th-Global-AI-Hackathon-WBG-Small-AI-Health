@@ -5,6 +5,7 @@ import { checkProtocol } from "./engine/rules.js";
 import * as store from "./engine/store.js";
 import * as pin from "./engine/pin.js";
 import * as outbox from "./engine/outbox.js";
+import { missedFollowUps, demoHistory } from "./engine/followup.js";
 
 const $ = id => document.getElementById(id);
 const el = (tag, props = {}, ...kids) => {
@@ -33,6 +34,8 @@ function paintText() {
   $("outboxTitle").textContent = t("outbox.title");
   $("btnSend").textContent = t("outbox.simulate");
   $("savedTitle").textContent = t("saved.title");
+  $("missedTitle").textContent = t("missed.title");
+  $("btnDemoHistory").textContent = t("missed.demo");
 }
 
 function paintNet() {
@@ -175,7 +178,14 @@ async function renderSaved() {
   }) : [document.createTextNode(t("saved.none"))]));
 }
 
-function refreshLists() { renderOutbox(); renderSaved(); }
+function refreshLists() { renderOutbox(); renderSaved(); renderMissed(); }
+
+async function renderMissed() {
+  const missed = missedFollowUps(await store.all("records"), today());
+  $("missed").replaceChildren(...(missed.length ? missed.map(m => el("div", { className: "msg" },
+    el("div", { textContent: `${m.name || "?"} · ${m.phone || ""}` }),
+    el("div", { className: "meta", textContent: t("missed.due", { date: fmtDate(m.due) }) }))) : [document.createTextNode(t("missed.none"))]));
+}
 
 function fmtDate(iso) {
   return new Date(iso + "T12:00:00").toLocaleDateString(P.worker_locale, { weekday: "long", day: "numeric", month: "long" });
@@ -263,6 +273,7 @@ async function toggleMic() {
   $("note").oninput = () => { delete $("note").dataset.source; };
   $("btnApprove").onclick = approve;
   $("btnMic").onclick = toggleMic;
+  $("btnDemoHistory").onclick = async () => { for (const r of demoHistory(today())) await store.add("records", r); refreshLists(); };
   $("btnSend").onclick = async () => { await outbox.flush(); renderOutbox(); };
   addEventListener("online", () => { paintNet(); renderOutbox(); });
   addEventListener("offline", () => { paintNet(); renderOutbox(); });

@@ -112,5 +112,9 @@
  "speech.working": "Transcribing…",
  "speech.done": "Transcribed offline in {s} s: check the text",
  "danger_asked": "I asked about danger signs: severe headache, chest pain, breathlessness, blurred vision",
- "speech.hosted": "Hosted demo: use a sample dictation (live dictation runs on the health-centre install)"
+ "speech.hosted": "Hosted demo: use a sample dictation (live dictation runs on the health-centre install)",
+ "missed.title": "Not returned (a person decides)",
+ "missed.due": "was due {date}: decide whether to call or visit",
+ "missed.none": "Everyone due has come back",
+ "missed.demo": "Load synthetic demo history"
 }
