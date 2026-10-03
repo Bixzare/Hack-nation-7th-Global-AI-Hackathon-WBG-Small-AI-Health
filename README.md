@@ -11,19 +11,25 @@ validated. It supports health workers and does not replace them. All patients an
 synthetic.**
 
 ## Try it in 3 steps (about 2 minutes)
-1. **Load a sample dictation.** Open the live demo, choose any 4-digit PIN, and open
-   *Dictées exemples*. Pick a sample, for example *Homme 67 ans, TA très élevée*. Its transcript was
-   precomputed by the offline speech model. Tap **Remplir la fiche** to fill the record. The URGENT
-   flags appear at the top of *Contrôles du protocole*. Yellow fields marked *à vérifier* need a human
-   check, and blood-pressure numbers from speech always do.
-2. **Approve.** Type a name and a phone number, then tap **OK** on each yellow field. Tick the consent
-   box and *J'ai demandé les signes de danger*. Then tap **Valider et enregistrer**. With a follow-up
-   sample, the outbox shows a Zarma voice reminder (▶ Écouter) and a French SMS, both scheduled for
-   18:30 the evening before the visit.
-3. **Go offline.** Turn on airplane mode and reload the page. The app, your saved record, and the
-   queued reminders are all still there; reminders wait until the network returns.
+The interface opens in English; use **EN | FR** at the top to switch. Dictation stays French. On a wide
+screen the nurse's phone is on the left and Noor's basic phone on the right.
 
-![Record filled from a dictation](docs/screenshot-record.png) ![Protocol checks](docs/screenshot-flags.png)
+1. **Load a sample dictation.** Choose any 4-digit PIN, open *Sample dictations* and pick one, for
+   example *Man, 67: very high BP*. The raw transcript (precomputed offline by Whisper small) appears
+   under the note. Tap **Fill record**. Protocol checks appear as cards with an icon and a word:
+   URGENT / REFER / PLEASE CHECK / MISSING STEP. Fields marked *please check* need a human check;
+   blood-pressure numbers from speech always do.
+2. **Approve.** Use the *Woman, 38: follow-up* sample. Type a name and a phone number, then tap
+   **OK** on each *please check* field. Tick consent and *I asked about danger signs*; that confirmation
+   resolves the danger-sign card but keeps it on the record with a time. Then tap **Approve & save**.
+   Noor's phone shows the Zarma voice reminder (▶ Play) and the French SMS, both scheduled for 18:30 the
+   evening before the visit.
+3. **Go offline.** Turn on airplane mode and reload. The app, your saved record and the queued
+   reminders are all still there; reminders wait until the network returns.
+
+![Desktop: nurse's phone and Noor's basic phone](docs/screens/desktop-6-reminder.png)
+
+![Protocol checks](docs/screens/mobile-3-flags.png) ![Review](docs/screens/mobile-4-review.png)
 
 ## The problem
 The challenge describes Noor, who lives near an overcrowded clinic. Its clinicians struggle with heavy
@@ -145,6 +151,23 @@ the 4 hosted samples.
 - **Speech:** faster-whisper (CTranslate2, int8), served by a small Python HTTP service on localhost.
 - **Evaluation:** Node + Python scripts in `ml/`: field accuracy, WER, urgent-flag recall,
   sensitivity/specificity, latency, and a headless-Chrome end-to-end test.
+
+## Tests
+`npm install` (puppeteer-core only; it uses your installed Chrome), then `npm test`. One command runs:
+- **Extractor unit tests:** number words, 20 adversarial cases (short notes like "Femme 35 ans",
+  no BP, numbers in words, filler words, mixed English/French), speech-safety checks, and regression
+  guards on the 30 typed gold texts.
+- **HEARTS rule tests** at threshold edges: 139/89 vs 140/90, 180/110 vs 181/100, 200/120 vs 201/90,
+  and BP not measured.
+- **End-to-end tests in headless Chrome**, against the local build and the live site: PIN → sample
+  dictation → record → flags → danger-signs confirmation → approve → reminder → missed follow-up →
+  offline reload. Includes the EN/FR toggle and the "no BP → reason required" gate.
+- **Real microphone path:** Chrome's fake microphone → MediaRecorder webm/opus → local Whisper →
+  auto-filled record. This runs only when the speech service is up.
+
+Speech settings were chosen on development clips: `language="fr"`, voice-activity detection on, no
+prompt. A clinical prompt invented numbers on cut-off phrases, and without voice-activity detection
+Whisper produced subtitle-credit text on silence.
 
 ## Run it locally
 The web app needs no build step and no dependencies:

@@ -260,7 +260,23 @@ uncertain. On the test set it added nothing. The remaining errors happened befor
 vocabulary did not cover, or words the speech model misheard. So the shipped version is rules-only,
 and the classifier stays in the code with the result documented.
 
-**Step 9: safety review, audit and deployment.** A health-safety review checked:
+**Step 9: making it testable and easier to use.** An automated test suite now checks the extractor,
+the protocol thresholds, and the whole demo journey in a real browser, both on a local copy and on the
+live site. It also tests the real microphone path. A live test exposed a usability problem: after
+dictating, the nurse still had to press a second button, so a short note like "Femme 35 ans" seemed
+not to register. The record now fills automatically. The raw transcript is shown separately, so
+anyone can see whether the speech model or the extractor made a mistake.
+
+Two tempting tweaks were tested and rejected on development clips:
+- Giving the speech model a clinical "hint" sentence made it invent blood-pressure numbers when
+  speech was cut off.
+- Turning off its silence detection made it write subtitle credits ("Sous-titres réalisés par…")
+  on silent audio.
+
+The interface also gained an English/French switch, a step indicator, and a second phone on screen
+showing what Noor actually receives.
+
+**Step 10: safety review, audit and deployment.** A health-safety review checked:
 
 - the wording, so that no message reads like a diagnosis or an "all clear";
 - that the thresholds are cited;
