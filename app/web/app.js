@@ -82,10 +82,11 @@ function renderRecord() {
     }
     input.value = f.value ?? "";
     input.onchange = () => { f.value = input.value === "" ? null : input.value; f.source = "typed"; f.check = false; renderRecord(); };
-    const ok = el("button", { className: "secondary small", textContent: t("field.confirm"), hidden: !f.check });
+    const ok = el("button", { className: "secondary small confirm", textContent: t("field.confirm"), hidden: !f.check });
     ok.onclick = () => { f.check = false; renderRecord(); };
     const label = el("label", {}, t("field." + name), el("span", { className: "tag", textContent: f.check ? t("field.check") : t("field.ok") }));
     const box = el("div", { className: "field " + (f.check ? "check" : "ok") }, label, el("div", { className: "line" }, input, ok));
+    box.dataset.field = name;
     if (f.source === "speech" && spec.numeric_bp && f.check) box.append(el("div", { className: "hint", textContent: t("note.source_speech") }));
     if (name === "follow_up") {
       const d = outbox.addDuration(RECORD.visit_date.value, f.value);
@@ -124,7 +125,7 @@ function renderFlags() {
   const order = { urgent: 0, refer: 1, check: 2, gap: 3, resolved: 4 };
   const flags = resolveFlags(checkProtocol(values())).sort((a, b) => order[a.level] - order[b.level]);
   $("flags").replaceChildren(...(flags.length
-    ? flags.map(f => el("li", { className: f.resolved ? "resolved" : f.level,
+    ? flags.map(f => el("li", { className: "flag " + (f.resolved ? "resolved" : f.level),
         textContent: f.resolved ? t("flag.danger_asked_confirmed", { time: fmtTime(f.resolved_at) }) : t("flag." + f.code) }))
     : [el("li", { textContent: t("flags.none") })]));
 }
