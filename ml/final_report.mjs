@@ -45,7 +45,9 @@ function run(file) {
 console.log("| Condition | Clips | Field accuracy | Voice A | Voice B | Voice C | Headache (mentioned) | Urgent caught | False urgent | Present danger symptom marked absent |");
 console.log("|---|---|---|---|---|---|---|---|---|---|");
 for (const [name, f] of [["Typed (script text)", "typed"], ["Whisper small, clean", "small_clean"], ["Whisper small, noisy", "small_noisy"],
+                         ["Whisper small, LIVE config (webm, VAD on), clean", "small-live_clean"], ["Whisper small, LIVE config, noisy", "small-live_noisy"],
                          ["Whisper base, clean", "base_clean"], ["Whisper base, noisy", "base_noisy"], ["Whisper tiny, clean", "tiny_clean"]]) {
+  if (!fs.existsSync(`data/gold/transcripts/${f}.json`)) continue;
   const r = run(`data/gold/transcripts/${f}.json`);
   const bv = k => (r.byVoice[k] ? pct(...r.byVoice[k]) : "n/a");
   console.log(`| ${name} | ${r.clips} | ${pct(r.ok, r.n)} | ${bv("A")} | ${bv("B")} | ${bv("C")} | ${pct(...r.head)} | ${pct(...r.urg)} | ${pct(...r.falseUrg)} | ${r.falseAbsent} of ${r.present} |`);
