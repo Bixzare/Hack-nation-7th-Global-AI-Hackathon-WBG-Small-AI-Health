@@ -1,6 +1,6 @@
 // End-to-end safety metric: does the record extracted from speech raise an URGENT flag whenever the
 // gold-labelled record would (HEARTS rules applied to both)? Counts only; gold text is never printed.
-//   node ml/eval_flags.mjs data/gold/transcripts/base_clean.json [--unseen]
+//   node ml/eval_flags.mjs data/gold/transcripts/base_clean.json [--split=test|dev]
 import fs from "node:fs";
 import { extract } from "../app/web/engine/extractor.js";
 import { checkProtocol } from "../app/web/engine/rules.js";
@@ -22,7 +22,7 @@ const strictUrgent = fl => fl.some(f => f.level === "urgent" && f.code !== "ask_
 
 const file = process.argv[2];
 let tp = 0, fn = 0, fp = 0, tn = 0, caughtByScreen = 0;
-for (const p of goldPairs(file, "speech")) {
+for (const p of goldPairs(file, file.endsWith("typed.json") ? "typed" : "speech")) {
   const want = strictUrgent(checkProtocol(goldValues(p.labels)));
   const rec = extract(p.text, schema, lex, { source: "speech" });
   const fl = checkProtocol(Object.fromEntries(Object.entries(rec).map(([k, x]) => [k, x.value])));
@@ -30,6 +30,6 @@ for (const p of goldPairs(file, "speech")) {
   if (want && got) tp++; else if (want) { fn++; if (fl.some(f => f.level === "urgent")) caughtByScreen++; }
   else if (got) fp++; else tn++;
 }
-console.log(`${file.split("/").pop()}${process.argv.includes("--unseen") ? " (unseen 26)" : ""}: urgent cases ${tp + fn}, ` +
+console.log(`${file.split("/").pop()}${(process.argv.find(a => a.startsWith("--split=")) || "").slice(8)}: urgent cases ${tp + fn}, ` +
   `flagged ${tp} (recall ${(100 * tp / Math.max(1, tp + fn)).toFixed(0)}%), missed ${fn} ` +
   `(of which still shown as urgent "ask danger signs": ${caughtByScreen}), false urgent ${fp} of ${fp + tn} non-urgent`);

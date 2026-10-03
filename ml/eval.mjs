@@ -79,10 +79,10 @@ function csvRows(file) {
 export function goldPairs(transcriptFile, source) {
   const labels = csvRows(path.join(ROOT, "data/gold/gold_labels.csv"));
   const tx = JSON.parse(fs.readFileSync(transcriptFile, "utf8"));
-  // Gold clips whose transcript wording the developer has seen (hosted-demo samples, 3 Oct ~22:35):
-  // reported separately so the "unseen" numbers stay clean.
-  const exclude = process.argv.includes("--unseen") ? new Set(["1", "4", "13", "20"]) : new Set();
-  return labels.filter(l => tx[l.id] != null && !exclude.has(l.id)).map(l => ({ text: tx[l.id], labels: l, source }));
+  // --split dev|test (data/gold/split.json, seed 2026). Test clips are frozen: report only.
+  const arg = process.argv.find(a => a.startsWith("--split="));
+  const split = arg ? JSON.parse(fs.readFileSync(path.join(ROOT, "data/gold/split.json"), "utf8"))[arg.slice(8)].map(String) : null;
+  return labels.filter(l => tx[l.id] != null && (!split || split.includes(l.id))).map(l => ({ text: tx[l.id], labels: l, source }));
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
@@ -104,7 +104,7 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
       .map(l => JSON.parse(l)).map(e => ({ text: e.text, labels: e.labels, source: "typed" }));
     report(`dev (synthetic)${useClf ? " rules+clf" : " rules"}`, score(pairs, opts));
   } else {
-    report(`gold${process.argv.includes("--unseen") ? "-26 unseen" : "-30"} ${path.basename(file)}${useClf ? " rules+clf" : " rules"}`,
-      score(goldPairs(file, file.includes("typed") ? "typed" : "speech"), opts), false);
+    report(`gold-${(process.argv.find(a => a.startsWith("--split=")) || "--split=all").slice(8)} ${path.basename(file)}${useClf ? " rules+clf" : " rules"}`,
+      score(goldPairs(file, path.basename(file).startsWith("typed") ? "typed" : "speech"), opts), false);
   }
 }
