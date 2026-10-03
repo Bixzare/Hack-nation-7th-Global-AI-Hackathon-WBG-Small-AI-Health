@@ -23,7 +23,7 @@
  "status.saved": "Saved on this device (record #{id})",
  "approve": "Approve & save",
  "flags.title": "Protocol checks",
- "flags.none": "No protocol gaps found",
+ "flags.none": "No protocol gap found: clinical judgement still applies",
  "outbox.title": "Outbox (reminders)",
  "outbox.empty": "Nothing queued",
  "outbox.voice": "Voice reminder ({locale})",

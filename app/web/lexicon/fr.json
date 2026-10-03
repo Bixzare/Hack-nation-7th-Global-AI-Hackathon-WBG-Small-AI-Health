@@ -1,5 +1,5 @@
 {
- "_comment": "French extraction lexicon for the language-neutral engine. Patterns are regexes over normalized text (lower case, accents stripped, number words converted to digits). Written from general French clinical-note conventions; never derived from the gold test set. NEEDS-NATIVE-CHECK by a French-speaking clinician.",
+ "_comment": "French extraction lexicon for the language-neutral engine. Patterns are regexes over normalized text (lower case, accents stripped, number words converted to digits). v1 written from general French clinical-note conventions; v2-v4 tuning history (incl. gold-dev headache sound-alikes) is disclosed in docs/log.md. bp.plausible / cmhg_below are data-entry sanity checks (they only lower confidence -> 'please check'), not clinical thresholds. NEEDS-NATIVE-CHECK by a French-speaking clinician.",
  "numbers": {
   "compounds": {
    "quatre[- ]vingts?": 80,

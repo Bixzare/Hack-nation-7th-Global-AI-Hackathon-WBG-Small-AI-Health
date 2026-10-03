@@ -2,7 +2,8 @@
 // Sources (verified against the PDFs, 3 Oct 2026):
 //   [H] WHO HEARTS technical package, Evidence-based treatment protocols, WHO/NMH/NVI/18.2 (2018)
 //   [G] WHO Guideline for the pharmacological treatment of hypertension in adults (2021)
-//   [R] WHO definition of women of reproductive age: 15-49 years
+//   [R] WHO indicator definition of women of reproductive age: 15-49 years (TODO-CLINICAL: standard WHO GHO
+//       definition, not re-fetched; HEARTS itself says 'women of childbearing age' without an age range)
 // Levels: "urgent" (ask a clinician / refer today), "refer" (non-emergency referral), "gap" (missing step),
 // "check" (something to confirm). The tool never diagnoses; it signposts to a person.
 
