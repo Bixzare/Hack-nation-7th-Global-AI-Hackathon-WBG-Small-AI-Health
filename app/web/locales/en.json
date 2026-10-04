@@ -147,5 +147,8 @@
  "noor.sms": "SMS · Health centre",
  "noor.play": "Play",
  "noor.empty": "No message yet. Approve a visit with a phone number and a next-visit date.",
- "field.empty": "not filled"
+ "field.empty": "not filled",
+ "speech.too_quiet": "Too quiet: hold the phone closer and try again.",
+ "raw.lowconf_hint": "Highlighted words: the speech model was unsure; fields built from them are marked \"please check\".",
+ "raw.lowconf_word": "speech model confidence {p}%"
 }

@@ -3,19 +3,219 @@
   "id": 1,
   "title": "Femme 38 ans — suivi (voix synthétique ElevenLabs)",
   "audio": "samples/sample-01.mp3",
-  "transcript": "Femme, 38 ans. Tention, 162 sur 98. C'est fallé depuis trois jours. Elle oublie parfois ses médicaments. Pas enceinte. Conseil sur le sel donné. Revoire dans deux semaines.",
+  "transcript": "Femme, 38 ans. Tention, 162 sur 98. C 'est fallé depuis trois jours. Elle oublie parfois ses médicaments. Pas enceinte. Conseil sur le sel donné. Revoir dans deux semaines.",
   "model": "Whisper small (faster-whisper int8, hors ligne)",
   "synthetic": true,
-  "title_en": "Woman, 38: follow-up (synthetic ElevenLabs voice)"
+  "title_en": "Woman, 38: follow-up (synthetic ElevenLabs voice)",
+  "words": [
+   {
+    "w": "Femme,",
+    "p": 0.733
+   },
+   {
+    "w": "38",
+    "p": 0.954
+   },
+   {
+    "w": "ans.",
+    "p": 0.998
+   },
+   {
+    "w": "Tention,",
+    "p": 0.698
+   },
+   {
+    "w": "162",
+    "p": 0.917
+   },
+   {
+    "w": "sur",
+    "p": 0.228
+   },
+   {
+    "w": "98.",
+    "p": 0.971
+   },
+   {
+    "w": "C",
+    "p": 0.891
+   },
+   {
+    "w": "'est",
+    "p": 0.997
+   },
+   {
+    "w": "fallé",
+    "p": 0.837
+   },
+   {
+    "w": "depuis",
+    "p": 0.996
+   },
+   {
+    "w": "trois",
+    "p": 0.668
+   },
+   {
+    "w": "jours.",
+    "p": 0.999
+   },
+   {
+    "w": "Elle",
+    "p": 0.985
+   },
+   {
+    "w": "oublie",
+    "p": 0.994
+   },
+   {
+    "w": "parfois",
+    "p": 0.979
+   },
+   {
+    "w": "ses",
+    "p": 0.966
+   },
+   {
+    "w": "médicaments.",
+    "p": 0.996
+   },
+   {
+    "w": "Pas",
+    "p": 0.971
+   },
+   {
+    "w": "enceinte.",
+    "p": 0.982
+   },
+   {
+    "w": "Conseil",
+    "p": 0.795
+   },
+   {
+    "w": "sur",
+    "p": 0.99
+   },
+   {
+    "w": "le",
+    "p": 0.995
+   },
+   {
+    "w": "sel",
+    "p": 0.827
+   },
+   {
+    "w": "donné.",
+    "p": 0.383
+   },
+   {
+    "w": "Revoir",
+    "p": 0.713
+   },
+   {
+    "w": "dans",
+    "p": 0.992
+   },
+   {
+    "w": "deux",
+    "p": 0.907
+   },
+   {
+    "w": "semaines.",
+    "p": 0.999
+   }
+  ]
  },
  {
   "id": 4,
   "title": "Homme 67 ans — TA très élevée (voix synthétique ElevenLabs)",
   "audio": "samples/sample-04.mp3",
-  "transcript": "Homme, 67 ans. Tention, 190 sur 115. Douleur thoracique depuis ce matin et soufflement. Référez à l'hôpital aujourd'hui.",
+  "transcript": "Homme, 67 ans. Tension, 190 sur 115. Douleur thoracique depuis ce matin et soufflement. Référez à l 'hôpital aujourd 'hui.",
   "model": "Whisper small (faster-whisper int8, hors ligne)",
   "synthetic": true,
-  "title_en": "Man, 67: very high BP (synthetic ElevenLabs voice)"
+  "title_en": "Man, 67: very high BP (synthetic ElevenLabs voice)",
+  "words": [
+   {
+    "w": "Homme,",
+    "p": 0.547
+   },
+   {
+    "w": "67",
+    "p": 0.938
+   },
+   {
+    "w": "ans.",
+    "p": 0.994
+   },
+   {
+    "w": "Tension,",
+    "p": 0.727
+   },
+   {
+    "w": "190",
+    "p": 0.899
+   },
+   {
+    "w": "sur",
+    "p": 0.061
+   },
+   {
+    "w": "115.",
+    "p": 0.976
+   },
+   {
+    "w": "Douleur",
+    "p": 0.812
+   },
+   {
+    "w": "thoracique",
+    "p": 0.89
+   },
+   {
+    "w": "depuis",
+    "p": 0.977
+   },
+   {
+    "w": "ce",
+    "p": 0.997
+   },
+   {
+    "w": "matin",
+    "p": 0.998
+   },
+   {
+    "w": "et",
+    "p": 0.214
+   },
+   {
+    "w": "soufflement.",
+    "p": 0.816
+   },
+   {
+    "w": "Référez",
+    "p": 0.833
+   },
+   {
+    "w": "à",
+    "p": 0.995
+   },
+   {
+    "w": "l",
+    "p": 0.994
+   },
+   {
+    "w": "'hôpital",
+    "p": 0.959
+   },
+   {
+    "w": "aujourd",
+    "p": 0.972
+   },
+   {
+    "w": "'hui.",
+    "p": 1.0
+   }
+  ]
  },
  {
   "id": 13,
@@ -24,15 +224,167 @@
   "transcript": "femme 52 ans tension 136 sur 80 pas de plainte traitement bien suivi revoir dans trois mois",
   "model": "Whisper small (faster-whisper int8, hors ligne)",
   "synthetic": true,
-  "title_en": "Woman, 52: BP controlled (synthetic ElevenLabs voice)"
+  "title_en": "Woman, 52: BP controlled (synthetic ElevenLabs voice)",
+  "words": [
+   {
+    "w": "femme",
+    "p": 0.206
+   },
+   {
+    "w": "52",
+    "p": 0.705
+   },
+   {
+    "w": "ans",
+    "p": 0.996
+   },
+   {
+    "w": "tension",
+    "p": 0.319
+   },
+   {
+    "w": "136",
+    "p": 0.982
+   },
+   {
+    "w": "sur",
+    "p": 0.419
+   },
+   {
+    "w": "80",
+    "p": 0.99
+   },
+   {
+    "w": "pas",
+    "p": 0.797
+   },
+   {
+    "w": "de",
+    "p": 0.997
+   },
+   {
+    "w": "plainte",
+    "p": 0.917
+   },
+   {
+    "w": "traitement",
+    "p": 0.867
+   },
+   {
+    "w": "bien",
+    "p": 0.996
+   },
+   {
+    "w": "suivi",
+    "p": 0.983
+   },
+   {
+    "w": "revoir",
+    "p": 0.915
+   },
+   {
+    "w": "dans",
+    "p": 0.991
+   },
+   {
+    "w": "trois",
+    "p": 0.788
+   },
+   {
+    "w": "mois",
+    "p": 0.998
+   }
+  ]
  },
  {
   "id": 20,
   "title": "Homme 39 ans — symptôme incertain (voix synthétique ElevenLabs)",
   "audio": "samples/sample-20.mp3",
-  "transcript": "Homme 39 ans. Tention 152 sur 97. Oubliez rarement ses comprimés. Peut-être un peu essoufflé. Revois dans deux semaines.",
+  "transcript": "Homme 39 ans. Tention 152 sur 97. Oubliez rarement ses compagnies. Peut -être un peu essoufflé. Revois dans deux semaines.",
   "model": "Whisper small (faster-whisper int8, hors ligne)",
   "synthetic": true,
-  "title_en": "Man, 39: uncertain symptom (synthetic ElevenLabs voice)"
+  "title_en": "Man, 39: uncertain symptom (synthetic ElevenLabs voice)",
+  "words": [
+   {
+    "w": "Homme",
+    "p": 0.554
+   },
+   {
+    "w": "39",
+    "p": 0.524
+   },
+   {
+    "w": "ans.",
+    "p": 0.978
+   },
+   {
+    "w": "Tention",
+    "p": 0.687
+   },
+   {
+    "w": "152",
+    "p": 0.985
+   },
+   {
+    "w": "sur",
+    "p": 0.334
+   },
+   {
+    "w": "97.",
+    "p": 0.944
+   },
+   {
+    "w": "Oubliez",
+    "p": 0.82
+   },
+   {
+    "w": "rarement",
+    "p": 0.974
+   },
+   {
+    "w": "ses",
+    "p": 0.814
+   },
+   {
+    "w": "compagnies.",
+    "p": 0.676
+   },
+   {
+    "w": "Peut",
+    "p": 0.99
+   },
+   {
+    "w": "-être",
+    "p": 0.973
+   },
+   {
+    "w": "un",
+    "p": 0.991
+   },
+   {
+    "w": "peu",
+    "p": 0.997
+   },
+   {
+    "w": "essoufflé.",
+    "p": 0.938
+   },
+   {
+    "w": "Revois",
+    "p": 0.715
+   },
+   {
+    "w": "dans",
+    "p": 0.963
+   },
+   {
+    "w": "deux",
+    "p": 0.647
+   },
+   {
+    "w": "semaines.",
+    "p": 0.998
+   }
+  ]
  }
 ]

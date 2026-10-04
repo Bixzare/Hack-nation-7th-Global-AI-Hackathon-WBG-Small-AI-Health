@@ -14,7 +14,7 @@ let up = false;
 if (!IN_CI) try { up = (await fetch("http://127.0.0.1:8765/health", { signal: AbortSignal.timeout(1500) })).ok; } catch {}
 const have = fs.existsSync(path.join(DIR, "short_01.wav"));
 
-async function dictate(wav, seconds) {
+async function dictate(wav, seconds, expectQuiet = false) {
   const server = await serve(8080 + Math.floor(Math.random() * 900)); // localhost page => mic button enabled
   const browser = await puppeteer.launch({ executablePath: CHROME, headless: true, args: [...CHROME_ARGS,
     "--use-fake-ui-for-media-stream", "--use-fake-device-for-media-stream", `--use-file-for-fake-audio-capture=${wav}`] });
@@ -26,11 +26,15 @@ async function dictate(wav, seconds) {
     await page.click("#btnMic");
     await new Promise(r => setTimeout(r, seconds * 1000));
     await page.click("#btnMic");
-    await page.waitForFunction(() => !document.getElementById("rawBox").hidden, { timeout: 60000 });
+    if (expectQuiet) {
+      await new Promise(r => setTimeout(r, 800));
+      return { raw: "", filled: await page.$$eval(".field", f => f.length), speech: await page.$eval("#speech", e => e.textContent) };
+    }
+    await page.waitForFunction(() => !document.getElementById("rawBox").hidden || /quiet|faible/i.test(document.getElementById("speech").textContent), { timeout: 60000 });
     const raw = await page.$eval("#rawText", e => e.textContent);
     const filled = await page.$$eval(".field", f => f.length);
     const get = k => page.$eval(`[data-field="${k}"]`, e => e.querySelector("select,input").value).catch(() => null);
-    return { raw, filled, sex: await get("sex"), age: await get("age") };
+    return { raw, filled, sex: await get("sex"), age: await get("age"), speech: await page.$eval("#speech", e => e.textContent) };
   } finally { await browser.close(); server.close(); }
 }
 
@@ -43,6 +47,14 @@ describe("browser microphone -> local Whisper -> record (local-only)", { skip: (
   test("'Homme, 36 ans' (dev clip 14, first 2.5 s)", async () => {
     const r = await dictate(path.join(DIR, "short_14.wav"), 3);
     assert.equal(r.sex, "M", `raw: ${r.raw}`); assert.equal(r.age, "36");
+  });
+  test("phone far away (-30 dB): still 'Homme, 36' (browser gain + server loudness normalisation)", async () => {
+    const r = await dictate(path.join(DIR, "far_14.wav"), 3);
+    assert.equal(r.sex, "M", `raw: ${r.raw}`); assert.equal(r.age, "36");
+  });
+  test("near-silent recording (-80 dB): 'too quiet' message, nothing sent, no record", async () => {
+    const r = await dictate(path.join(DIR, "veryquiet_14.wav"), 3, true);
+    assert.equal(r.filled, 0); assert.match(r.speech, /quiet|faible/i);
   });
   test("silence produces no text and no record", async () => {
     const r = await dictate(path.join(DIR, "silence.wav"), 3);

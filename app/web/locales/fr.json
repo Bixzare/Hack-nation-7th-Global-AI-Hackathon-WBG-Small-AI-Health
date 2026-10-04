@@ -148,5 +148,8 @@
  "noor.sms": "SMS · CSI",
  "noor.play": "Écouter",
  "noor.empty": "Aucun message. Validez une consultation avec un téléphone et une date de RDV.",
- "field.empty": "non rempli"
+ "field.empty": "non rempli",
+ "speech.too_quiet": "Trop faible : rapprochez le téléphone et réessayez.",
+ "raw.lowconf_hint": "Mots surlignés : le modèle vocal n'était pas sûr ; les champs qui en viennent sont « à vérifier ».",
+ "raw.lowconf_word": "confiance du modèle vocal {p} %"
 }

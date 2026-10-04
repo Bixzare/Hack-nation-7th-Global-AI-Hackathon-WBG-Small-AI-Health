@@ -1,6 +1,6 @@
 // Service worker: precache the app shell, then serve same-origin GETs cache-first and refresh in the
 // background (stale-while-revalidate). After one visit the app works in airplane mode.
-const CACHE = "htn-v12";
+const CACHE = "htn-v13";
 const SHELL = [
   "./", "index.html", "styles.css", "app.js", "manifest.webmanifest", "icon.svg", "config.json",
   "engine/i18n.js", "engine/extractor.js", "engine/rules.js", "engine/store.js", "engine/pin.js",

@@ -278,18 +278,25 @@ async function loadSamples() {
     b.onclick = () => {
       if (s.audio) new Audio(s.audio).play().catch(() => {});
       $("note").value = s.transcript; $("note").dataset.source = "speech";
-      showRaw(s.transcript, t("note.samples_label", { model: s.model }));
+      showRaw(s.transcript, t("note.samples_label", { model: s.model }), s.words);
     };
     return b;
   }));
 }
 
 let RAW = null; // last raw speech transcript (before any edit or extraction)
-function showRaw(text, label) {
-  RAW = { text, label };
+let LOWCONF = []; // words the speech model was unsure about (probability below the profile threshold)
+function showRaw(text, label, words = null) {
+  RAW = { text, label, words };
+  LOWCONF = (words || []).filter(w => w.p < (P.asr_low_conf_threshold ?? 0.4)).map(w => w.w);
   $("rawBox").hidden = false;
-  $("rawLabel").textContent = label;
-  $("rawText").textContent = text ? `« ${text} »` : t("raw.empty");
+  $("rawLabel").textContent = label + (LOWCONF.length ? " " + t("raw.lowconf_hint") : "");
+  if (!text) { $("rawText").textContent = t("raw.empty"); return; }
+  if (!words?.length) { $("rawText").textContent = `« ${text} »`; return; }
+  // Low-confidence words are subtly highlighted; fields built from them are marked "please check".
+  const th = P.asr_low_conf_threshold ?? 0.4;
+  $("rawText").replaceChildren("« ", ...words.flatMap((w, i) => [i ? " " : "",
+    w.p < th ? el("mark", { className: "lowconf", textContent: w.w, title: t("raw.lowconf_word", { p: Math.round(w.p * 100) }) }) : w.w]), " »");
 }
 
 async function probeSpeech() {
@@ -311,22 +318,27 @@ async function probeSpeech() {
 
 // Live dictation: record in the browser, transcribe on the LOCAL service (audio never leaves the device).
 let rec = null;
+const TOO_QUIET_DBFS = -60; // loudest 50 ms frame below this = nothing usable was captured
 async function toggleMic() {
   if (rec) { rec.stop(); return; }
-  const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+  // Phone held at a distance: let the browser boost and clean the signal before recording.
+  const stream = await navigator.mediaDevices.getUserMedia({ audio: { autoGainControl: true, noiseSuppression: true, echoCancellation: true } });
   const chunks = [];
+  const level = startMeter(stream);
   rec = new MediaRecorder(stream);
   rec.ondataavailable = e => chunks.push(e.data);
   rec.onstop = async () => {
     stream.getTracks().forEach(tr => tr.stop());
+    const peakDb = level.stop();
     rec = null;
+    if (peakDb < TOO_QUIET_DBFS) { $("speech").textContent = t("speech.too_quiet"); $("btnMic").textContent = t("speech.record"); return; }
     $("btnMic").textContent = t("speech.working"); $("btnMic").disabled = true;
     try {
       const r = await fetch(P.speech_service_url + "/transcribe", { method: "POST", body: new Blob(chunks) });
       const j = await r.json();
       // Raw transcript is shown separately from the extracted record, so we can tell whether speech or
       // extraction failed. Then the record is filled automatically.
-      showRaw(j.text ?? "", t("raw.live", { model: j.model ?? "?", s: j.proc_s ?? "?" }));
+      showRaw(j.text ?? "", t("raw.live", { model: j.model ?? "?", s: j.proc_s ?? "?" }), j.words);
       if (j.text) { $("note").value = j.text; $("note").dataset.source = "speech"; $("btnFill").click(); }
       $("speech").textContent = j.text ? t("speech.done", { s: j.proc_s }) : t("speech.empty");
     } catch { $("speech").textContent = t("speech.unavailable"); }
@@ -344,6 +356,28 @@ function setUI(l) {
   if (!$("pinGate").hidden) { $("pinLabel").textContent = pin.hasPin() ? t("pin.enter") : t("pin.set"); $("btnPin").textContent = t("pin.button"); }
   if (RECORD) renderRecord();
   refreshLists(); loadSamples(); probeSpeech();
+}
+
+// Small input-level meter while recording; returns the loudest 50 ms frame (dBFS) when stopped.
+function startMeter(stream) {
+  let peak = -Infinity, raf = 0, ctx = null;
+  try {
+    ctx = new AudioContext();
+    const an = ctx.createAnalyser(); an.fftSize = 2048;
+    ctx.createMediaStreamSource(stream).connect(an);
+    const buf = new Float32Array(an.fftSize);
+    $("meter").hidden = false;
+    const tick = () => {
+      an.getFloatTimeDomainData(buf);
+      let sum = 0; for (const v of buf) sum += v * v;
+      const db = 10 * Math.log10(sum / buf.length + 1e-12);
+      peak = Math.max(peak, db);
+      $("meterBar").style.width = `${Math.max(0, Math.min(100, (db + 70) * 1.6))}%`;
+      raf = requestAnimationFrame(tick);
+    };
+    tick();
+  } catch { peak = 0; } // no Web Audio: never block dictation on the meter
+  return { stop() { cancelAnimationFrame(raf); ctx?.close(); $("meter").hidden = true; return peak; } };
 }
 
 // ---------- boot ----------
@@ -368,7 +402,8 @@ function setUI(l) {
   $("btnLock").onclick = showPin;
   $("btnFill").onclick = () => {
     const source = $("note").dataset.source || "typed";
-    try { RECORD = extract($("note").value, SCHEMA, LEX, { source, classifier: CLF }); }
+    const lowConf = source === "speech" ? LOWCONF : [];
+    try { RECORD = extract($("note").value, SCHEMA, LEX, { source, classifier: CLF, lowConf }); }
     catch { RECORD = emptyRecord(SCHEMA); } // safe default: nothing pre-filled, everything "please check"
     RECORD.visit_date = { value: today(), confidence: 1, source: "typed", check: false };
     APPROVED = false;

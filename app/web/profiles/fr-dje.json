@@ -14,5 +14,6 @@
   "en",
   "fr"
  ],
- "hosted_default_ui": "en"
+ "hosted_default_ui": "en",
+ "asr_low_conf_threshold": 0.4
 }

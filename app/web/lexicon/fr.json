@@ -119,7 +119,6 @@
    "cephalalgies?",
    "tete qui (lui )?fait mal",
    "douleurs? (a|de) la tete",
-   "\\b(?:(?:c|s) est |ses |ces |s )e?f+al+(?:e+s?|er|ai[st]?)\\b",
    "\\bheadaches?\\b"
   ],
   "chest_pain": [
@@ -491,5 +490,102 @@
   ],
   "min_len": 5
  },
- "_version": "v5 (v4 + unit-set fixes: cmHg with BP context, 'over', English clinical terms)"
+ "_version": "v6 (v5 + phonetic close-match vocabulary; ASR sound-alikes always flagged)",
+ "asr_variants": {
+  "_comment": "Sound-alike transcriptions of clinical words seen on gold DEV clips. A match fills the field but ALWAYS marks it 'please check'.",
+  "headache": [
+   "\\b(?:(?:c|s) est |ses |ces |s )e?f+al+(?:e+s?|er|ai[st]?)\\b"
+  ]
+ },
+ "phonetic": {
+  "_comment": "French phonetic key for close-match correction of single words or adjacent word pairs. A corrected word NEVER fills a field silently (always 'please check'). Protected everyday words are never rewritten.",
+  "rules": [
+   [
+    "ph",
+    "f"
+   ],
+   [
+    "ch",
+    "S"
+   ],
+   [
+    "h",
+    ""
+   ],
+   [
+    "qu",
+    "k"
+   ],
+   [
+    "c(?=[eiy])",
+    "s"
+   ],
+   [
+    "c",
+    "k"
+   ],
+   [
+    "emm",
+    "am"
+   ],
+   [
+    "eau",
+    "o"
+   ],
+   [
+    "au",
+    "o"
+   ],
+   [
+    "ai|ei",
+    "e"
+   ],
+   [
+    "y",
+    "i"
+   ],
+   [
+    "(er|ez|et)$",
+    "e"
+   ],
+   [
+    "(.)\\1+",
+    "$1"
+   ],
+   [
+    "[estxd]+$",
+    ""
+   ]
+  ],
+  "terms": [
+   "femme",
+   "homme",
+   "cephalees",
+   "dyspnee",
+   "enceinte"
+  ],
+  "protect": [
+   "ferme",
+   "faim",
+   "famille",
+   "pomme",
+   "comme",
+   "fame",
+   "femmes",
+   "hommes",
+   "on",
+   "au",
+   "eau",
+   "os",
+   "fin",
+   "fan",
+   "fait",
+   "effet",
+   "seul",
+   "dispense",
+   "ensemble",
+   "ancien"
+  ],
+  "min_len": 3
+ }
 }

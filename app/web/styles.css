@@ -137,3 +137,6 @@ details summary { cursor: pointer; font-weight: 600; padding: 10px 0; min-height
 .basic-keys { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 16px; }
 .basic-keys span { background: #3c424b; color: #d9dee5; border-radius: 10px; text-align: center; padding: 6px 0; font-weight: 700; min-height: 30px; }
 .empty .tag { color: var(--muted); } .empty .tag::before { content: "— "; }
+mark.lowconf { background: transparent; color: inherit; text-decoration: underline dotted 2px var(--checkBorder); text-underline-offset: 3px; }
+.meter { height: 8px; background: var(--infoBg); border: 1px solid var(--line); border-radius: 99px; overflow: hidden; margin-top: 8px; }
+.meter span { display: block; height: 100%; width: 0; background: var(--ok); transition: width .08s linear; }

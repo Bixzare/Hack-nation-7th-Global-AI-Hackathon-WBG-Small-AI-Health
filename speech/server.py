@@ -15,11 +15,14 @@ Run: .venv-speech/Scripts/python speech/server.py [--model small|base] [--port 8
 import argparse
 import json
 import os
+import re
+import subprocess
 import tempfile
 import time
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
+import imageio_ffmpeg
 from faster_whisper import WhisperModel
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -27,8 +30,27 @@ MAX_BYTES = 20 * 1024 * 1024
 # Whisper's known silence hallucinations in French (subtitle credits from its training data). Seen on silent
 # and room-tone clips when VAD is off (speech/dictation_experiments.py). Dropped as a second safety net.
 HALLUCINATIONS = ("sous-titres réalisés par", "sous-titrage st", "amara.org", "merci d'avoir regardé")
+# Distance: recordings quieter than this (mean volume) are loudness-normalised before Whisper. Gold DEV
+# clips sit at -26 to -32 dB; at -60 dB (phone far away) Whisper dropped "Homme" and normalisation restored
+# it, while normalising already-level clean clips cost about 1.4 points on dev (speech/quiet_test.py).
+QUIET_DB = -40.0
+FFMPEG = imageio_ffmpeg.get_ffmpeg_exe()
 MODEL = None
 MODEL_NAME = ""
+
+
+def mean_volume_db(path):
+    out = subprocess.run([FFMPEG, "-hide_banner", "-i", path, "-af", "volumedetect", "-f", "null", "-"],
+                         capture_output=True, text=True).stderr
+    m = re.search(r"mean_volume: (-?[\d.]+) dB", out)
+    return float(m.group(1)) if m else None
+
+
+def loudnorm(path):
+    out = path + ".norm.wav"
+    subprocess.run([FFMPEG, "-v", "error", "-y", "-i", path, "-af", "loudnorm=I=-20:TP=-2:LRA=11",
+                    "-ar", "16000", "-ac", "1", out], check=True)
+    return out
 
 
 class Handler(BaseHTTPRequestHandler):
@@ -66,17 +88,23 @@ class Handler(BaseHTTPRequestHandler):
             with os.fdopen(fd, "wb") as f:
                 f.write(data)
             t = time.perf_counter()
-            segs, info = MODEL.transcribe(path, language="fr", beam_size=5, vad_filter=True,
-                                          condition_on_previous_text=False)
-            text = " ".join(s.text.strip() for s in segs).strip()
+            vol = mean_volume_db(path)
+            src = loudnorm(path) if vol is not None and vol < QUIET_DB else path
+            segs, info = MODEL.transcribe(src, language="fr", beam_size=5, vad_filter=True,
+                                          condition_on_previous_text=False, word_timestamps=True)
+            words = [{"w": w.word.strip(), "p": round(w.probability, 3)} for s in segs for w in (s.words or [])]
+            text = " ".join(x["w"] for x in words).strip()
             if any(h in text.lower() for h in HALLUCINATIONS):
-                text = ""
-            self._json({"text": text, "audio_s": round(info.duration, 2),
-                        "proc_s": round(time.perf_counter() - t, 2), "model": MODEL_NAME})
+                text, words = "", []
+            self._json({"text": text, "words": words, "audio_s": round(info.duration, 2),
+                        "proc_s": round(time.perf_counter() - t, 2), "model": MODEL_NAME,
+                        "mean_db": vol, "normalised": src != path})
         except Exception as e:  # report, never crash the service
             self._json({"error": str(e)}, 500)
         finally:
-            os.remove(path)
+            for f in (path, path + ".norm.wav"):
+                if os.path.exists(f):
+                    os.remove(f)
 
     def log_message(self, fmt, *args):  # no request logging: transcripts are health data
         pass

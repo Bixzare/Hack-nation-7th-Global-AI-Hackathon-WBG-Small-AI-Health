@@ -15,15 +15,53 @@ export function emptyRecord(schema) {
 
 // ---------- normalization ----------
 export function normalize(text, lex) {
+  return normalizeWithCorrections(text, lex).text;
+}
+
+// Same as normalize, plus the set of canonical words that were produced by a CORRECTION (fuzzy spelling
+// or phonetic sound-alike). Fields whose evidence contains a corrected word are always "please check".
+export function normalizeWithCorrections(text, lex) {
   let s = text.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
   s = s.replace(/[’']/g, " ").replace(/\s+/g, " ");
   s = wordsToDigits(s, lex.numbers);
-  return lex.fuzzy ? fuzzyRewrite(s, lex.fuzzy) : s;
+  const corrected = new Set();
+  if (lex.fuzzy) s = fuzzyRewrite(s, lex.fuzzy, corrected);
+  if (lex.phonetic) s = phoneticRewrite(s, lex.phonetic, corrected);
+  return { text: s, corrected };
+}
+
+// French phonetic key from lexicon rules (ph->f, c before e/i->s, emm->am, silent endings...).
+export function phoneticKey(w, ph) {
+  let k = w;
+  for (const [re, rep] of ph.rules) k = k.replace(new RegExp(re, "g"), rep);
+  return k;
+}
+
+// Rewrite a word (or two adjacent words) whose phonetic key equals a clinical term's key, e.g.
+// "fam" -> "femme", "s effaler" -> "cephalees". Protected everyday words are never rewritten.
+export function phoneticRewrite(s, ph, corrected = new Set()) {
+  const keys = new Map(ph.terms.map(t => [phoneticKey(t, ph), t]));
+  const protect = new Set([...ph.protect, ...ph.terms]);
+  const toks = s.split(/(\s+)/);
+  const word = x => /^[a-z]+$/.test(x || "");
+  for (let i = 0; i < toks.length; i++) {
+    const w = toks[i];
+    if (!word(w) || protect.has(w)) continue;
+    const j = i + 2; // next word (toks[i+1] is the space)
+    if (word(toks[j]) && !protect.has(toks[j]) && (w + toks[j]).length >= ph.min_len) {
+      const t2 = keys.get(phoneticKey(w + toks[j], ph));
+      if (t2) { toks[i] = t2; toks[i + 1] = ""; toks[j] = ""; corrected.add(t2); continue; }
+    }
+    if (w.length < ph.min_len) continue;
+    const t = keys.get(phoneticKey(w, ph));
+    if (t) { toks[i] = t; corrected.add(t); }
+  }
+  return toks.join("").replace(/\s+/g, " ").trim();
 }
 
 // ASR-tolerant spelling: rewrite a word to a canonical lexicon term when it is within edit distance
-// 1 (length 5-7) or 2 (length >= 8) and starts with the same letter.
-export function fuzzyRewrite(s, fz) {
+// 1 (length 5-7) or 2 (length >= 8) and starts with the same letter. Rewrites are reported in `corrected`.
+export function fuzzyRewrite(s, fz, corrected = new Set()) {
   const canon = new Set(fz.terms);
   return s.replace(/[a-z]+/g, w => {
     if (w.length < fz.min_len || canon.has(w)) return w;
@@ -34,6 +72,7 @@ export function fuzzyRewrite(s, fz) {
       const d = editDistance(w, c, max);
       if (d <= max && d < bestD) { best = c; bestD = d; }
     }
+    if (best) corrected.add(best);
     return best ?? w;
   });
 }
@@ -150,103 +189,123 @@ export function mentions(text, lex) {
 export function extract(text, schema, lex, opts = {}) {
   const source = opts.source || "typed";
   const rec = emptyRecord(schema);
-  const norm = normalize(text, lex);
+  const { text: norm, corrected } = normalizeWithCorrections(text, lex);
   const cls = clauses(norm, lex);
-  const set = (name, value, conf, extraCheck = false) => {
+  // Suspect words: produced by a correction, or heard with low ASR confidence (opts.lowConf = raw words from
+  // the speech service below the threshold). A field whose evidence contains one is always "please check".
+  const lowConf = new Set();
+  for (const w of opts.lowConf || []) for (const tok of normalize(w, lex).split(/[^a-z0-9]+/)) if (tok) lowConf.add(tok);
+  const evidence = {};
+  const set = (name, value, conf, extraCheck = false, ev = null) => {
     if (!rec[name]) return;
     rec[name] = { value, confidence: conf, source, check: conf < CHECK_BELOW || extraCheck };
+    if (ev) evidence[name] = ev;
   };
 
   // sex: strong cues (sex words) outweigh weak ones (grammatical agreement); tie -> unknown (check)
-  const score = { F: 0, M: 0 }, strong = { F: 0, M: 0 };
+  const score = { F: 0, M: 0 }, strong = { F: 0, M: 0 }, sexEv = { F: [], M: [] };
   for (const k of ["F", "M"]) {
-    for (const p of lex.sex[k].strong) if (new RegExp(p).test(norm)) { score[k] += 3; strong[k]++; }
-    for (const p of lex.sex[k].weak) if (new RegExp(p).test(norm)) score[k] += 1;
+    for (const p of lex.sex[k].strong) { const m = new RegExp(p).exec(norm); if (m) { score[k] += 3; strong[k]++; sexEv[k].push(m[0]); } }
+    for (const p of lex.sex[k].weak) { const m = new RegExp(p).exec(norm); if (m) { score[k] += 1; sexEv[k].push(m[0]); } }
   }
   if (score.F !== score.M) {
     const win = score.F > score.M ? "F" : "M", lose = win === "F" ? "M" : "F";
-    set("sex", win, strong[win] && !strong[lose] ? 0.9 : 0.6);
+    set("sex", win, strong[win] && !strong[lose] ? 0.9 : 0.6, false, sexEv[win].join(" "));
   } else set("sex", "unknown", 0.3);
 
   // age
-  for (const p of lex.age) { const m = new RegExp(p).exec(norm); if (m) { set("age", Number(m[1]), 0.9, source === "speech"); break; } }
+  for (const p of lex.age) { const m = new RegExp(p).exec(norm); if (m) { set("age", Number(m[1]), 0.9, source === "speech", m[0]); break; } }
 
   // blood pressure: every number pair in order; first -> bp1, second -> bp2. Speech numbers are ALWAYS checked.
   const bps = [];
   for (const p of lex.bp.patterns) for (const m of norm.matchAll(new RegExp(p, "g")))
-    if (+m[1] >= (lex.bp.min_sys ?? 0)) bps.push({ i: m.index, s: +m[1], d: +m[2] }); // skip dates like 12/10
+    if (+m[1] >= (lex.bp.min_sys ?? 0)) bps.push({ i: m.index, s: +m[1], d: +m[2], ev: m[0] }); // skip dates like 12/10
   // cmHg shorthand ("TA 16/9") is accepted only right after a BP word (lexicon cmhg_pattern)
   if (lex.bp.cmhg_pattern) for (const m of norm.matchAll(new RegExp(lex.bp.cmhg_pattern, "g")))
-    if (+m[1] <= lex.bp.cmhg_below && +m[2] <= lex.bp.cmhg_below) bps.push({ i: m.index, s: +m[1] * 10, d: +m[2] * 10, cmhg: true });
+    if (+m[1] <= lex.bp.cmhg_below && +m[2] <= lex.bp.cmhg_below) bps.push({ i: m.index, s: +m[1] * 10, d: +m[2] * 10, cmhg: true, ev: m[0] });
   bps.sort((a, b) => a.i - b.i);
   bps.slice(0, 2).forEach((bp, k) => {
     let { s, d } = bp, conf = bp.cmhg ? 0.6 : 0.9; // cmHg conversion is always "please check"
     const [smin, smax] = lex.bp.plausible.sys, [dmin, dmax] = lex.bp.plausible.dia;
     if (s < smin || s > smax || d < dmin || d > dmax || d >= s) conf = 0.3;
-    set(`bp${k + 1}_sys`, s, conf, source === "speech");
-    set(`bp${k + 1}_dia`, d, conf, source === "speech");
+    set(`bp${k + 1}_sys`, s, conf, source === "speech", bp.ev);
+    set(`bp${k + 1}_dia`, d, conf, source === "speech", bp.ev);
   });
 
   // symptoms
   const allNone = any(lex.symptoms_none, norm);
   for (const sym of SYMPTOMS) {
-    const found = [];
+    const found = [], symEv = [];
+    let variant = false; // matched through an ASR sound-alike pattern -> always "please check"
     let neg = false; // negation carried by list continuers ("pas de X, ni de Y")
+    const pats = [...lex.symptoms[sym].map(p => [p, false]), ...(lex.asr_variants?.[sym] || []).map(p => [p, true])];
     for (const c of cls) {
       const cont = lex.list_continuers.some(w => c.text.startsWith(w + " "));
-      for (const p of lex.symptoms[sym]) {
+      for (const [p, isVariant] of pats) {
         const m = new RegExp(p).exec(c.text);
         if (!m) continue;
         let r = ruleStatus(c, m.index, m[0].length, lex, cont && neg);
         if (opts.classifier) r = combine(r, opts.classifier(termWindow(c, m.index, m[0].length), sym));
         found.push(r);
+        symEv.push(`${lastWords(c.text.slice(0, m.index), lex.scope_words.neg_pre)} ${m[0]}`);
+        variant ||= isVariant;
         break;
       }
       neg = any(lex.negation_pre, c.text) || (cont && neg);
     }
     if (found.length) {
       const statuses = new Set(found.map(f => f.status));
-      if (statuses.size === 1) set(sym, found[0].status, Math.min(...found.map(f => f.conf)), found[0].status === "uncertain");
-      else set(sym, "uncertain", 0.4, true); // conflicting mentions: ask the health worker
+      if (statuses.size === 1) set(sym, found[0].status, Math.min(...found.map(f => f.conf)), found[0].status === "uncertain" || variant, symEv.join(" "));
+      else set(sym, "uncertain", 0.4, true, symEv.join(" ")); // conflicting mentions: ask the health worker
+      if (variant) rec[sym].reason = "sound_alike";
     } else if (allNone) set(sym, "absent", 0.8);
     else set(sym, "not_mentioned", 0.9);
   }
 
   // closed-value fields from ordered pattern lists
+  const pickEv = {};
   const pick = name => {
     const f = lex.fields[name];
-    for (const v of f.order) if (any(f[v], norm)) return v;
+    for (const v of f.order) for (const p of f[v]) { const m = new RegExp(p).exec(norm); if (m) { pickEv[name] = m[0]; return v; } }
     return null;
   };
   const onMeds = pick("on_meds");
-  set("on_meds", onMeds ?? "not_mentioned", onMeds ? 0.85 : 0.9);
+  set("on_meds", onMeds ?? "not_mentioned", onMeds ? 0.85 : 0.9, false, pickEv.on_meds);
   const miss = pick("missed_doses");
-  if (onMeds === "no") set("missed_doses", "na", 0.85);
-  else set("missed_doses", miss ?? "not_mentioned", miss ? 0.8 : 0.9);
+  if (onMeds === "no") set("missed_doses", "na", 0.85, false, pickEv.on_meds);
+  else set("missed_doses", miss ?? "not_mentioned", miss ? 0.8 : 0.9, false, pickEv.missed_doses);
 
   const sex = rec.sex.value;
   const preg = pick("pregnancy");
   if (preg === "pregnant" && sex !== "F") set("sex", "F", 0.7);
   if (rec.sex.value === "M") set("pregnancy", "na", 0.9);
-  else set("pregnancy", preg ?? "not_mentioned", preg ? 0.85 : (rec.sex.value === "F" ? 0.9 : 0.5));
+  else set("pregnancy", preg ?? "not_mentioned", preg ? 0.85 : (rec.sex.value === "F" ? 0.9 : 0.5), false, pickEv.pregnancy);
 
   const couns = pick("counselling");
-  set("counselling", couns ?? "not_mentioned", couns ? 0.8 : 0.9);
+  set("counselling", couns ?? "not_mentioned", couns ? 0.8 : 0.9, false, pickEv.counselling);
   const ref = pick("referral");
-  set("referral", ref ?? "not_mentioned", ref ? 0.8 : 0.9);
+  set("referral", ref ?? "not_mentioned", ref ? 0.8 : 0.9, false, pickEv.referral);
 
-  set("follow_up", followUp(norm, lex.follow_up) ?? "not_mentioned", 0.85);
+  const fu = followUp(norm, lex.follow_up);
+  set("follow_up", fu?.value ?? "not_mentioned", 0.85, false, fu?.ev);
+
+  // Corrected or low-confidence words never fill a field silently.
+  for (const [name, ev] of Object.entries(evidence)) {
+    const toks = ev.split(/[^a-z0-9]+/).filter(Boolean);
+    const why = toks.some(t => corrected.has(t)) ? "corrected" : toks.some(t => lowConf.has(t)) ? "low_asr_confidence" : null;
+    if (why && rec[name]) { rec[name].check = true; rec[name].reason ??= why; }
+  }
   return rec;
 }
 
 function followUp(norm, fu) {
-  for (const [p, v] of Object.entries(fu.phrases)) if (norm.includes(p)) return v;
+  for (const [p, v] of Object.entries(fu.phrases)) if (norm.includes(p)) return { value: v, ev: p };
   for (const pat of [fu.pattern, fu.bare_pattern]) {
     const m = new RegExp(pat).exec(norm);
     if (!m) continue;
     const n = Number(m[1]), unit = fu.units[m[2]];
-    if (unit === "D") return fu.day_map[String(n)] ?? `P${n}D`;
-    return `P${n}${unit}`;
+    if (unit === "D") return { value: fu.day_map[String(n)] ?? `P${n}D`, ev: m[0] };
+    return { value: `P${n}${unit}`, ev: m[0] };
   }
   return null;
 }

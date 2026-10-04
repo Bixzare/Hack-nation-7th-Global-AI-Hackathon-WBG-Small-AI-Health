@@ -30,6 +30,13 @@ def main(tag="base"):
         shutil.copyfile(src, dst)
         samples.append({"id": i, "title": f"{title} (voix synthétique ElevenLabs)", "title_en": f"{PICK_EN[i]} (synthetic ElevenLabs voice)", "audio": f"samples/{dst.name}",
                         "transcript": tx[str(i)], "model": MODEL_LABEL[tag], "synthetic": True})
+    wfile = GOLD / "transcripts" / "small-words_dev_clean.json"  # word probabilities (speech/word_probs.py dev)
+    if wfile.exists():
+        words = json.loads(wfile.read_text(encoding="utf-8"))
+        for s in samples:
+            if str(s["id"]) in words:
+                s["words"] = words[str(s["id"])]["words"]
+                s["transcript"] = words[str(s["id"])]["text"]
     (OUT / "samples.json").write_text(json.dumps(samples, ensure_ascii=False, indent=1), encoding="utf-8")
     print(f"{len(samples)} samples written ({tag}); audio {sum((OUT / s['audio'].split('/')[1]).stat().st_size for s in samples) / 1024:.0f} KB")
 
