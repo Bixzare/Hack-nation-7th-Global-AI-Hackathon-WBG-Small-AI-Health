@@ -444,6 +444,52 @@ local + live GitHub Pages + real-mic.
   urgent 5/5 and 3/3; 0 false; 0 false-absent.
 - Local suite 201/202 (1 todo = absolute dates). Freeze re-applied on main.
 
+
+## On-device dictation (BETA, branch `on-device-asr`, Sun 10:52 → ; main frozen, tags submission-safe-3/4)
+- **What:**
+  - Whisper running in the browser through Transformers.js **4.3.0** (pinned), in a Web Worker
+    (WebGPU if available, else WASM single-thread, because GitHub Pages has no cross-origin isolation).
+  - `language=fr`, `task=transcribe`, q8 ONNX.
+  - Mode selection: local Whisper service (local install) → on-device → none. The hosted page never
+    probes localhost; `?asr=ondevice` forces on-device.
+  - In on-device mode EVERY speech-derived field is "please check" (no word confidence). Sound-alike
+    corrections are still flagged.
+  - The level meter and "too quiet" gate are kept. Samples are still available.
+- **Sizes:**
+  - whisper-base q8 = encoder 23.2 MB + decoder 53.7 MB, about **79 MB** with tokenizer/config, one-time
+    download with a progress bar.
+  - whisper-tiny q8 is about **43 MB** (used when the phone reports < 4 GB RAM).
+  - Runtime: transformers.min.js 0.58 MB + ORT asyncify wasm **26.9 MB**, same-origin.
+  - The runtime is **not committed**: the minified library trips GitHub secret scanning (a false
+    "Mistral API key" on model-name tables). It is built by `npm run vendor` in CI and Pages.
+- **Offline:**
+  - The model is cached by the browser (Cache API), the runtime by the service worker.
+  - Headless Chrome via the public preview URL: download (47 s), dictate online, airplane mode, reload,
+    dictate → transcribed **offline** in 11.3 s.
+- **Frozen test (20 clips, run once, never tuned): on-device whisper-base vs Whisper small (service):**
+
+  | | On-device whisper-base q8 | Whisper small (local service) |
+  |---|---|---|
+  | Field accuracy, clean | 237/280 (84.6%) | 267/280 (95.4%) |
+  | Field accuracy, noisy (9) | 92/126 (73.0%) | 116/126 (92.1%) |
+  | Urgent caught clean / noisy | 5/5 / **2/3** | 5/5 / 3/3 |
+  | False urgent | 0/15, 0/6 | 0/15, 0/6 |
+  | Present danger sign marked absent | 0 | 0 |
+  | Wrong fields NOT flagged (all are "not mentioned" misses; filled fields are always flagged) | 18 clean, 15 noisy | 10, 7 |
+  | Latency (laptop CPU, Node, per ~10 s clip) | median **16.6 s** (RTF 1.82) | 9.4 s |
+
+- **Honest assessment:**
+  - On-device base is clearly less accurate. It missed one noisy urgent case, and its errors are mostly
+    symptoms or answers missed entirely (read as "not mentioned"), which the flags cannot catch.
+  - It is also slower than real time on a laptop CPU; phones will be slower.
+  - Usable as a "beta" convenience with mandatory checking. Not a replacement for the health-centre
+    service.
+- **Preview (phone):** a Cloudflare quick tunnel from this laptop serving the branch build. It is up
+  only while the laptop runs it.
+- **Tests:** local 211/212 (1 todo); branch CI green. New unit tests: mode selection (7) and the
+  on-device please-check rule (3). Manual checks: `tests/helpers/ondevice_check.mjs`,
+  `ondevice_offline_check.mjs`.
+
 ## Small AI audit (Sun, `ml/measure.py`, frozen test split)
 **Checklist**
 - ✅ No runtime cloud AI. Every `fetch` targets the same origin (app files, served by the SW) or the
