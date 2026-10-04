@@ -376,6 +376,13 @@ dictation path is measured to perform the same as the file-based evaluation. Ful
   - No drop, so it's kept.
   - No gain on test either: the test clips' remaining errors are in other wordings. The dev gain is real,
     but it should not be claimed as a test-set improvement.
+- **Verification:** CI 104/104 (79 + 25). Live site updated; e2e local + live pass.
+  - Known flaky test (local-only, not caused by this change): the mic test "'Femme, 38 ans'" heard
+    **28** once in 3 runs (Chrome fake mic + noise suppression; the start offset varies). It passed on
+    both re-runs.
+  - Safety holds: ages from speech are always "please check".
+  - For the video, expect occasional misheard numbers in live dictation. That is exactly why speech
+    numbers always need a human check.
 - **FREEZE** again after this commit.
 
 ## Small AI audit (Sun, `ml/measure.py`, frozen test split)
