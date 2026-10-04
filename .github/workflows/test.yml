@@ -1,0 +1,30 @@
+# Runs the test suite on every push and pull request.
+# CI has no Whisper, no speech service, no microphone and no gold audio (data/ is gitignored):
+#   - mic/speech tests are local-only and skip here (tests/e2e/mic.test.mjs)
+#   - gold-data regression guards skip here (they run locally)
+#   - e2e runs against THIS commit's build served locally (NO_LIVE=1), not the live site
+name: tests
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - id: chrome
+        uses: browser-actions/setup-chrome@v1
+        with:
+          chrome-version: stable
+      - name: npm test
+        run: npm test
+        env:
+          CHROME: ${{ steps.chrome.outputs.chrome-path }}
+          NO_LIVE: "1"

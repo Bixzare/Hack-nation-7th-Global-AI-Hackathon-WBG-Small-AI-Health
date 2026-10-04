@@ -2,12 +2,13 @@
 // PIN -> sample dictation -> record -> flags -> danger-signs confirmation -> approve -> reminder queued
 // -> offline reload -> missed follow-up list. Plus: approval blocked without BP until "not measured" + reason.
 // Env: CHROME (path), LIVE_URL (default: Pages), NO_LIVE=1 to skip the live run, SHOTS=dir to save screenshots.
+// CI runs the local build only (NO_LIVE=1): the live site may still serve the previous deploy.
 import { test, describe, before, after } from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
 import puppeteer from "puppeteer-core";
-import { serve, CHROME } from "../helpers/server.mjs";
+import { serve, CHROME, CHROME_ARGS } from "../helpers/server.mjs";
 const LIVE = process.env.LIVE_URL || "https://bixzare.github.io/Hack-nation-7th-Global-AI-Hackathon-WBG-Small-AI-Health/";
 const SHOTS = process.env.SHOTS;
 async function shot(page, name) {
@@ -31,7 +32,7 @@ function suite(name, getUrl) {
   describe(name, { skip: !CHROME && "Chrome not found" }, () => {
     let browser, page, errors = [];
     before(async () => {
-      browser = await puppeteer.launch({ executablePath: CHROME, headless: true });
+      browser = await puppeteer.launch({ executablePath: CHROME, headless: true, args: CHROME_ARGS });
       page = await browser.newPage();
       await page.setViewport({ width: 400, height: 860, deviceScaleFactor: 1 });
       page.on("pageerror", e => errors.push(e.message));

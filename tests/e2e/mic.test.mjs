@@ -1,21 +1,22 @@
 // Real browser-microphone path: Chrome fake mic plays a WAV -> MediaRecorder (webm/opus) -> POST to the
 // local speech service -> raw transcript shown -> record auto-filled. Uses gold DEV clips only.
-// Skipped unless the speech service answers on 127.0.0.1:8765 and the dev phrases exist (data/ is gitignored).
+// LOCAL-ONLY: needs the local Whisper speech service, the gold dev audio (data/ is gitignored) and a
+// microphone path. Always skipped in CI; also skipped locally unless the service answers on 127.0.0.1:8765.
 import { test, describe } from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
 import puppeteer from "puppeteer-core";
-import { serve, CHROME, ROOT } from "../helpers/server.mjs";
+import { serve, CHROME, CHROME_ARGS, ROOT, IN_CI } from "../helpers/server.mjs";
 
 const DIR = path.join(ROOT, "data/s0/dictation");
 let up = false;
-try { up = (await fetch("http://127.0.0.1:8765/health")).ok; } catch {}
+if (!IN_CI) try { up = (await fetch("http://127.0.0.1:8765/health", { signal: AbortSignal.timeout(1500) })).ok; } catch {}
 const have = fs.existsSync(path.join(DIR, "short_01.wav"));
 
 async function dictate(wav, seconds) {
   const server = await serve(8080 + Math.floor(Math.random() * 900)); // localhost page => mic button enabled
-  const browser = await puppeteer.launch({ executablePath: CHROME, headless: true, args: [
+  const browser = await puppeteer.launch({ executablePath: CHROME, headless: true, args: [...CHROME_ARGS,
     "--use-fake-ui-for-media-stream", "--use-fake-device-for-media-stream", `--use-file-for-fake-audio-capture=${wav}`] });
   try {
     const page = await browser.newPage();
@@ -33,7 +34,7 @@ async function dictate(wav, seconds) {
   } finally { await browser.close(); server.close(); }
 }
 
-describe("browser microphone -> local Whisper -> record", { skip: (!up && "speech service not running") || (!have && "dev phrases not built") || (!CHROME && "no Chrome") }, () => {
+describe("browser microphone -> local Whisper -> record (local-only)", { skip: (IN_CI && "local-only: needs the speech service, gold audio and a microphone path") || (!up && "speech service not running") || (!have && "dev phrases not built") || (!CHROME && "no Chrome") }, () => {
   test("'Femme, 38 ans' (dev clip 1, first 2.5 s)", async () => {
     const r = await dictate(path.join(DIR, "short_01.wav"), 3);
     assert.ok(r.raw.length > 3, `raw transcript: ${r.raw}`);
