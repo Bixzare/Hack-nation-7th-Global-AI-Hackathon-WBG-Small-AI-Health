@@ -385,6 +385,47 @@ dictation path is measured to perform the same as the file-based evaluation. Ful
     numbers always need a human check.
 - **FREEZE** again after this commit.
 
+
+## QA pass (Sun ~09:45, freeze kept: tests and test data only, no app code changed)
+**Full suite: `npm test` → 237 tests: 234 passed, 0 failed, 3 todo** (known issues below). It covers
+local + live GitHub Pages + real-mic.
+- **New `tests/qa/`** (`npm run test:qa`):
+  - **Demo phrases** (`tests/qa/demo_phrases.json`, 18 phrases + 2 todo). Expectations are the
+    clinically correct record and HEARTS flags, reviewed by hand. They cover:
+    - short note ("Femme 35 ans"), the Noor follow-up, urgent with referral, controlled (shows "no gap")
+    - pregnant + vision, uncertain symptom, no BP, very high BP
+    - numbers in words, cmHg "16/9", English, second reading, ASR typos ("FAM", "c'est fallé")
+    - all-negative, poor adherence, Madame / Monsieur with mmHg, absolute date
+  - **UI QA in headless Chrome, local AND live** (33 each):
+    - PIN (short / wrong / lock / unlock); every phrase typed into the UI (values, "please check",
+      flag cards); editing a value recomputes flags
+    - approval gates; EN↔FR mid-review keeps entries; reminder dates (visit = today + 2 weeks, sent
+      18:30 the day before, Zarma weekday clip + French SMS weekday, Noor's phone + play)
+    - referral → no reminder; no phone → no reminder; BP not measured ("other" needs text); empty note
+    - all 4 samples; offline evening send stays queued, then sent online
+    - reload online + offline keeps records / outbox / missed list
+    - layout: no horizontal scroll at 360 px, two-device view on desktop
+    - demo labels visible; no console errors
+  - **Speech QA with your own voice** (local-only). Record the phrases in `docs/QA-phrases.md` as
+    `data/qa/audio/<id>.m4a`. Each one goes through the local Whisper service with hard safety checks
+    (speech numbers flagged, no present danger sign marked absent, urgent kept) plus a value report.
+    The harness was validated with a stand-in clip (5/5); it is skipped until recordings exist.
+- **Findings:**
+  1. **BUG (not fixed, freeze): missed follow-up merges patients who share a phone.**
+     - `engine/followup.js` matches patients by phone first. Households share phones (challenge
+       scenario), so a relative's later visit hides a genuinely missed follow-up, which fails unsafe.
+     - Reproduced by `tests/qa/followup.test.mjs` (todo).
+     - Proposed fix: match on name + phone. Needs a decision to lift the freeze.
+  2. **Limitation (todo):** English age without "ans" ("Woman 45") stays empty and "please check".
+  3. **Limitation (todo):** absolute follow-up dates ("RDV le 12/10") are not parsed; the "No next
+     visit" gap flag prompts the nurse.
+  4. **Flaky local mic test explained, not an app bug.** "38 ans" was occasionally heard as "28".
+     - Direct upload of the same clip: 4/4 correct.
+     - Browser capture with noise suppression / auto-gain ON vs OFF: 5/5 correct each, so the audio
+       processing is not the cause.
+     - Cause: Chrome's fake mic LOOPS the 2.5 s clip and the recording can cut a word at the loop point.
+     - Fix (test-only): the clips are padded with silence; mic tests 15/15 over 3 runs.
+
 ## Small AI audit (Sun, `ml/measure.py`, frozen test split)
 **Checklist**
 - ✅ No runtime cloud AI. Every `fetch` targets the same origin (app files, served by the SW) or the

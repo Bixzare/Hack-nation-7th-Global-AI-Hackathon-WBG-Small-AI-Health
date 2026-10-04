@@ -1,5 +1,7 @@
 // Real browser-microphone path: Chrome fake mic plays a WAV -> MediaRecorder (webm/opus) -> POST to the
 // local speech service -> raw transcript shown -> record auto-filled. Uses gold DEV clips only.
+// Clips are padded with silence (*_pad.wav): Chrome's fake mic LOOPS the file, and an unpadded 2.5 s clip
+// can be cut mid-word at the loop point (seen once as "38" -> "28"); a real microphone does not loop.
 // LOCAL-ONLY: needs the local Whisper speech service, the gold dev audio (data/ is gitignored) and a
 // microphone path. Always skipped in CI; also skipped locally unless the service answers on 127.0.0.1:8765.
 import { test, describe } from "node:test";
@@ -12,7 +14,7 @@ import { serve, CHROME, CHROME_ARGS, ROOT, IN_CI } from "../helpers/server.mjs";
 const DIR = path.join(ROOT, "data/s0/dictation");
 let up = false;
 if (!IN_CI) try { up = (await fetch("http://127.0.0.1:8765/health", { signal: AbortSignal.timeout(1500) })).ok; } catch {}
-const have = fs.existsSync(path.join(DIR, "short_01.wav"));
+const have = fs.existsSync(path.join(DIR, "short_01_pad.wav")); // built by speech/dictation_experiments.py + padding (see docs/log.md)
 
 async function dictate(wav, seconds, expectQuiet = false) {
   const server = await serve(8080 + Math.floor(Math.random() * 900)); // localhost page => mic button enabled
@@ -40,24 +42,24 @@ async function dictate(wav, seconds, expectQuiet = false) {
 
 describe("browser microphone -> local Whisper -> record (local-only)", { skip: (IN_CI && "local-only: needs the speech service, gold audio and a microphone path") || (!up && "speech service not running") || (!have && "dev phrases not built") || (!CHROME && "no Chrome") }, () => {
   test("'Femme, 38 ans' (dev clip 1, first 2.5 s)", async () => {
-    const r = await dictate(path.join(DIR, "short_01.wav"), 3);
+    const r = await dictate(path.join(DIR, "short_01_pad.wav"), 4);
     assert.ok(r.raw.length > 3, `raw transcript: ${r.raw}`);
     assert.equal(r.sex, "F"); assert.equal(r.age, "38");
   });
   test("'Homme, 36 ans' (dev clip 14, first 2.5 s)", async () => {
-    const r = await dictate(path.join(DIR, "short_14.wav"), 3);
+    const r = await dictate(path.join(DIR, "short_14_pad.wav"), 4);
     assert.equal(r.sex, "M", `raw: ${r.raw}`); assert.equal(r.age, "36");
   });
   test("phone far away (-30 dB): still 'Homme, 36' (browser gain + server loudness normalisation)", async () => {
-    const r = await dictate(path.join(DIR, "far_14.wav"), 3);
+    const r = await dictate(path.join(DIR, "far_14_pad.wav"), 4);
     assert.equal(r.sex, "M", `raw: ${r.raw}`); assert.equal(r.age, "36");
   });
   test("near-silent recording (-80 dB): 'too quiet' message, nothing sent, no record", async () => {
-    const r = await dictate(path.join(DIR, "veryquiet_14.wav"), 3, true);
+    const r = await dictate(path.join(DIR, "veryquiet_14_pad.wav"), 4, true);
     assert.equal(r.filled, 0); assert.match(r.speech, /quiet|faible/i);
   });
   test("silence produces no text and no record", async () => {
-    const r = await dictate(path.join(DIR, "silence.wav"), 3);
+    const r = await dictate(path.join(DIR, "silence_pad.wav"), 4);
     assert.equal(r.filled, 0, `raw on silence: ${r.raw}`);
   });
 });
