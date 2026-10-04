@@ -1,6 +1,6 @@
 // On-device dictation in AIRPLANE MODE: download the model once online, then go offline, reload, and dictate.
 //   node tests/helpers/ondevice_offline_check.mjs <url>
-import puppeteer from "puppeteer-core";
+import puppeteer, { KnownDevices } from "puppeteer-core";
 import path from "node:path";
 import { CHROME, CHROME_ARGS, ROOT } from "./server.mjs";
 const URL = process.argv[2];
@@ -8,6 +8,7 @@ const wav = path.join(ROOT, "data/s0/dictation/short_14_pad.wav");
 const b = await puppeteer.launch({ executablePath: CHROME, headless: true, protocolTimeout: 600000,
   args: [...CHROME_ARGS, "--use-fake-ui-for-media-stream", "--use-fake-device-for-media-stream", `--use-file-for-fake-audio-capture=${wav}`] });
 const p = await b.newPage();
+if (process.env.MOBILE) await p.emulate(KnownDevices["Pixel 5"]); // mobile viewport, touch, user agent
 const unlock = async () => { await p.type("#pinInput", "4821"); await p.click("#btnPin"); await p.waitForSelector("#btnMic:not([hidden])", { timeout: 15000 }); };
 await p.goto(URL, { waitUntil: "domcontentloaded" }); await new Promise(r => setTimeout(r, 2000));
 await p.evaluate(() => localStorage.setItem("htn-ui", "en"));

@@ -74,6 +74,31 @@ nurse dictates (French)
 - **Why rules for the clinical logic:** they are cited and checkable, and they cannot hallucinate.
   Every output is from a fixed list: fields, values, flags, SMS template, and voice clips.
 
+## Two speech modes
+The app picks the speech path automatically: the clinic's local Whisper service when the page runs on
+the health-centre laptop, otherwise on-device speech in the browser. Typing and the sample dictations
+always work.
+
+| | **Clinic laptop (recommended)** | **Phone, on-device (beta)** |
+|---|---|---|
+| Speech model | Whisper **small**, local service on the health-centre laptop (`speech/server.py`) | Whisper **base**, in the browser (Transformers.js, WebGPU or WASM, Web Worker) |
+| Download | Installed with the laptop (486 MB) | **79 MB once** (progress bar), then cached; works in airplane mode |
+| "Please check" | numbers always; words below 40% speech-model confidence; corrections | **every field from speech** (no word confidence on-device); corrections |
+| Field accuracy, frozen test, clean | **267/280 (95.4%)** | 237/280 (84.6%) |
+| Field accuracy, frozen test, noisy (9 clips) | **116/126 (92.1%)** | 92/126 (73.0%) |
+| Urgent cases caught (clean / noisy) | **5/5 / 3/3** | 5/5 / **2/3** |
+| False urgent alarms | 0 | 0 |
+| Present danger sign marked absent | 0 | 0 |
+| Time per ~10 s dictation | 9.4 s (laptop CPU) | 16.6 s (laptop CPU, Node); **on a phone this was not measured** |
+
+- The phone figures were measured with the **same on-device model on a laptop** (Transformers.js in
+  Node, `ml/eval_ondevice.mjs`), **not on a phone**. On-phone accuracy and latency still need to be
+  measured.
+- On-device base misses more, and its misses read as "not mentioned". The "ask about danger signs"
+  prompt still fires when BP is raised (tested), and approval needs the "danger signs asked" tick.
+- Short, isolated phrases ("Femme 35 ans") give the model too little context. Dictate full sentences,
+  e.g. `02-noor` in [docs/QA-phrases.md](docs/QA-phrases.md).
+
 ## Results (frozen test split: 20 clips, never used for development)
 | Input | Field accuracy (14 fields per clip) | Urgent cases flagged | False urgent | Danger signs present, detected | Present sign marked absent |
 |---|---|---|---|---|---|
@@ -180,7 +205,7 @@ Everyday words that sound similar are protected and never "corrected", for examp
   GitHub Pages.
 - **Engine:** language-neutral JavaScript. Everything language- and country-specific lives in
   `lexicon/`, `locales/` and `profiles/`.
-- **Speech:** faster-whisper (CTranslate2, int8), served by a small Python HTTP service on localhost.
+- **Speech:** clinic laptop: faster-whisper (CTranslate2, int8) local service; phone: Transformers.js 4.3.0 + onnxruntime-web (WebGPU/WASM) in a Web Worker, model cached by the browser. The runtime is copied in by `npm run vendor` (not committed).
 - **Evaluation:** Node + Python scripts in `ml/`: field accuracy, WER, urgent-flag recall,
   sensitivity/specificity, latency, and a headless-Chrome end-to-end test.
 
@@ -210,7 +235,10 @@ python -m http.server 8080 -d app/web --bind 127.0.0.1
 ```
 Open http://127.0.0.1:8080.
 
-Live dictation is optional. It runs offline Whisper on this machine; the first run downloads 486 MB:
+On-device (phone/browser) dictation needs its runtime copied in once (it is not committed):
+`npm ci && npm run vendor`. Add `?asr=ondevice` to the URL to try on-device mode on a laptop.
+
+Clinic-laptop dictation (recommended) is optional. It runs offline Whisper on this machine; the first run downloads 486 MB:
 ```
 python -m venv .venv-speech
 .venv-speech/Scripts/python -m pip install faster-whisper      # macOS/Linux: .venv-speech/bin/python

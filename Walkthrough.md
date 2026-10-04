@@ -97,6 +97,23 @@ open-source Whisper model, in its "small" size, running through a library called
 runs entirely on the health centre's laptop: the audio never leaves the machine, and no internet is
 needed. A smaller version, Whisper "base", is the fallback for weaker laptops.
 
+**Two ways to dictate.** The tool has two speech modes and picks one automatically.
+
+- **Clinic laptop, recommended.** At the health centre, a laptop runs the larger Whisper "small" model
+  as a local service. This is the most accurate setup: on the frozen test it got 95.4 percent of
+  fields right on clean audio and 92.1 percent on noisy audio, and caught every urgent case.
+- **Phone, on-device, beta.** On the hosted website, or on a phone with no laptop nearby, the smaller
+  Whisper "base" model runs directly in the browser.
+  - It downloads once, about 79 megabytes with a progress bar, and then works in airplane mode.
+  - It is less accurate: 84.6 percent of fields on clean audio and 73 percent on noisy audio. It
+    missed one of the three urgent cases in noisy audio.
+  - So in this mode **every field that comes from speech is marked "please check"**, and the
+    "ask about danger signs" prompt still appears whenever blood pressure is raised.
+  - These phone figures were measured by running the same model on a laptop, not on a phone. Real
+    phone speed and accuracy still need to be measured.
+  - Short phrases such as "Femme 35 ans" give the model too little context, so full sentences work
+    better.
+
 **Part two: the extractor.** It turns the text into a fixed record. It is a rule engine written in
 plain JavaScript and runs inside the web browser. It first normalizes the text: lower case, accents
 removed, and spoken numbers converted to digits, so "cent soixante-deux sur quatre-vingt-dix-huit"
@@ -349,8 +366,9 @@ Being clear about the limits is part of responsible AI.
 
 - **Front end:** plain HTML and JavaScript, with no framework. Records in IndexedDB, a service worker
   for offline use, hosted on GitHub Pages.
-- **Speech:** OpenAI Whisper small (base as fallback) through faster-whisper with 8-bit inference,
-  run as a local service on the health-centre laptop.
+- **Speech:** OpenAI Whisper small through faster-whisper with 8-bit inference, run as a local
+  service on the health-centre laptop (recommended). On phones and on the hosted site, Whisper base runs
+  in the browser through Transformers.js (beta, 79 MB one-time download, works offline afterwards).
 - **Extraction and rules:** a language-neutral JavaScript engine, a French vocabulary file, and WHO
   HEARTS rules with citations in the code.
 - **Patient messages:** recorded Zarma voice clips and a French SMS template, in a store-and-forward
