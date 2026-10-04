@@ -188,8 +188,16 @@ function suite(name, getUrl) {
       assert.match(await page.$eval("#outbox", e => e.innerText), new RegExp(EN["outbox.sent"].replace(/[()]/g, ".")));
     });
 
-    test("reload (online and offline): records, outbox and missed list persist", async () => {
+    test("shared household phone: a relative's visit on Aïssa's phone does not hide her missed follow-up", async () => {
       await page.click("#btnDemoHistory"); await new Promise(r => setTimeout(r, 400));
+      await fill(byId["04-controlled"].text);
+      await setField("patient_name", "Relative of Aïssa (synthetic)"); await setField("phone", "+227 90 00 00 01");
+      await confirmAll(); await tick("#consent"); await tick("#dangerAsked");
+      await page.click("#btnApprove"); await new Promise(r => setTimeout(r, 600));
+      assert.match(await page.$eval("#missed", e => e.innerText), /Aïssa/);
+    });
+
+    test("reload (online and offline): records, outbox and missed list persist", async () => {
       for (const offline of [false, true]) {
         await page.setOfflineMode(offline);
         await page.reload({ waitUntil: "domcontentloaded" }); await new Promise(r => setTimeout(r, 800));

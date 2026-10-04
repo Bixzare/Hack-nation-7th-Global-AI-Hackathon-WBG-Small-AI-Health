@@ -234,7 +234,8 @@
  },
  "age": [
   "\\b(\\d{1,3})\\s*ans\\b",
-  "\\bage\\s*:?\\s*(\\d{1,3})\\b"
+  "\\bage\\s*:?\\s*(\\d{1,3})\\b",
+  "\\b(?:woman|man|female|male|femme|homme|patiente?|madame|monsieur|mme)\\b,?\\s*(\\d{1,3})\\b(?!\\s*(?:/|sur|over|par|-|ans|mois|semaines?|jours?|mmhg|cm|kg|\\d))"
  ],
  "bp": {
   "patterns": [
@@ -519,7 +520,7 @@
   ],
   "min_len": 5
  },
- "_version": "v7 (v6 + adherence classes: good / partial / poor)",
+ "_version": "v7.1 (v7 + age after a sex word without 'ans', e.g. 'Woman 45')",
  "asr_variants": {
   "_comment": "Sound-alike transcriptions of clinical words seen on gold DEV clips. A match fills the field but ALWAYS marks it 'please check'.",
   "headache": [

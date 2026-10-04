@@ -2,10 +2,17 @@
 // The tool only lists them; a person decides what to do (call, home visit, nothing).
 import { addDuration } from "./outbox.js";
 
-const key = r => {
-  const v = k => (r.record[k]?.value ?? "").toString().trim().toLowerCase();
-  return v("phone") || v("patient_name");
-};
+// Households share one basic phone, so a phone number does NOT identify a patient. Two records are the
+// same patient only if the names match (and the phones too, when both are recorded). When we cannot
+// tell (a name is missing), the visit stays on the list: the safe direction, a person decides.
+const norm = s => (s ?? "").toString().toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/\s+/g, " ").trim();
+const digits = s => (s ?? "").toString().replace(/\D/g, "");
+function samePatient(a, b) {
+  const na = norm(a.record.patient_name?.value), nb = norm(b.record.patient_name?.value);
+  if (!na || !nb || na !== nb) return false;
+  const pa = digits(a.record.phone?.value), pb = digits(b.record.phone?.value);
+  return !pa || !pb || pa === pb;
+}
 
 export function missedFollowUps(records, todayIso) {
   const out = [];
@@ -14,7 +21,7 @@ export function missedFollowUps(records, todayIso) {
     if (v("referral") === "yes") continue;
     const due = addDuration(v("visit_date"), v("follow_up"));
     if (!due || due >= todayIso) continue;
-    const returned = records.some(o => o !== r && key(o) && key(o) === key(r) &&
+    const returned = records.some(o => o !== r && samePatient(o, r) &&
       (o.record.visit_date?.value ?? "") > (v("visit_date") ?? ""));
     if (!returned) out.push({ id: r.id, name: v("patient_name"), phone: v("phone"), due });
   }

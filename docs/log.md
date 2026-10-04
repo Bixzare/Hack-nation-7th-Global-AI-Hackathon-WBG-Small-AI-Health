@@ -426,6 +426,24 @@ local + live GitHub Pages + real-mic.
      - Cause: Chrome's fake mic LOOPS the 2.5 s clip and the recording can cut a word at the loop point.
      - Fix (test-only): the clips are padded with silence; mic tests 15/15 over 3 runs.
 
+
+## Bug fixes after QA (Sun 10:41 → 10:50; freeze lifted, tag submission-safe-3 = 405bee4 before)
+- **FIXED: missed follow-up merged patients sharing a phone.** `engine/followup.js` now treats two
+  records as the same patient only if the names match (accents and case ignored), and the phones match
+  when both are recorded. If it cannot tell (no name), the visit stays on the "not returned" list (the
+  safe direction). Tests:
+  - 6 follow-up unit tests (shared phone, accents/case, different phones, missing name, referral);
+  - a UI QA scenario: a relative approved on Aïssa's phone, and Aïssa is still listed.
+- **FIXED: English age without "ans"** ("Woman 45", "Man, 60", "Madame 48"). It is matched only right
+  after a sex word, and not when followed by sur/over/mmHg/a time unit ("Homme 145 sur 90" stays a BP).
+  Ages from speech are still always "please check".
+- **Not changed, documented limitation:** absolute follow-up dates ("RDV le 12/10"). Parsing them needs a
+  new record field (a date, not an interval), which is a feature, not a bug fix. The "No next visit" gap
+  flag prompts the nurse.
+- **Frozen test re-check:** unchanged. Typed 271/280; Whisper small 267/280 clean, 116/126 noisy;
+  urgent 5/5 and 3/3; 0 false; 0 false-absent.
+- Local suite 201/202 (1 todo = absolute dates). Freeze re-applied on main.
+
 ## Small AI audit (Sun, `ml/measure.py`, frozen test split)
 **Checklist**
 - ✅ No runtime cloud AI. Every `fetch` targets the same origin (app files, served by the SW) or the
