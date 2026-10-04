@@ -7,9 +7,11 @@
     "test": "node --test --test-reporter=spec \"tests/**/*.test.mjs\"",
     "test:unit": "node --test --test-reporter=spec \"tests/unit/*.test.mjs\"",
     "test:e2e": "node --test --test-reporter=spec \"tests/e2e/*.test.mjs\"",
-    "test:qa": "node --test --test-reporter=spec \"tests/qa/*.test.mjs\""
+    "test:qa": "node --test --test-reporter=spec \"tests/qa/*.test.mjs\"",
+    "vendor": "node ml/vendor.mjs"
   },
   "devDependencies": {
+    "@huggingface/transformers": "4.3.0",
     "puppeteer-core": "^23.11.1"
   }
 }

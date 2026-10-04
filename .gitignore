@@ -12,3 +12,5 @@ node_modules/
 docs/challenge-brief.pdf
 .venv-speech/
 locales/
+app/web/vendor/*
+!app/web/vendor/README.txt

@@ -13,7 +13,7 @@ export const IN_CI = !!process.env.CI;
 export const CHROME = process.env.CHROME || ["C:/Program Files/Google/Chrome/Application/chrome.exe",
   "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome", "/usr/bin/google-chrome"].find(p => fs.existsSync(p));
 const TYPES = { ".html": "text/html", ".js": "text/javascript", ".json": "application/json", ".css": "text/css",
-  ".mp3": "audio/mpeg", ".svg": "image/svg+xml", ".webmanifest": "application/manifest+json", ".png": "image/png" };
+  ".mp3": "audio/mpeg", ".svg": "image/svg+xml", ".webmanifest": "application/manifest+json", ".png": "image/png", ".wasm": "application/wasm", ".mjs": "text/javascript" };
 
 export function serve(port = 0) {
   return new Promise(resolve => {

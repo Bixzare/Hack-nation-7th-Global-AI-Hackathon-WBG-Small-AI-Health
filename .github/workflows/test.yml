@@ -19,6 +19,7 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      - run: npm run vendor
       - id: chrome
         uses: browser-actions/setup-chrome@v1
         with:

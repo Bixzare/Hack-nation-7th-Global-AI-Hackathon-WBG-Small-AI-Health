@@ -1,10 +1,10 @@
 // Service worker: precache the app shell, then serve same-origin GETs cache-first and refresh in the
 // background (stale-while-revalidate). After one visit the app works in airplane mode.
-const CACHE = "htn-v15";
+const CACHE = "htn-v16";
 const SHELL = [
   "./", "index.html", "styles.css", "app.js", "manifest.webmanifest", "icon.svg", "config.json",
   "engine/i18n.js", "engine/extractor.js", "engine/rules.js", "engine/store.js", "engine/pin.js",
-  "engine/outbox.js", "engine/followup.js", "engine/schema.json",
+  "engine/outbox.js", "engine/followup.js", "engine/asrmode.js", "engine/asr-worker.js", "engine/schema.json",
   "profiles/fr-dje.json", "locales/en.json", "locales/fr.json", "locales/dje.json",
   "samples/samples.json", "lexicon/fr.json", "engine/classifier.js", "models/symptom_clf.json",
   ...[1, 4, 13, 20].map(i => `samples/sample-${String(i).padStart(2, "0")}.mp3`),

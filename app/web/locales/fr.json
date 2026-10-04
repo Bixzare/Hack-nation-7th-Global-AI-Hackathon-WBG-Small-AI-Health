@@ -151,5 +151,11 @@
  "field.empty": "non rempli",
  "speech.too_quiet": "Trop faible : rapprochez le téléphone et réessayez.",
  "raw.lowconf_hint": "Mots surlignés : le modèle vocal n'était pas sûr ; les champs qui en viennent sont « à vérifier ».",
- "raw.lowconf_word": "confiance du modèle vocal {p} %"
+ "raw.lowconf_word": "confiance du modèle vocal {p} %",
+ "speech.ondevice": "Reconnaissance vocale sur l’appareil (bêta, {model}) : tout champ issu de la dictée est « à vérifier »",
+ "speech.download": "🎙 Activer la dictée (télécharger {mb} Mo une fois)",
+ "speech.downloading_short": "Téléchargement…",
+ "speech.downloading": "Téléchargement du modèle vocal ({mb} Mo, une fois) : {done} Mo",
+ "speech.ondevice_failed": "La reconnaissance vocale n’a pas pu démarrer sur cet appareil : tapez la note ou utilisez un exemple",
+ "raw.ondevice": "Reconnaissance sur l’appareil (bêta, {model}, {device}, {s} s), avant extraction :"
 }

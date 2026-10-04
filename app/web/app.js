@@ -6,6 +6,7 @@ import * as store from "./engine/store.js";
 import * as pin from "./engine/pin.js";
 import * as outbox from "./engine/outbox.js";
 import { missedFollowUps, demoHistory } from "./engine/followup.js";
+import { selectAsrMode, isHostedLocation, flagAllSpeechFields } from "./engine/asrmode.js";
 
 const $ = id => document.getElementById(id);
 const el = (tag, props = {}, ...kids) => {
@@ -300,21 +301,77 @@ function showRaw(text, label, words = null) {
     w.p < th ? el("mark", { className: "lowconf", textContent: w.w, title: t("raw.lowconf_word", { p: Math.round(w.p * 100) }) }) : w.w]), " »");
 }
 
+let ASR_MODE = "none";
 async function probeSpeech() {
-  // Hosted demo: never reach for the visitor's localhost (Chrome would ask for local-network permission).
-  // Live dictation is for the health-centre install, where the page itself is served locally.
-  if (!["localhost", "127.0.0.1", "[::1]"].includes(location.hostname)) {
-    $("speech").textContent = t("speech.hosted");
-    return;
-  }
-  let ok = false;
-  try {
+  // The hosted page never probes localhost (Chrome would show a local-network permission prompt).
+  // ?asr=ondevice forces on-device mode (testing, or a local install without the speech service).
+  const forceOndevice = new URLSearchParams(location.search).get("asr") === "ondevice";
+  const hosted = isHostedLocation(location.hostname) || forceOndevice;
+  let serviceUp = false;
+  if (!hosted) try {
     const ctl = new AbortController(); setTimeout(() => ctl.abort(), 800);
-    ok = (await fetch(P.speech_service_url + "/health", { signal: ctl.signal })).ok;
+    serviceUp = (await fetch(P.speech_service_url + "/health", { signal: ctl.signal })).ok;
   } catch {}
-  $("speech").textContent = ok ? t("speech.available") : t("speech.unavailable");
-  $("btnMic").hidden = !ok || !navigator.mediaDevices?.getUserMedia;
-  $("btnMic").textContent = t("speech.record");
+  ASR_MODE = selectAsrMode({ hosted, serviceUp, hasMic: !!navigator.mediaDevices?.getUserMedia,
+    hasWorker: typeof Worker !== "undefined", hasAudio: typeof OfflineAudioContext !== "undefined",
+    ondeviceEnabled: !!P.asr_ondevice?.enabled });
+  $("speech").textContent = ASR_MODE === "service" ? t("speech.available")
+    : ASR_MODE === "ondevice" ? t("speech.ondevice", { model: ondeviceModel().name }) : (hosted ? t("speech.hosted") : t("speech.unavailable"));
+  $("btnMic").hidden = ASR_MODE === "none";
+  $("btnMic").textContent = ASR_MODE === "ondevice" && !asrReady() ? t("speech.download", { mb: ondeviceModel().mb }) : t("speech.record");
+}
+
+// ---- on-device speech (beta): Whisper in a Web Worker ----
+function ondeviceModel() {
+  const c = P.asr_ondevice || {};
+  const small = (navigator.deviceMemory ?? 8) < 4; // low-memory phone -> tiny
+  return small ? { id: c.fallback_model, mb: c.fallback_size_mb, name: "whisper-tiny" } : { id: c.model, mb: c.size_mb, name: "whisper-base" };
+}
+const asrReady = () => { try { return localStorage.getItem("htn-asr-ready") === ondeviceModel().id; } catch { return false; } };
+let WORKER = null;
+function worker() {
+  if (WORKER) return WORKER;
+  WORKER = new Worker(new URL("./engine/asr-worker.js", import.meta.url), { type: "module" });
+  const files = {};
+  WORKER.addEventListener("message", ({ data }) => {
+    if (data.type === "progress" && data.status === "progress" && data.total) {
+      files[data.file] = [data.loaded, data.total];
+      const [l, tot] = Object.values(files).reduce((acc, [x, y]) => [acc[0] + x, acc[1] + y], [0, 0]);
+      $("dlBox").hidden = false;
+      $("dlText").textContent = t("speech.downloading", { mb: (tot / 1e6).toFixed(0), done: (l / 1e6).toFixed(0) });
+      $("dlBar").style.width = `${Math.round(100 * l / tot)}%`;
+    }
+    if (data.type === "ready") {
+      $("dlBox").hidden = true;
+      try { localStorage.setItem("htn-asr-ready", ondeviceModel().id); } catch {}
+    }
+  });
+  return WORKER;
+}
+function ask(msg, transfer) {
+  return new Promise((resolve, reject) => {
+    const w = worker();
+    const h = ({ data }) => {
+      if (data.type === "error") { w.removeEventListener("message", h); reject(new Error(data.message)); }
+      if ((msg.type === "load" && data.type === "ready") || (msg.type === "transcribe" && data.type === "result")) { w.removeEventListener("message", h); resolve(data); }
+    };
+    w.addEventListener("message", h);
+    w.postMessage(msg, transfer || []);
+  });
+}
+async function downloadModel() {
+  $("btnMic").disabled = true; $("btnMic").textContent = t("speech.downloading_short");
+  try { await ask({ type: "load", model: ondeviceModel().id }); $("speech").textContent = t("speech.ondevice", { model: ondeviceModel().name }); }
+  catch { $("speech").textContent = t("speech.ondevice_failed"); $("dlBox").hidden = true; }
+  $("btnMic").disabled = false; $("btnMic").textContent = asrReady() ? t("speech.record") : t("speech.download", { mb: ondeviceModel().mb });
+}
+// Recorded blob (webm/opus or mp4) -> 16 kHz mono Float32 for Whisper.
+async function to16kMono(blob) {
+  const ac = new AudioContext();
+  const buf = await ac.decodeAudioData(await blob.arrayBuffer()); ac.close();
+  const off = new OfflineAudioContext(1, Math.max(1, Math.ceil(buf.duration * 16000)), 16000);
+  const src = off.createBufferSource(); src.buffer = buf; src.connect(off.destination); src.start();
+  return (await off.startRendering()).getChannelData(0);
 }
 
 // Live dictation: record in the browser, transcribe on the LOCAL service (audio never leaves the device).
@@ -322,12 +379,14 @@ let rec = null;
 const TOO_QUIET_DBFS = -60; // loudest 50 ms frame below this = nothing usable was captured
 async function toggleMic() {
   if (rec) { rec.stop(); return; }
+  if (ASR_MODE === "ondevice" && !asrReady()) return downloadModel(); // one-time model download, with progress
   // Phone held at a distance: let the browser boost and clean the signal before recording.
   const stream = await navigator.mediaDevices.getUserMedia({ audio: { autoGainControl: true, noiseSuppression: true, echoCancellation: true } });
   const chunks = [];
   const level = startMeter(stream);
   rec = new MediaRecorder(stream);
   rec.ondataavailable = e => chunks.push(e.data);
+  const mime = rec.mimeType;
   rec.onstop = async () => {
     stream.getTracks().forEach(tr => tr.stop());
     const peakDb = level.stop();
@@ -335,6 +394,15 @@ async function toggleMic() {
     if (peakDb < TOO_QUIET_DBFS) { $("speech").textContent = t("speech.too_quiet"); $("btnMic").textContent = t("speech.record"); return; }
     $("btnMic").textContent = t("speech.working"); $("btnMic").disabled = true;
     try {
+      if (ASR_MODE === "ondevice") {
+        const audio = await to16kMono(new Blob(chunks, { type: mime }));
+        const j = await ask({ type: "transcribe", model: ondeviceModel().id, audio }, [audio.buffer]);
+        showRaw(j.text, t("raw.ondevice", { model: ondeviceModel().name, s: j.proc_s, device: j.device }));
+        if (j.text) { $("note").value = j.text; $("note").dataset.source = "speech-ondevice"; $("btnFill").click(); }
+        $("speech").textContent = j.text ? t("speech.done", { s: j.proc_s }) : t("speech.empty");
+        $("btnMic").textContent = t("speech.record"); $("btnMic").disabled = false;
+        return;
+      }
       const r = await fetch(P.speech_service_url + "/transcribe", { method: "POST", body: new Blob(chunks) });
       const j = await r.json();
       // Raw transcript is shown separately from the extracted record, so we can tell whether speech or
@@ -402,10 +470,14 @@ function startMeter(stream) {
   $("pinInput").onkeydown = e => { if (e.key === "Enter") submitPin(); };
   $("btnLock").onclick = showPin;
   $("btnFill").onclick = () => {
-    const source = $("note").dataset.source || "typed";
-    const lowConf = source === "speech" ? LOWCONF : [];
-    try { RECORD = extract($("note").value, SCHEMA, LEX, { source, classifier: CLF, lowConf }); }
-    catch { RECORD = emptyRecord(SCHEMA); } // safe default: nothing pre-filled, everything "please check"
+    const src = $("note").dataset.source || "typed";
+    const source = src === "speech-ondevice" ? "speech" : src;
+    const lowConf = src === "speech" ? LOWCONF : [];
+    try {
+      RECORD = extract($("note").value, SCHEMA, LEX, { source, classifier: CLF, lowConf });
+      // On-device mode has no word confidence: EVERY field derived from speech is "please check".
+      if (src === "speech-ondevice") flagAllSpeechFields(RECORD, SCHEMA);
+    } catch { RECORD = emptyRecord(SCHEMA); } // safe default: nothing pre-filled, everything "please check"
     RECORD.visit_date = { value: today(), confidence: 1, source: "typed", check: false };
     APPROVED = false;
     $("recordBox").hidden = false; renderRecord();

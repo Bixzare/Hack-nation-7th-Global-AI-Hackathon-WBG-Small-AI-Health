@@ -15,5 +15,13 @@
   "fr"
  ],
  "hosted_default_ui": "en",
- "asr_low_conf_threshold": 0.4
+ "asr_low_conf_threshold": 0.4,
+ "asr_ondevice": {
+  "enabled": true,
+  "model": "onnx-community/whisper-base",
+  "size_mb": 79,
+  "fallback_model": "onnx-community/whisper-tiny",
+  "fallback_size_mb": 43,
+  "_comment": "Beta. q8 ONNX, downloaded once from the Hugging Face hub, cached by the browser. Tiny on phones reporting < 4 GB RAM."
+ }
 }

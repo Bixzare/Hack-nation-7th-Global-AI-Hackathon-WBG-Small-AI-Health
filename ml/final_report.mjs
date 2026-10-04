@@ -1,9 +1,11 @@
 // Final numbers on the frozen gold TEST split (20 clips). Counts and %, per condition and per voice.
 //   node ml/final_report.mjs > docs/results-test.md
 import fs from "node:fs";
+import path from "node:path";
 import { extract } from "../app/web/engine/extractor.js";
 import { checkProtocol } from "../app/web/engine/rules.js";
 import { FIELDS, toLabels, goldPairs } from "./eval.mjs";
+import { flagAllSpeechFields } from "../app/web/engine/asrmode.js";
 
 const schema = JSON.parse(fs.readFileSync("app/web/engine/schema.json", "utf8"));
 const lex = JSON.parse(fs.readFileSync("app/web/lexicon/fr.json", "utf8"));
@@ -36,6 +38,7 @@ function run(file) {
   for (const p of rows) {
     const lowConf = (words[p.labels.id] || []).filter(w => w.p < TH).map(w => w.w);
     const rec = extract(p.text, schema, lex, { source: src, lowConf });
+    if (path.basename(file).startsWith("tjs-")) flagAllSpeechFields(rec, schema); // on-device rule
     const got = toLabels(rec);
     const v = voice(p.labels.id);
     agg.byVoice[v] ??= [0, 0];
@@ -59,6 +62,7 @@ for (const [name, f] of [["Typed (script text)", "typed"], ["Whisper small, clea
                          ["Whisper small, LIVE config (webm, VAD on), clean", "small-live_clean"], ["Whisper small, LIVE config, noisy", "small-live_noisy"],
                          ["Whisper small, LIVE + word confidence + corrections + adherence classes (v7), clean", "small-words_test_clean"],
                          ["Whisper small, LIVE + word confidence + corrections + adherence classes (v7), noisy", "small-words_test_noisy"],
+                         ["ON-DEVICE whisper-base q8 (Transformers.js), clean", "tjs-whisper-base_test_clean"], ["ON-DEVICE whisper-base q8 (Transformers.js), noisy", "tjs-whisper-base_test_noisy"],
                          ["Whisper base, clean", "base_clean"], ["Whisper base, noisy", "base_noisy"], ["Whisper tiny, clean", "tiny_clean"]]) {
   if (!fs.existsSync(`data/gold/transcripts/${f}.json`)) continue;
   const r = run(`data/gold/transcripts/${f}.json`);

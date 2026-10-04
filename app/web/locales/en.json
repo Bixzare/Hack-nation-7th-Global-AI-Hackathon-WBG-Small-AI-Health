@@ -150,5 +150,11 @@
  "field.empty": "not filled",
  "speech.too_quiet": "Too quiet: hold the phone closer and try again.",
  "raw.lowconf_hint": "Highlighted words: the speech model was unsure; fields built from them are marked \"please check\".",
- "raw.lowconf_word": "speech model confidence {p}%"
+ "raw.lowconf_word": "speech model confidence {p}%",
+ "speech.ondevice": "On-device speech (beta, {model}): every field from speech is \"please check\"",
+ "speech.download": "🎙 Enable dictation (download {mb} MB once)",
+ "speech.downloading_short": "Downloading…",
+ "speech.downloading": "Downloading speech model ({mb} MB, once): {done} MB",
+ "speech.ondevice_failed": "On-device speech could not start on this device: type the note or use a sample",
+ "raw.ondevice": "On-device speech (beta, {model}, {device}, {s} s), before extraction:"
 }
