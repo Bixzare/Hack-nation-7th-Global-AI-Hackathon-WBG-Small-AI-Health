@@ -6,6 +6,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { selectAsrMode, isHostedLocation, flagAllSpeechFields } from "../../app/web/engine/asrmode.js";
 import { extract } from "../../app/web/engine/extractor.js";
+import { checkProtocol } from "../../app/web/engine/rules.js";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const read = p => JSON.parse(fs.readFileSync(path.join(ROOT, p), "utf8"));
@@ -44,5 +45,14 @@ describe("on-device speech: EVERY field derived from speech is 'please check'", 
   test("sound-alike corrections stay flagged in on-device mode", () => {
     const rec = flagAllSpeechFields(extract("FAM 35 ans, c'est fallé", schema, lex, { source: "speech" }), schema);
     assert.equal(rec.sex.check, true); assert.equal(rec.headache.check, true);
+  });
+});
+
+describe("on-device mode: a MISSED danger symptom is still caught by the screening prompt", () => {
+  test("raised BP + symptoms 'not mentioned' (on-device) -> 'ask about danger signs' flag", () => {
+    const rec = flagAllSpeechFields(extract("Homme 58 ans, tension 172 sur 104, revoir dans deux semaines", schema, lex, { source: "speech" }), schema);
+    assert.equal(rec.headache.value, "not_mentioned");
+    const codes = checkProtocol(Object.fromEntries(Object.entries(rec).map(([k, x]) => [k, x.value]))).map(f => f.code);
+    assert.ok(codes.includes("ask_danger_symptoms"));
   });
 });

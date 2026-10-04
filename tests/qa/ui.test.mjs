@@ -73,6 +73,20 @@ function suite(name, getUrl) {
       });
     }
 
+    test("on-device speech: missed danger symptom -> 'ask about danger signs' shown, approval blocked until ticked", async () => {
+      await page.$eval("#note", e => { e.value = "Homme 58 ans, tension 172 sur 104, revoir dans deux semaines."; e.dataset.source = "speech-ondevice"; });
+      await page.click("#btnFill"); await page.waitForSelector(".field");
+      assert.equal(await isCheck("bp1_sys"), true); assert.equal(await isCheck("follow_up"), true, "every on-device speech field is please check");
+      assert.equal(await val("headache"), "not_mentioned");
+      assert.ok((await flags()).some(f => f.text === flagText("ask_danger_symptoms")), "screening prompt shown");
+      await setField("patient_name", "QA on-device (synthetic)");
+      await confirmAll(); await tick("#consent");
+      assert.equal(await approveReady(), false, "blocked until the danger-signs confirmation is ticked");
+      await tick("#dangerAsked");
+      assert.equal(await approveReady(), true);
+      for (const id of ["#consent", "#dangerAsked"]) await page.click(id); // leave the form as the next test expects
+    });
+
     test("edit a value: flags recompute (controlled patient -> 185/100 + headache = URGENT)", async () => {
       await fill(byId["04-controlled"].text);
       assert.ok(!(await flags()).some(f => f.level === "urgent"));
