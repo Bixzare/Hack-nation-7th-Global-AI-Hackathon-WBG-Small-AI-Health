@@ -58,9 +58,9 @@ function suite(name, getUrl) {
 
     test("sample dictation fills the record; speech BP is 'please check'", async () => {
       await page.click("#samplesTitle");
-      const samples = await page.$$("#samples button");
-      assert.ok(samples.length >= 4, "4 samples");
-      await samples[0].click(); // woman 38, follow-up in 2 weeks
+      // look up + click in one step: the list is re-rendered after a language switch (stale handles on slow CI)
+      await page.waitForFunction(() => document.querySelectorAll("#samples button").length >= 4);
+      await page.evaluate(() => document.querySelectorAll("#samples button")[0].click()); // woman 38, follow-up in 2 weeks
       await page.click("#btnFill");
       await page.waitForSelector(".field");
       await shot(page, "02-record");

@@ -168,7 +168,7 @@ function suite(name, getUrl) {
       const n = await page.$$eval("#samples button", b => b.length);
       assert.equal(n, 4);
       for (let i = 0; i < n; i++) {
-        await (await page.$$("#samples button"))[i].click();
+        await page.evaluate(i => document.querySelectorAll("#samples button")[i].click(), i); // no stale handles
         assert.equal(await page.$eval("#rawBox", e => e.hidden), false, "raw transcript shown");
         await page.click("#btnFill"); await page.waitForSelector(".field");
         assert.equal(await isCheck("bp1_sys"), true, "speech BP always please check");
