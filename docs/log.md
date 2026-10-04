@@ -299,6 +299,61 @@ dictation path is measured to perform the same as the file-based evaluation. Ful
   panel will show whether speech or extraction is at fault if it still fails with a real (non-TTS)
   voice. The microphone test only uses synthetic TTS voices.
 
+
+## Robustness work (Sun 09:08 → 09:25; tag submission-safe-1 = 9ca941c, the last green state before)
+1. **ASR word confidence → "please check".**
+   - The speech service returns word probabilities (`word_timestamps=True`). Every field keeps its
+     evidence span, and a word below the threshold in that span flags the field (`reason:
+     low_asr_confidence`). Low-confidence words are underlined in the raw transcript.
+   - Threshold tuned on DEV only (`ml/tune_confidence.mjs`, 16 dev clips, clean + noisy):
+
+     | Threshold | Extra flags on correct fields per note | Wrong fields newly caught (of 14) |
+     |---|---|---|
+     | 0.3 / 0.4 | 0.19 | 0 |
+     | 0.5 | 0.31 | 0 |
+     | 0.6 | 1.06 | 0 |
+     | 0.7 | 1.63 | 0 |
+     | 0.9 | 2.19 | 0 |
+
+   - **Chose 0.4.** Word confidence catches **no** wrong fields on synthetic dev audio. The silent dev
+     errors are vocabulary gaps on words Whisper was sure of ("traitement bien suivi" → on_meds,
+     "correctement" / "rarement" → missed doses). Low-confidence words are mostly "sur" in BP readings
+     (already flagged) and sex words, e.g. "femme" at 0.21 and "homme" at 0.15. Flagging those is a
+     cheap safety net for real voices.
+   - Next step, not done (scope): add those three phrasings to the lexicon.
+2. **Close-match vocabulary correction.**
+   - French phonetic key: ph→f, c(e/i)→s, emm→am, eau/au→o, ai/ei→e, doubled letters, silent endings.
+   - It applies to single words and adjacent pairs, and only for the terms femme, homme, céphalées,
+     dyspnée and enceinte. The existing fuzzy spelling correction now also reports what it corrected.
+   - A corrected word NEVER fills a field silently: the field is "please check" with `reason:
+     corrected`. ASR sound-alike patterns ("c'est fallé") moved to `asr_variants` and are always flagged
+     (they used to fill headache silently).
+   - Protected words: ferme, faim, famille, pomme, comme…
+   - Unit tests: "FAM 35 ans" → F/35 flagged; "c'est fallé" → headache flagged; "s'effaler" → headache
+     absent flagged; "dispnée" → flagged; 8 negative cases must not match.
+3. **Microphone distance.**
+   - getUserMedia with autoGainControl, noiseSuppression and echoCancellation, plus an input-level meter.
+   - If the loudest 50 ms frame is below −60 dBFS: "Too quiet: hold the phone closer", and nothing is
+     sent.
+   - The server normalizes loudness (ffmpeg loudnorm I=−20) only when the mean volume is below −40 dB.
+   - Evidence (`speech/quiet_test.py`, DEV): clips sit at −26 to −32 dB. At −62 dB, Whisper dropped
+     "Homme"; with normalization it was recovered.
+   - Always-on loudnorm on dev: clean 95.7 → 94.3%, noisy 90.5 → 94.0%. That's why it's adaptive.
+   - Mic e2e: the −30 dB clip still gives M/36; the −80 dB clip shows "Too quiet".
+4. **Size:** the phone side grows by a few KB only (extractor + lexicon + app.js = 50 KB). Everything is
+   offline.
+5. **Tests:** local **114/114** (+18 uncertainty unit tests, +2 mic tests). CI: see below.
+   **Frozen test, old vs new (run once)**:
+
+   | Condition | Before (v5) | After (v6: word confidence + corrections + adaptive loudnorm) |
+   |---|---|---|
+   | Whisper small, clean | 267/280 (95.4%), urgent 5/5, 0 false, 0 false-absent | 267/280 (95.4%), urgent 5/5, 0 false, 0 false-absent |
+   | Whisper small, noisy | 116/126 (92.1%), urgent 3/3 | 116/126 (92.1%), urgent 3/3 |
+   | Typed | 271/280 (96.8%) | 271/280 (96.8%) |
+
+   No drop, so nothing was reverted. Wrong fields not flagged: 10 of 13 wrong (clean) and 7 of 10
+   (noisy), unchanged. As on dev, the residual errors are vocabulary gaps that confidence can't see.
+
 ## Small AI audit (Sun, `ml/measure.py`, frozen test split)
 **Checklist**
 - ✅ No runtime cloud AI. Every `fetch` targets the same origin (app files, served by the SW) or the

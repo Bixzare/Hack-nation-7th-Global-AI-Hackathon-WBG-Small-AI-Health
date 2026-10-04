@@ -128,6 +128,38 @@ the 4 hosted samples.
 - **Clinic conditions:** real clinic noise and real clinician phrasing are untested.
 - **Visit types:** non-hypertension visits are out of scope.
 
+## How the tool shows uncertainty
+The tool never fills a field silently from something it is unsure of. A field is marked **please check**
+when any of these hold:
+
+| Signal | Example | Where |
+|---|---|---|
+| Any number from speech | BP 162/98 dictated | always, for every number |
+| Uncertainty words in the note | "peut-être une vision floue" | NegEx-style cues near the symptom |
+| **Low speech-model confidence** | Whisper heard "femme" at 21% confidence | the word is underlined in the raw transcript; fields built from it are flagged (threshold 0.4, tuned on development clips) |
+| **Close-match correction** | "FAM 35 ans" → *femme*; "dispnée" → *dyspnée*; "s'effaler" → *céphalées* | French phonetic/spelling match against a fixed clinical vocabulary; pre-fills, never fills silently |
+| **Known speech-model sound-alike** | "c'est fallé" for *céphalées* | always flagged |
+| Low extraction confidence or conflicting mentions | "céphalées … pas de céphalées" | flagged as uncertain |
+
+Everyday words that sound similar are protected and never "corrected", for example *ferme*, *faim*,
+*famille*, *pomme* and *comme*. These cases are covered by unit tests.
+
+**What this does and doesn't catch.**
+- On the development clips, the remaining wrong fields came from phrasings the vocabulary doesn't know
+  ("traitement bien suivi", "oublie rarement"). Whisper was confident on those words, so word confidence
+  did not flag them; with synthetic voices it catches no extra errors.
+- The confidence signal is there for real voices and mumbled words. On the frozen test it added flags
+  without changing any value (see Results).
+
+**Phone held at a distance.**
+- The browser records with automatic gain, noise suppression and echo cancellation, and shows an input
+  level meter.
+- If nothing usable was captured (loudest moment below −60 dBFS), it says *Too quiet: hold the phone
+  closer* and sends nothing.
+- The speech service normalizes loudness only for quiet recordings (mean below −40 dB). On a development
+  clip attenuated by 30 dB, Whisper dropped "Homme" without it and recovered it with it. Normalizing
+  already-level recordings cost about 1 point on development clips, so it is not applied to them.
+
 ## Safety and data handling
 - **Never a diagnosis.** Outputs are triage actions: *urgent: ask a clinician or refer today*, *refer*,
   *take a second reading*. "No protocol gap found" explicitly says clinical judgement still applies.
