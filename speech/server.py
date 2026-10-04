@@ -92,8 +92,9 @@ class Handler(BaseHTTPRequestHandler):
             src = loudnorm(path) if vol is not None and vol < QUIET_DB else path
             segs, info = MODEL.transcribe(src, language="fr", beam_size=5, vad_filter=True,
                                           condition_on_previous_text=False, word_timestamps=True)
+            segs = list(segs)
             words = [{"w": w.word.strip(), "p": round(w.probability, 3)} for s in segs for w in (s.words or [])]
-            text = " ".join(x["w"] for x in words).strip()
+            text = " ".join(s.text.strip() for s in segs).strip()  # Whisper's own spacing ("C'est", not "C 'est")
             if any(h in text.lower() for h in HALLUCINATIONS):
                 text, words = "", []
             self._json({"text": text, "words": words, "audio_s": round(info.duration, 2),

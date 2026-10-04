@@ -4,6 +4,7 @@ The page labels them as precomputed. Transcripts are copied, never printed. Clip
 Run: .venv/Scripts/python ml/make_samples.py [model_tag]   (default: base)
 """
 import json
+import re
 import shutil
 import sys
 from pathlib import Path
@@ -16,8 +17,8 @@ OUT = ROOT / "app" / "web" / "samples"
 PICK_EN = {1: "Woman, 38: follow-up", 4: "Man, 67: very high BP", 13: "Woman, 52: BP controlled", 20: "Man, 39: uncertain symptom"}
 PICK = {1: "Femme 38 ans — suivi", 4: "Homme 67 ans — TA très élevée", 13: "Femme 52 ans — TA contrôlée",
         20: "Homme 39 ans — symptôme incertain"}
-MODEL_LABEL = {"base": "Whisper base (faster-whisper int8, hors ligne)",
-               "small": "Whisper small (faster-whisper int8, hors ligne)"}
+MODEL_LABEL = {"base": "Whisper base (faster-whisper int8, offline)",
+               "small": "Whisper small (faster-whisper int8, offline)"}
 
 
 def main(tag="base"):
@@ -36,7 +37,7 @@ def main(tag="base"):
         for s in samples:
             if str(s["id"]) in words:
                 s["words"] = words[str(s["id"])]["words"]
-                s["transcript"] = words[str(s["id"])]["text"]
+                s["transcript"] = re.sub(r" (?=['’-])", "", words[str(s["id"])]["text"])  # "C 'est" -> "C'est"
     (OUT / "samples.json").write_text(json.dumps(samples, ensure_ascii=False, indent=1), encoding="utf-8")
     print(f"{len(samples)} samples written ({tag}); audio {sum((OUT / s['audio'].split('/')[1]).stat().st_size for s in samples) / 1024:.0f} KB")
 

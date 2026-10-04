@@ -295,7 +295,8 @@ function showRaw(text, label, words = null) {
   if (!words?.length) { $("rawText").textContent = `« ${text} »`; return; }
   // Low-confidence words are subtly highlighted; fields built from them are marked "please check".
   const th = P.asr_low_conf_threshold ?? 0.4;
-  $("rawText").replaceChildren("« ", ...words.flatMap((w, i) => [i ? " " : "",
+  // no space before tokens that start with an apostrophe or hyphen ("C" + "'est" -> "C'est")
+  $("rawText").replaceChildren("« ", ...words.flatMap((w, i) => [i && !/^['’-]/.test(w.w) ? " " : "",
     w.p < th ? el("mark", { className: "lowconf", textContent: w.w, title: t("raw.lowconf_word", { p: Math.round(w.p * 100) }) }) : w.w]), " »");
 }
 

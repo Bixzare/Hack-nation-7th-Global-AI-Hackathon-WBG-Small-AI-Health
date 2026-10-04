@@ -7,6 +7,7 @@ Run: .venv-speech/Scripts/python speech/word_probs.py dev [--loudnorm]
 """
 import csv
 import json
+import re
 import subprocess
 import sys
 import tempfile
@@ -43,7 +44,7 @@ def main(split, loudnorm):
                 segs, _ = model.transcribe(str(src), language="fr", beam_size=5, vad_filter=True,
                                            condition_on_previous_text=False, word_timestamps=True)
                 words = [{"w": w.word.strip(), "p": round(w.probability, 3)} for s in segs for w in (s.words or [])]
-                out[r["id"]] = {"text": " ".join(x["w"] for x in words).strip(), "words": words}
+                out[r["id"]] = {"text": re.sub(r" (?=['’-])", "", " ".join(x["w"] for x in words)).strip(), "words": words}
             (GOLD / "transcripts" / f"{tag}_{split}_{cond}.json").write_text(json.dumps(out, ensure_ascii=False), encoding="utf-8")
             print(f"{tag} {split} {cond}: {len(out)} clips in {time.perf_counter() - t0:.0f} s")
 
