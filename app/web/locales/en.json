@@ -158,5 +158,12 @@
  "speech.ondevice_failed": "On-device speech could not start on this device: type the note or use a sample",
  "raw.ondevice": "On-device speech (beta, {model}, {device}, {s} s), before extraction:",
  "app.name": "Movois",
- "app.tagline": "Speak the visit. Reach the patient."
+ "app.tagline": "Speak the visit. Reach the patient.",
+ "toast.reminder": "✓ Visit saved · Reminder queued for {weekday} 18:30",
+ "toast.no_reminder": "✓ Saved · no reminder: {why}",
+ "toast.why.no_follow_up": "no follow-up date set",
+ "toast.why.no_phone": "no phone number",
+ "toast.why.referred": "patient referred today",
+ "toast.new_visit": "New visit",
+ "noor.simulated": "Simulated delivery — evening before visit"
 }

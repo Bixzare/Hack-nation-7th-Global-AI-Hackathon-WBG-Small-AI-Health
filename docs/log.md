@@ -503,6 +503,20 @@ local + live GitHub Pages + real-mic.
   until a re-download. It now deletes only its own old shell caches (`isOldAppCache`, unit-tested).
 - **Tests:** local 210/211 (1 todo).
 
+
+## Demo flow after Approve (Sun 13:21, last change before submission; rollback = submission-safe-6)
+- **Toast on Approve:** "✓ Visit saved · Reminder queued for <weekday> 18:30" (EN/FR). If no reminder is
+  queued, it says exactly why: "no follow-up date set", "no phone number" or "patient referred today".
+- **Noor's phone** updates immediately with the Zarma voice message (▶ Play) and the French SMS, labelled
+  "Simulated delivery — evening before visit". It keeps the last reminder until the next approval.
+- **Sample (demo) mode:** after Fill record, a synthetic patient and phone are filled in ("Noor —
+  synthetic"; "Moussa — synthetic" for the male samples), so a sample with a follow-up always produces a
+  reminder. Typed notes are unchanged: the name / phone must be typed.
+- **Reset:** after ~3 s, or the "New visit" button, the form resets to a clean new visit. The PIN session
+  stays unlocked.
+- **Tests:** `tests/e2e/demoflow.test.mjs` (sample 1 end to end, referral reason, no-phone reason;
+  mobile + desktop, local + live).
+
 ## Small AI audit (Sun, `ml/measure.py`, frozen test split)
 **Checklist**
 - ✅ No runtime cloud AI. Every `fetch` targets the same origin (app files, served by the SW) or the

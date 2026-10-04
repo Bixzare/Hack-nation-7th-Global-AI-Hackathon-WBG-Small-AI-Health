@@ -142,3 +142,10 @@ mark.lowconf { background: transparent; color: inherit; text-decoration: underli
 .meter span { display: block; height: 100%; width: 0; background: var(--ok); transition: width .08s linear; }
 .brand { font-size: 1.45rem; letter-spacing: .01em; }
 .tagline { font-weight: 600; color: var(--accent); font-size: .95rem; margin-bottom: 2px; }
+.toast { position: fixed; left: 50%; bottom: 20px; transform: translateX(-50%); z-index: 50; display: flex; gap: 12px;
+  align-items: center; max-width: calc(100vw - 32px); padding: 12px 14px; border-radius: 12px; font-weight: 700;
+  box-shadow: 0 8px 24px rgba(0,0,0,.25); pointer-events: none; }
+.toast button { pointer-events: auto; white-space: nowrap; }
+.toast.ok { background: var(--ok); color: #fff; } .toast.ok button { background: #fff; color: var(--ok); }
+.toast.warn { background: var(--check); color: #fff; } .toast.warn button { background: #fff; color: var(--check); }
+.basic-sim { font-size: .75rem; opacity: .8; border-bottom: 1px dashed rgba(0,0,0,.25); padding-bottom: 4px; margin-bottom: 4px; }

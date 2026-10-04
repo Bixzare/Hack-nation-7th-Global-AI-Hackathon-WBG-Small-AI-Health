@@ -159,5 +159,12 @@
  "speech.ondevice_failed": "La reconnaissance vocale n’a pas pu démarrer sur cet appareil : tapez la note ou utilisez un exemple",
  "raw.ondevice": "Reconnaissance sur l’appareil (bêta, {model}, {device}, {s} s), avant extraction :",
  "app.name": "Movois",
- "app.tagline": "Dictez la consultation. Joignez le patient."
+ "app.tagline": "Dictez la consultation. Joignez le patient.",
+ "toast.reminder": "✓ Consultation enregistrée · Rappel prévu {weekday} 18:30",
+ "toast.no_reminder": "✓ Enregistré · pas de rappel : {why}",
+ "toast.why.no_follow_up": "pas de date de RDV",
+ "toast.why.no_phone": "pas de numéro de téléphone",
+ "toast.why.referred": "patient référé aujourd'hui",
+ "toast.new_visit": "Nouvelle consultation",
+ "noor.simulated": "Envoi simulé — la veille du RDV"
 }

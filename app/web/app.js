@@ -15,7 +15,7 @@ const el = (tag, props = {}, ...kids) => {
   return e;
 };
 
-let P, t, tSms, SCHEMA, LEX, CLF = null, RECORD = null, UI = "fr";
+let P, t, tSms, SCHEMA, LEX, CLF = null, RECORD = null, UI = "fr", SAMPLE = false;
 const today = () => new Date().toLocaleDateString("sv"); // YYYY-MM-DD, local time
 
 // ---------- static text ----------
@@ -35,6 +35,7 @@ function paintText() {
   $("step3Title").textContent = t("step3.title");
   $("deviceCaptionNurse").textContent = t("device.nurse");
   $("deviceCaptionNoor").textContent = t("device.noor");
+  $("noorSim").textContent = t("noor.simulated");
   $("offlineHint").textContent = t("offline.hint");
   $("disclaimer").textContent = t("app.disclaimer");
   $("btnLock").textContent = t("pin.lock");
@@ -169,19 +170,46 @@ async function approve() {
     flags: resolveFlags(checkProtocol(v)),
     danger_signs_asked: { confirmed: true, at: DANGER_AT }, raw_transcript: RAW,
     bp_not_measured: bpMissing ? { reason: $("bpReason").value, other: $("bpReasonOther").value.trim() || null } : null });
-  await outbox.queue(outbox.remindersFor(id, v, P));
+  const msgs = outbox.remindersFor(id, v, P);
+  await outbox.queue(msgs);
   RECORD = null; $("recordBox").hidden = true; $("note").value = ""; $("consent").checked = false; $("dangerAsked").checked = false; DANGER_AT = null;
   RAW = null; $("rawBox").hidden = true;
   $("bpNotMeasured").checked = false; $("bpReason").value = ""; $("bpReasonOther").value = ""; $("bpReasonRow").hidden = true;
   $("status").textContent = "";
   APPROVED = true; renderSteps();
-  refreshLists();
-  alertSaved(id);
+  SAMPLE = false;
+  refreshLists(); // Noor's phone shows the new reminder immediately
+  toast(msgs.length
+    ? t("toast.reminder", { weekday: t("weekday." + msgs[0].params.weekday) })
+    : t("toast.no_reminder", { why: t("toast.why." + noReminderReason(v)) }), !!msgs.length);
 }
 
-function alertSaved(id) {
-  const s = el("div", { className: "status", textContent: t("status.saved", { id }) });
-  $("recordBox").before(s); setTimeout(() => s.remove(), 4000);
+// Why no reminder was queued (shown in the toast, never silent).
+function noReminderReason(v) {
+  if (v.referral === "yes") return "referred";
+  if (!v.follow_up || v.follow_up === "not_mentioned") return "no_follow_up";
+  if (!v.phone) return "no_phone";
+  return "no_follow_up";
+}
+
+// Confirmation toast; after ~3 s (or "New visit") the screen returns to a clean new visit. PIN stays unlocked.
+let toastTimer = null;
+function toast(text, ok) {
+  clearTimeout(toastTimer);
+  const btn = el("button", { className: "small", textContent: t("toast.new_visit") });
+  btn.onclick = newVisit;
+  $("toast").replaceChildren(el("span", { textContent: text }), btn);
+  $("toast").className = "toast " + (ok ? "ok" : "warn");
+  $("toast").hidden = false;
+  toastTimer = setTimeout(newVisit, 3000);
+}
+function newVisit() {
+  clearTimeout(toastTimer);
+  $("toast").hidden = true;
+  APPROVED = false; renderSteps();
+  $("note").focus({ preventScroll: true });
+  document.querySelector(".device.nurse .screen")?.scrollTo?.({ top: 0, behavior: "smooth" });
+  window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
 // ---------- outbox ----------
@@ -281,6 +309,7 @@ async function loadSamples() {
     b.onclick = () => {
       if (s.audio) new Audio(s.audio).play().catch(() => {});
       $("note").value = s.transcript; $("note").dataset.source = "speech";
+      SAMPLE = true; // demo mode: a synthetic patient and phone are filled in after "Fill record"
       showRaw(s.transcript, t("note.samples_label", { model: s.model }), s.words);
     };
     return b;
@@ -481,6 +510,11 @@ function startMeter(stream) {
       if (src === "speech-ondevice") flagAllSpeechFields(RECORD, SCHEMA);
     } catch { RECORD = emptyRecord(SCHEMA); } // safe default: nothing pre-filled, everything "please check"
     RECORD.visit_date = { value: today(), confidence: 1, source: "typed", check: false };
+    if (SAMPLE) { // demo samples always have a (synthetic) patient + phone, so a follow-up produces a reminder
+      const female = RECORD.sex.value !== "M";
+      RECORD.patient_name = { value: female ? "Noor — synthetic" : "Moussa — synthetic", confidence: 1, source: "demo", check: false };
+      RECORD.phone = { value: "+227 90 00 00 00", confidence: 1, source: "demo", check: false };
+    }
     APPROVED = false;
     $("recordBox").hidden = false; renderRecord();
   };
@@ -489,7 +523,7 @@ function startMeter(stream) {
   $("bpNotMeasured").onchange = () => { $("bpReasonRow").hidden = !$("bpNotMeasured").checked; RECORD && renderRecord(); };
   $("bpReason").onchange = () => { $("bpReasonOther").hidden = $("bpReason").value !== "other"; RECORD && renderRecord(); };
   $("bpReasonOther").oninput = () => RECORD && renderRecord();
-  $("note").oninput = () => { delete $("note").dataset.source; };
+  $("note").oninput = () => { delete $("note").dataset.source; SAMPLE = false; };
   $("btnApprove").onclick = approve;
   $("btnMic").onclick = toggleMic;
   $("btnDemoHistory").onclick = async () => { for (const r of demoHistory(today())) await store.add("records", r); refreshLists(); };
