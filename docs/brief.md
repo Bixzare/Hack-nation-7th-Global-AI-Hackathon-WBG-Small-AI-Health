@@ -1,4 +1,6 @@
-# Brief
+# Brief: Movois
+
+*Speak the visit. Reach the patient.* Product name: **Movois** (médecine + voix).
 
 Source: `docs/challenge-brief.pdf` (WBG × Hack-Nation, Small AI for Development, Annex A: Health;
 gitignored because it is marked "Official Use Only").

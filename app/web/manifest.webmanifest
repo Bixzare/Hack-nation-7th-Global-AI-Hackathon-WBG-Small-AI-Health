@@ -1,9 +1,16 @@
 {
-  "name": "HTN Visit Recorder (prototype)",
-  "short_name": "HTN Visit",
+  "name": "Movois",
+  "short_name": "Movois",
   "start_url": "./",
   "display": "standalone",
   "background_color": "#f6f7f9",
   "theme_color": "#1f5fbf",
-  "icons": [{ "src": "icon.svg", "sizes": "any", "type": "image/svg+xml" }]
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ],
+  "description": "Speak the visit. Reach the patient. Offline voice-to-record for hypertension care (prototype)."
 }

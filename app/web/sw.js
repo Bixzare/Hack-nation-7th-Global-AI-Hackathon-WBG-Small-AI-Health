@@ -1,6 +1,6 @@
 // Service worker: precache the app shell, then serve same-origin GETs cache-first and refresh in the
 // background (stale-while-revalidate). After one visit the app works in airplane mode.
-const CACHE = "htn-v16";
+const CACHE = "movois-v17";
 const SHELL = [
   "./", "index.html", "styles.css", "app.js", "manifest.webmanifest", "icon.svg", "config.json",
   "engine/i18n.js", "engine/extractor.js", "engine/rules.js", "engine/store.js", "engine/pin.js",
@@ -11,13 +11,18 @@ const SHELL = [
   ...["intro", "mon", "tue", "wed", "thu", "fri", "sat", "sun", "clinic", "refill"].map(c => `audio/dje/${c}.mp3`),
 ];
 
+// Only our own old app-shell caches ("htn-v15", "movois-v16"...). Kept on one line: tests/unit/sw.test.mjs reads it.
+const isOldAppCache = k => k !== CACHE && /^(htn|movois)-v\d+$/.test(k);
+
 self.addEventListener("install", e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL)).then(() => self.skipWaiting()));
 });
 
 self.addEventListener("activate", e => {
   e.waitUntil(caches.keys()
-    .then(keys => Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k))))
+    // Delete only OUR old app-shell caches. Never touch other caches, e.g. the browser's cache of the
+    // 79 MB on-device speech model: wiping it on every update would break offline dictation.
+    .then(keys => Promise.all(keys.filter(isOldAppCache).map(k => caches.delete(k))))
     .then(() => self.clients.claim()));
 });
 

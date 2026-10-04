@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#1f5fbf">
-<title>HTN Visit Recorder</title>
+<title>Movois</title>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <!-- No external resources: everything is same-origin so the service worker can serve it offline. -->
@@ -20,7 +20,8 @@
     <main class="screen">
       <header class="topbar">
         <div>
-          <h1 id="title"></h1>
+          <h1 id="title" class="brand"></h1>
+          <div id="tagline" class="tagline"></div>
           <div id="disclaimer" class="sub"></div>
         </div>
         <div class="right">

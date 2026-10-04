@@ -49,11 +49,12 @@ function suite(name, getUrl) {
     });
 
     test("EN | FR toggle switches the interface (dictation stays French)", async () => {
-      const titleIn = async l => { await page.evaluate(l => [...document.querySelectorAll("#lang button")].find(b => b.textContent === l).click(), l);
-        return page.$eval("#title", e => e.textContent); };
-      assert.equal(await titleIn("EN"), "Hypertension visit");
-      assert.equal(await titleIn("FR"), "Consultation HTA");
-      await titleIn(process.env.E2E_LANG || "EN");
+      const taglineIn = async l => { await page.evaluate(l => [...document.querySelectorAll("#lang button")].find(b => b.textContent === l).click(), l);
+        return page.$eval("#tagline", e => e.textContent); };
+      assert.equal(await taglineIn("EN"), "Speak the visit. Reach the patient.");
+      assert.equal(await taglineIn("FR"), "Dictez la consultation. Joignez le patient.");
+      assert.equal(await page.$eval("#title", e => e.textContent), "Movois", "brand is the same in every language");
+      await taglineIn(process.env.E2E_LANG || "EN");
     });
 
     test("sample dictation fills the record; speech BP is 'please check'", async () => {

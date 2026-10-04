@@ -1,4 +1,4 @@
-# Demo QA phrases: record these in your own voice
+# Movois demo QA phrases: record these in your own voice
 
 These are the phrases the QA suite uses (`tests/qa/demo_phrases.json`). Expectations are the clinically
 correct record and WHO HEARTS flags, reviewed by hand. All patients are synthetic.

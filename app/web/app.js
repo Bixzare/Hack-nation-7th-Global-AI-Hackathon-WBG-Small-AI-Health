@@ -27,7 +27,9 @@ function paintText() {
     return b;
   }));
   $("banner").textContent = t("banner");
-  $("title").textContent = t("app.title");
+  $("title").textContent = t("app.name"); // brand: Movois (médecine + voix)
+  $("tagline").textContent = t("app.tagline");
+  document.title = `${t("app.name")}: ${t("app.tagline")}`;
   $("step1Title").textContent = t("step1.title");
   $("step2Title").textContent = t("step2.title");
   $("step3Title").textContent = t("step3.title");

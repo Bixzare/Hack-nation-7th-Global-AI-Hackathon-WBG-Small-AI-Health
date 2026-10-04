@@ -140,3 +140,5 @@ details summary { cursor: pointer; font-weight: 600; padding: 10px 0; min-height
 mark.lowconf { background: transparent; color: inherit; text-decoration: underline dotted 2px var(--checkBorder); text-underline-offset: 3px; }
 .meter { height: 8px; background: var(--infoBg); border: 1px solid var(--line); border-radius: 99px; overflow: hidden; margin-top: 8px; }
 .meter span { display: block; height: 100%; width: 0; background: var(--ok); transition: width .08s linear; }
+.brand { font-size: 1.45rem; letter-spacing: .01em; }
+.tagline { font-weight: 600; color: var(--accent); font-size: .95rem; margin-bottom: 2px; }

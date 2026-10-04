@@ -1,17 +1,22 @@
-# HTN Visit Recorder: offline voice-to-record for hypertension care in rural Niger
+# Movois — offline voice-to-record for hypertension care in Niger
+
+***Speak the visit. Reach the patient.***
+
+Movois lets a nurse in rural Niger record a hypertension visit just by speaking, offline, and reaches the
+patient at home with a reminder in Zarma.
 
 **Live demo:** https://bixzare.github.io/Hack-nation-7th-Global-AI-Hackathon-WBG-Small-AI-Health/
 
-A nurse dictates a short French note; small, offline AI turns it into a WHO-HEARTS-checked hypertension
-record; the nurse approves it; and the patient hears her next visit announced in **Zarma**, by voice, the
-evening before.
+*Movois = médecine + voix.* A nurse dictates a short French note; small, offline AI turns it into a
+WHO-HEARTS-checked hypertension record; the nurse approves it; and the patient hears her next visit
+announced in **Zarma**, by voice, the evening before.
 
 World Bank Group × Hack-Nation, *Small AI for Development*, Health. **Prototype, not clinically
 validated. It supports health workers and does not replace them. All patients and all test voices are
 synthetic.**
 
 ## Try it in 3 steps (about 2 minutes)
-The interface opens in English; use **EN | FR** at the top to switch. Dictation stays French. On a wide
+Movois opens in English; use **EN | FR** at the top to switch. Dictation stays French. On a wide
 screen the nurse's phone is on the left and Noor's basic phone on the right.
 
 1. **Load a sample dictation.** Choose any 4-digit PIN, open *Sample dictations* and pick one, for
@@ -75,7 +80,7 @@ nurse dictates (French)
   Every output is from a fixed list: fields, values, flags, SMS template, and voice clips.
 
 ## Two speech modes
-The app picks the speech path automatically: the clinic's local Whisper service when the page runs on
+Movois picks the speech path automatically: the clinic's local Whisper service when the page runs on
 the health-centre laptop, otherwise on-device speech in the browser. Typing and the sample dictations
 always work.
 
@@ -153,8 +158,8 @@ the 4 hosted samples.
 - **Clinic conditions:** real clinic noise and real clinician phrasing are untested.
 - **Visit types:** non-hypertension visits are out of scope.
 
-## How the tool shows uncertainty
-The tool never fills a field silently from something it is unsure of. A field is marked **please check**
+## How Movois shows uncertainty
+Movois never fills a field silently from something it is unsure of. A field is marked **please check**
 when any of these hold:
 
 | Signal | Example | Where |

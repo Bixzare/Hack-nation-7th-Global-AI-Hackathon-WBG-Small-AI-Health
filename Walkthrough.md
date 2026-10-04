@@ -1,7 +1,10 @@
-# Walkthrough: an offline voice-to-record assistant for hypertension care in rural Niger
+# Walkthrough: Movois, an offline voice-to-record assistant for hypertension care in rural Niger
 
-This document explains a prototype built in one weekend for the World Bank Group "Small AI for
-Development" hackathon (Health category), 3–4 October 2026. It covers the problem, what the tool
+*Speak the visit. Reach the patient.* The name Movois joins two French words: médecine (medicine)
+and voix (voice).
+
+This document explains Movois, a prototype built in one weekend for the World Bank Group "Small AI for
+Development" hackathon (Health category), 3–4 October 2026. It covers the problem, what Movois
 does, how it works, how it was built step by step, how well it performs, and what it does not yet
 do. Every number in this document was measured on the prototype. Every patient and every test voice
 is synthetic. No real patient data was used.
@@ -12,7 +15,7 @@ Live demo: https://bixzare.github.io/Hack-nation-7th-Global-AI-Hackathon-WBG-Sma
 
 ## 1. The idea in one paragraph
 
-A nurse at a rural health centre in Niger measures a patient's blood pressure and dictates a short
+With Movois, a nurse at a rural health centre in Niger measures a patient's blood pressure and dictates a short
 note in French, the way clinicians already talk. A small speech model running on the health centre's
 own laptop turns the voice into text, without internet. A tiny rule engine running in the browser
 then fills a fixed hypertension record and checks it against the World Health Organization's HEARTS
@@ -97,7 +100,7 @@ open-source Whisper model, in its "small" size, running through a library called
 runs entirely on the health centre's laptop: the audio never leaves the machine, and no internet is
 needed. A smaller version, Whisper "base", is the fallback for weaker laptops.
 
-**Two ways to dictate.** The tool has two speech modes and picks one automatically.
+**Two ways to dictate.** Movois has two speech modes and picks one automatically.
 
 - **Clinic laptop, recommended.** At the health centre, a laptop runs the larger Whisper "small" model
   as a local service. This is the most accurate setup: on the frozen test it got 95.4 percent of
@@ -149,7 +152,7 @@ browser.
 
 ---
 
-## 5. What the AI does, and why a simpler tool would not do
+## 5. What the AI in Movois does, and why a simpler tool would not do
 
 A paper form or a spreadsheet could hold the same fields. But filling in the form is exactly the
 burden the challenge describes, and it takes time away from the patient. Earlier mobile-health
@@ -429,5 +432,6 @@ AI becomes useful where it is needed most.
   signal.
 - **Human in the loop:** nothing is saved without the nurse's confirmation; uncertainty is always
   shown.
+- **Name:** Movois (médecine + voix). Tagline: "Speak the visit. Reach the patient."
 - **Status:** a prototype, not clinically validated, built to support health workers, not replace
   them.

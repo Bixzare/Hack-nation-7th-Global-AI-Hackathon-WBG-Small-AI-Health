@@ -490,6 +490,19 @@ local + live GitHub Pages + real-mic.
   on-device please-check rule (3). Manual checks: `tests/helpers/ondevice_check.mjs`,
   `ondevice_offline_check.mjs`.
 
+
+## Rebrand to Movois (Sun 12:16)
+- **Product name: Movois** (médecine + voix). Tagline: "Speak the visit. Reach the patient." Repo name
+  and Pages URL unchanged.
+- **App:** page title, header (brand + tagline, same in EN/FR; French tagline NEEDS-NATIVE-CHECK), PWA
+  manifest name / short_name, demo banners. Patient SMS / Zarma clips unchanged (no brand on the shared
+  phone).
+- **Docs:** README title, tagline and pitch; Walkthrough; brief; QA phrases; screenshots regenerated.
+- **Bug fixed along the way:** the service worker deleted EVERY other cache on update, including the
+  browser's 79 MB on-device speech-model cache. Each deploy would have silently broken offline dictation
+  until a re-download. It now deletes only its own old shell caches (`isOldAppCache`, unit-tested).
+- **Tests:** local 210/211 (1 todo).
+
 ## Small AI audit (Sun, `ml/measure.py`, frozen test split)
 **Checklist**
 - ✅ No runtime cloud AI. Every `fetch` targets the same origin (app files, served by the SW) or the

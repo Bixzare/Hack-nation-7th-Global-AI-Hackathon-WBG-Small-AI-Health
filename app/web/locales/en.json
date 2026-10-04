@@ -1,7 +1,7 @@
 {
  "app.title": "Hypertension visit",
  "app.disclaimer": "Prototype · not clinically validated · supports, does not replace, the health worker",
- "banner": "Demo: synthetic patients only. Try a sample dictation, then turn on airplane mode.",
+ "banner": "Movois demo: synthetic patients only. Try a sample dictation, then turn on airplane mode.",
  "pin.set": "Choose a 4-digit PIN for this device",
  "pin.enter": "Enter PIN",
  "pin.button": "Unlock",
@@ -156,5 +156,7 @@
  "speech.downloading_short": "Downloading…",
  "speech.downloading": "Downloading speech model ({mb} MB, once): {done} MB",
  "speech.ondevice_failed": "On-device speech could not start on this device: type the note or use a sample",
- "raw.ondevice": "On-device speech (beta, {model}, {device}, {s} s), before extraction:"
+ "raw.ondevice": "On-device speech (beta, {model}, {device}, {s} s), before extraction:",
+ "app.name": "Movois",
+ "app.tagline": "Speak the visit. Reach the patient."
 }

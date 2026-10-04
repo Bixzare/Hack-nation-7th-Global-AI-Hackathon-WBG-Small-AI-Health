@@ -2,7 +2,7 @@
  "_comment": "Health-worker locale. NEEDS-NATIVE-CHECK by a French-speaking clinician.",
  "app.title": "Consultation HTA",
  "app.disclaimer": "Prototype · non validé cliniquement · aide l'agent de santé, ne le remplace pas",
- "banner": "Démo : patients fictifs uniquement. Essayez une dictée exemple, puis activez le mode avion.",
+ "banner": "Démo Movois : patients fictifs uniquement. Essayez une dictée exemple, puis activez le mode avion.",
  "pin.set": "Choisissez un code PIN à 4 chiffres pour cet appareil",
  "pin.enter": "Code PIN",
  "pin.button": "Déverrouiller",
@@ -157,5 +157,7 @@
  "speech.downloading_short": "Téléchargement…",
  "speech.downloading": "Téléchargement du modèle vocal ({mb} Mo, une fois) : {done} Mo",
  "speech.ondevice_failed": "La reconnaissance vocale n’a pas pu démarrer sur cet appareil : tapez la note ou utilisez un exemple",
- "raw.ondevice": "Reconnaissance sur l’appareil (bêta, {model}, {device}, {s} s), avant extraction :"
+ "raw.ondevice": "Reconnaissance sur l’appareil (bêta, {model}, {device}, {s} s), avant extraction :",
+ "app.name": "Movois",
+ "app.tagline": "Dictez la consultation. Joignez le patient."
 }

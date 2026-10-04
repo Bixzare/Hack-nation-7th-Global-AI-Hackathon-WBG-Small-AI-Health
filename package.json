@@ -1,5 +1,5 @@
 {
-  "name": "htn-visit-recorder",
+  "name": "movois",
   "private": true,
   "type": "module",
   "description": "Offline voice-to-record for hypertension care (prototype). Tests only; the app itself has no build step.",

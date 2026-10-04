@@ -109,7 +109,8 @@ function suite(name, getUrl) {
 
     test("language switch mid-review keeps what was entered", async () => {
       await page.evaluate(() => [...document.querySelectorAll("#lang button")].find(b => b.textContent === "FR").click());
-      assert.equal(await page.$eval("#title", e => e.textContent), FR["app.title"]);
+      assert.equal(await page.$eval("#tagline", e => e.textContent), FR["app.tagline"]);
+      assert.equal(await page.$eval("#title", e => e.textContent), "Movois");
       assert.equal(await val("patient_name"), "QA Noor (synthetic)");
       assert.equal(await val("bp1_sys"), "162");
       await page.evaluate(() => [...document.querySelectorAll("#lang button")].find(b => b.textContent === "EN").click());
@@ -235,6 +236,8 @@ function suite(name, getUrl) {
 
     test("demo labels stay visible: synthetic banner, precomputed-transcript label, airplane hint", async () => {
       assert.match(await page.$eval("#banner", e => e.textContent), /synthetic/i);
+      assert.match(await page.$eval("#banner", e => e.textContent), /Movois/);
+      assert.equal(await page.title(), "Movois: Speak the visit. Reach the patient.");
       assert.match(await page.$eval("#offlineHint", e => e.textContent), /airplane/i);
       assert.match(await page.$eval("#samples", e => e.textContent), /precomputed offline/i);
     });
