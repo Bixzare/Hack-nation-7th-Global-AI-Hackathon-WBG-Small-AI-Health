@@ -57,8 +57,8 @@ console.log("| Condition | Clips | Field accuracy | Voice A | Voice B | Voice C 
 console.log("|---|---|---|---|---|---|---|---|---|---|---|");
 for (const [name, f] of [["Typed (script text)", "typed"], ["Whisper small, clean", "small_clean"], ["Whisper small, noisy", "small_noisy"],
                          ["Whisper small, LIVE config (webm, VAD on), clean", "small-live_clean"], ["Whisper small, LIVE config, noisy", "small-live_noisy"],
-                         ["Whisper small, LIVE + word confidence + corrections (v6), clean", "small-words_test_clean"],
-                         ["Whisper small, LIVE + word confidence + corrections (v6), noisy", "small-words_test_noisy"],
+                         ["Whisper small, LIVE + word confidence + corrections + adherence classes (v7), clean", "small-words_test_clean"],
+                         ["Whisper small, LIVE + word confidence + corrections + adherence classes (v7), noisy", "small-words_test_noisy"],
                          ["Whisper base, clean", "base_clean"], ["Whisper base, noisy", "base_noisy"], ["Whisper tiny, clean", "tiny_clean"]]) {
   if (!fs.existsSync(`data/gold/transcripts/${f}.json`)) continue;
   const r = run(`data/gold/transcripts/${f}.json`);

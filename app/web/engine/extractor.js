@@ -266,7 +266,8 @@ export function extract(text, schema, lex, opts = {}) {
   const pickEv = {};
   const pick = name => {
     const f = lex.fields[name];
-    for (const v of f.order) for (const p of f[v]) { const m = new RegExp(p).exec(norm); if (m) { pickEv[name] = m[0]; return v; } }
+    // lexicon classes may alias a record value (e.g. "poor" adherence -> missed_doses "yes")
+    for (const v of f.order) for (const p of f[v]) { const m = new RegExp(p).exec(norm); if (m) { pickEv[name] = m[0]; return f.alias?.[v] ?? v; } }
     return null;
   };
   const onMeds = pick("on_meds");

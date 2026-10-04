@@ -298,12 +298,26 @@
     "\\bttt\\b",
     "(son|ses|un|le|les|des) (traitements?|medicaments?)",
     "medicaments? (pour|contre)",
-    "\\bmedicaments?\\b"
+    "\\bmedicaments?\\b",
+    "\\b(traitements?|ttt|medicaments?|comprimes?|prises?)(?: est| sont)? bien (suivis?|pris|respectes?)\\b",
+    "\\b(?<!pas )(?<!ne )(prend|suit|respecte)\\b (son|sa|ses|le|les|un) (traitements?|ttt|medicaments?|comprimes?|prises?) (correctement|regulierement|tous les jours|bien)\\b",
+    "\\b(traitements?|ttt|medicaments?|comprimes?|prises?) (suivis?|pris) (correctement|regulierement)\\b",
+    "\\b(traitements?|ttt|medicaments?|comprimes?|prises?)(?: est| sont)? (mal|pas bien|pas) (suivis?|pris|respectes?)\\b",
+    "\\b(pris|prend) (irregulierement|mal)\\b",
+    "\\bmal (suivi|pris)\\b",
+    "\\bne (prend|suit) pas (correctement|regulierement|bien)\\b",
+    "\\boublie? rarement\\b",
+    "\\brares? oublis?\\b",
+    "\\b(son|ses|les|des) comprimes?\\b",
+    "\\baucun oubli\\b",
+    "\\bobservance (est )?(bonne|correcte|parfaite)\\b",
+    "\\bbonne observance\\b"
    ]
   },
   "missed_doses": {
    "order": [
     "sometimes",
+    "poor",
     "no",
     "yes"
    ],
@@ -319,7 +333,10 @@
     "de temps a autre",
     "pas toujours",
     "lui arrive d oublier",
-    "oublie (une|certaines) prises?"
+    "oublie (une|certaines) prises?",
+    "\\boublie? rarement\\b",
+    "\\brares? oublis?\\b",
+    "\\boublis? rares?\\b"
    ],
    "no": [
     "bonne observance",
@@ -334,7 +351,10 @@
     "prend (bien|regulierement) (son|ses|le|les)",
     "n a (pas|jamais) oublie",
     "jamais d oubli",
-    "observance (est )?bonne"
+    "observance (est )?bonne",
+    "\\b(traitements?|ttt|medicaments?|comprimes?|prises?)(?: est| sont)? bien (suivis?|pris|respectes?)\\b",
+    "\\b(?<!pas )(?<!ne )(prend|suit|respecte)\\b (son|sa|ses|le|les|un) (traitements?|ttt|medicaments?|comprimes?|prises?) (correctement|regulierement|tous les jours|bien)\\b",
+    "\\b(traitements?|ttt|medicaments?|comprimes?|prises?) (suivis?|pris) (correctement|regulierement)\\b"
    ],
    "yes": [
     "oublie (souvent|son|ses|regulierement|frequemment)",
@@ -349,7 +369,16 @@
     "\\boublie\\b",
     "\\boublis\\b",
     "non observante?"
-   ]
+   ],
+   "poor": [
+    "\\b(traitements?|ttt|medicaments?|comprimes?|prises?)(?: est| sont)? (mal|pas bien|pas) (suivis?|pris|respectes?)\\b",
+    "\\b(pris|prend) (irregulierement|mal)\\b",
+    "\\bmal (suivi|pris)\\b",
+    "\\bne (prend|suit) pas (correctement|regulierement|bien)\\b"
+   ],
+   "alias": {
+    "poor": "yes"
+   }
   },
   "pregnancy": {
    "order": [
@@ -490,7 +519,7 @@
   ],
   "min_len": 5
  },
- "_version": "v6 (v5 + phonetic close-match vocabulary; ASR sound-alikes always flagged)",
+ "_version": "v7 (v6 + adherence classes: good / partial / poor)",
  "asr_variants": {
   "_comment": "Sound-alike transcriptions of clinical words seen on gold DEV clips. A match fills the field but ALWAYS marks it 'please check'.",
   "headache": [

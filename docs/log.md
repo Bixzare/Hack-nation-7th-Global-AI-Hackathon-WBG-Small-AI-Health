@@ -354,6 +354,30 @@ dictation path is measured to perform the same as the file-based evaluation. Ful
    No drop, so nothing was reverted. Wrong fields not flagged: 10 of 13 wrong (clean) and 7 of 10
    (noisy), unchanged. As on dev, the residual errors are vocabulary gaps that confidence can't see.
 
+
+## Adherence vocabulary (Sun 09:32 → 09:35, freeze lifted for ONE change; tag submission-safe-2 = 0b91606)
+- **Lexicon v7: adherence as classes, not phrases.**
+  - Good: a treatment word (traitement / médicaments / comprimés / ttt / prises) + "bien suivi / pris /
+    respecté"; a taking verb + treatment object + correctement / régulièrement / tous les jours; aucun oubli;
+    bonne observance. → on_meds yes, missed_doses no.
+  - Partial: oublie rarement / parfois, rares oublis. → sometimes.
+  - Poor: mal suivi, pas bien suivi, ne prend pas correctement, pris irrégulièrement. → yes, through a
+    `poor` class aliased to "yes" and checked before "good". Often → yes (unchanged).
+  - Talk about adherence implies on_meds = yes.
+- **DEV only check** (Whisper small, webm/VAD): clean 95.7 → **97.1%**, noisy 90.5 → **92.9%**; typed dev
+  → 100%; synthetic dev unchanged (99.7%).
+- **Tests:** 25 adherence unit tests: 9 good, 4 partial, 5 poor, and 7 must-not-match ("il suit bien le
+  régime", "conseils bien suivis", "prend la tension tous les jours", "pas de traitement"…).
+  - The "prend la tension tous les jours" case caught an over-broad pattern. It was tightened to need a
+    treatment object.
+  - Local **139/139**.
+- **Frozen test (run once), before → after:** Whisper small clean 267/280 → 267/280; noisy 116/126 →
+  116/126; typed 271/280 → 271/280; urgent 5/5 and 3/3, 0 false, 0 false-absent, unchanged.
+  - No drop, so it's kept.
+  - No gain on test either: the test clips' remaining errors are in other wordings. The dev gain is real,
+    but it should not be claimed as a test-set improvement.
+- **FREEZE** again after this commit.
+
 ## Small AI audit (Sun, `ml/measure.py`, frozen test split)
 **Checklist**
 - ✅ No runtime cloud AI. Every `fetch` targets the same origin (app files, served by the SW) or the
